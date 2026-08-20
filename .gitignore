@@ -70,3 +70,9 @@ fastlane/*
 !fastlane/Fastfile
 !fastlane/staticContent/
 Gemfile
+
+# C runtime build artifacts
+c_runtime/*.o
+c_runtime/src/*.o
+c_runtime/tests/test_all
+c_runtime/catrobat_run

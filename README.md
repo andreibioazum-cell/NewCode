@@ -1,4 +1,23 @@
-# Catroid #
+# Catroid (C-runtime fork) #
+
+Этот форк переносит **исполнение проектов Catrobat** с Java/Kotlin на
+чистый C. Runtime живёт в каталоге [`c_runtime/`](c_runtime/README.md)
+и собирается любым C11-компилятором (только libm):
+
+```bash
+cd c_runtime && make && ./catrobat_run examples/hello.xml
+```
+
+Из кодовой базы Android-приложения удалены все блоки-расширения
+(**Lego NXT/EV3, Raspberry Pi, Arduino, Phiro, Parrot Drone,
+JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad**) —
+поддерживаются только основные категории: события, управление,
+движение, внешний вид, звук, переменные/списки, формулы.
+Подробности — в [`c_runtime/README.md`](c_runtime/README.md).
+
+---
+
+## Оригинальное описание Catroid ##
 
 **Catroid** is a visual coding IDE and interpreter for Android for the Catrobat programming language.
 
