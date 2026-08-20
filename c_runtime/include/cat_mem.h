@@ -18,6 +18,9 @@ size_t cat_mem_free_count(void);
 
 /* 0 = без лимита. */
 void   cat_mem_set_limit(size_t bytes);
+/* Безопасные настройки выполнения проекта. 0 означает значение по умолчанию. */
+size_t cat_mem_limit(void);
+void   cat_mem_reset_stats(void);
 
 void  *cat_malloc(size_t n);
 void  *cat_calloc(size_t nmemb, size_t size);

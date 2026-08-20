@@ -58,6 +58,15 @@ examples/
   hello.xml         — маленький проект: repeat, JOIN, sensor, broadcast
 ```
 
+### C-блоки и типы
+
+В палитру рантайма добавлены низкоуровневые C-блоки: `malloc`, `calloc`,
+`realloc`, `free`, `memcpy`, `memset`, указатель set/get, `cast`, `typedef`,
+а также `return`, `break` и `continue`. Блоки представлены типизированными
+`CatBrickKind` и используют только безопасные обёртки `cat_mem_*`.
+Настройки памяти доступны через `cat_mem_set_limit`, `cat_mem_limit` и
+`cat_mem_reset_stats`; это позволяет ограничить проект и проверять утечки.
+
 ### Управление памятью
 
 Все аллокации проходят через `cat_malloc/cat_realloc/cat_free`,

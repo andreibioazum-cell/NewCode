@@ -293,6 +293,19 @@ const char *cat_brick_kind_name(CatBrickKind k) {
     case CB_INSERT_INTO_LIST: return "InsertIntoList";
     case CB_REPLACE_IN_LIST: return "ReplaceInList";
     case CB_PRINT: return "Print";
+    case CB_MALLOC: return "malloc";
+    case CB_CALLOC: return "calloc";
+    case CB_REALLOC: return "realloc";
+    case CB_FREE: return "free";
+    case CB_MEMCPY: return "memcpy";
+    case CB_MEMSET: return "memset";
+    case CB_TYPEDEF: return "typedef";
+    case CB_CAST: return "cast";
+    case CB_POINTER_SET: return "pointer set";
+    case CB_POINTER_GET: return "pointer get";
+    case CB_RETURN: return "return";
+    case CB_BREAK: return "break";
+    case CB_CONTINUE: return "continue";
     default: return "?";
     }
 }
