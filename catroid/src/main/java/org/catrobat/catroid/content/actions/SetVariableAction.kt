@@ -25,12 +25,8 @@ package org.catrobat.catroid.content.actions
 import android.util.Log
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
 import org.catrobat.catroid.ProjectManager
-import org.catrobat.catroid.bluetooth.base.BluetoothDevice
-import org.catrobat.catroid.common.CatroidService
 import org.catrobat.catroid.common.Constants
-import org.catrobat.catroid.common.ServiceProvider
 import org.catrobat.catroid.content.Scope
-import org.catrobat.catroid.devices.multiplayer.MultiplayerInterface
 import org.catrobat.catroid.formulaeditor.Formula
 import org.catrobat.catroid.formulaeditor.FormulaElement
 import org.catrobat.catroid.formulaeditor.UserVariable
@@ -62,17 +58,6 @@ class SetVariableAction : TemporalAction() {
         }
 
         userVariable?.value = value
-        handleMultiplayerVariable()
-    }
-
-    val multiplayerDevice: MultiplayerInterface?
-        get() = ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE).getDevice(
-            BluetoothDevice.MULTIPLAYER
-        )
-
-    private fun handleMultiplayerVariable() {
-        ProjectManager.getInstance().currentProject.getMultiplayerVariable(userVariable?.name) ?: return
-        multiplayerDevice?.sendChangedMultiplayerVariables(userVariable)
     }
     private fun checkValueForDoubleConversion(value: Any?): Boolean =
         value is String && convertArgumentToDouble(value) != null

@@ -35,13 +35,11 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
-import org.catrobat.catroid.cast.CastManager
 import org.catrobat.catroid.common.BrickValues
 import org.catrobat.catroid.common.Constants
 import org.catrobat.catroid.common.Constants.IMAGE_DIRECTORY_NAME
@@ -56,7 +54,6 @@ import org.catrobat.catroid.ui.SpriteActivity.EXTRA_Y_TRANSFORM
 import org.catrobat.catroid.ui.SpriteActivity.REQUEST_CODE_VISUAL_PLACEMENT
 import org.catrobat.catroid.ui.recyclerview.dialog.textwatcher.DuplicateInputTextWatcher
 import org.catrobat.catroid.ui.recyclerview.fragment.SpriteListFragment
-import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import org.catrobat.catroid.utils.Utils
 import org.catrobat.catroid.visualplacement.VisualPlacementActivity
 import java.io.File
@@ -140,9 +137,6 @@ class NewSpriteDialogFragment(
             startVisualPlacementActivity()
         }
 
-        if (showCastDialog()) {
-            CastManager.getInstance().openDeviceSelectorOrDisconnectDialog(activity as? AppCompatActivity)
-        }
     }
 
     private fun handleNegativeButton() {
@@ -154,10 +148,6 @@ class NewSpriteDialogFragment(
             Log.e(TAG, Log.getStackTraceString(exception))
         }
     }
-
-    private fun showCastDialog(): Boolean = SettingsFragment.isCastSharedPreferenceEnabled(activity) &&
-        ProjectManager.getInstance().currentProject.isCastProject &&
-        !CastManager.getInstance().isConnected
 
     private fun addLookDataToSprite(currentScene: Scene?, textInput: String?) {
         try {

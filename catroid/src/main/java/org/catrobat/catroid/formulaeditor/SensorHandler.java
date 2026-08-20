@@ -38,17 +38,8 @@ import android.view.WindowManager;
 
 import org.catrobat.catroid.CatroidApplication;
 import org.catrobat.catroid.ProjectManager;
-import org.catrobat.catroid.bluetooth.base.BluetoothDevice;
-import org.catrobat.catroid.bluetooth.base.BluetoothDeviceService;
 import org.catrobat.catroid.camera.Position;
 import org.catrobat.catroid.camera.VisualDetectionHandler;
-import org.catrobat.catroid.cast.CastManager;
-import org.catrobat.catroid.common.CatroidService;
-import org.catrobat.catroid.common.ServiceProvider;
-import org.catrobat.catroid.devices.arduino.phiro.Phiro;
-import org.catrobat.catroid.devices.mindstorms.ev3.LegoEV3;
-import org.catrobat.catroid.devices.mindstorms.nxt.LegoNXT;
-import org.catrobat.catroid.nfc.NfcHandler;
 import org.catrobat.catroid.utils.TouchUtil;
 
 import java.util.Calendar;
@@ -65,7 +56,6 @@ public final class SensorHandler implements SensorEventListener, SensorCustomEve
 	private static final float RADIAN_TO_DEGREE_CONST = 180f / (float) Math.PI;
 	private static final String TAG = SensorHandler.class.getSimpleName();
 	private static SensorHandler instance;
-	private static final BluetoothDeviceService BT_SERVICE = ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE);
 	private final SensorManagerInterface sensorManager;
 	private final Sensor linearAccelerationSensor;
 	private Sensor accelerometerSensor;
@@ -315,47 +305,6 @@ public final class SensorHandler implements SensorEventListener, SensorCustomEve
 			case TIME_SECOND:
 				return (double) Calendar.getInstance().get(Calendar.SECOND);
 
-			case NXT_SENSOR_1:
-			case NXT_SENSOR_2:
-			case NXT_SENSOR_3:
-			case NXT_SENSOR_4:
-
-				LegoNXT nxt = BT_SERVICE.getDevice(BluetoothDevice.LEGO_NXT);
-				if (nxt != null) {
-					return (double) nxt.getSensorValue(sensor);
-				}
-				break;
-
-			case EV3_SENSOR_1:
-			case EV3_SENSOR_2:
-			case EV3_SENSOR_3:
-			case EV3_SENSOR_4:
-				LegoEV3 ev3 = BT_SERVICE.getDevice(BluetoothDevice.LEGO_EV3);
-				if (ev3 != null) {
-					return (double) ev3.getSensorValue(sensor);
-				}
-				break;
-
-			case PHIRO_BOTTOM_LEFT:
-			case PHIRO_BOTTOM_RIGHT:
-			case PHIRO_FRONT_LEFT:
-			case PHIRO_FRONT_RIGHT:
-			case PHIRO_SIDE_LEFT:
-			case PHIRO_SIDE_RIGHT:
-				Phiro phiro = BT_SERVICE.getDevice(BluetoothDevice.PHIRO);
-				if (phiro != null) {
-					return (double) phiro.getSensorValue(sensor);
-				}
-				break;
-
-			case GAMEPAD_A_PRESSED:
-			case GAMEPAD_B_PRESSED:
-			case GAMEPAD_DOWN_PRESSED:
-			case GAMEPAD_LEFT_PRESSED:
-			case GAMEPAD_RIGHT_PRESSED:
-			case GAMEPAD_UP_PRESSED:
-				return CastManager.getInstance().isButtonPressed(sensor) ? 1.0 : 0.0;
-
 			case LAST_FINGER_INDEX:
 				return (double) TouchUtil.getLastTouchIndex();
 			case FINGER_TOUCHED:
@@ -366,10 +315,6 @@ public final class SensorHandler implements SensorEventListener, SensorCustomEve
 				return (double) TouchUtil.getY(TouchUtil.getLastTouchIndex());
 			case NUMBER_CURRENT_TOUCHES:
 				return (double) TouchUtil.getNumberOfCurrentTouches();
-			case NFC_TAG_MESSAGE:
-				return String.valueOf(NfcHandler.getLastNfcTagMessage());
-			case NFC_TAG_ID:
-				return String.valueOf(NfcHandler.getLastNfcTagId());
 			case SPEECH_RECOGNITION_LANGUAGE:
 				return listeningLanguageSensor;
 			case USER_LANGUAGE:

@@ -22,25 +22,5 @@
  */
 package org.catrobat.catroid.ui
 
-import android.view.Menu
-import android.view.MenuItem
-import org.catrobat.catroid.R
-import org.catrobat.catroid.cast.CastManager
-import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 
-abstract class BaseCastActivity : BaseActivity() {
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (SettingsFragment.isCastSharedPreferenceEnabled(this)) {
-            CastManager.getInstance().setCastButton(menu.findItem(R.id.cast_button))
-        }
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.cast_button -> CastManager.getInstance().openDeviceSelectorOrDisconnectDialog()
-            else -> return super.onOptionsItemSelected(item)
-        }
-        return true
-    }
-}
+abstract class BaseCastActivity : BaseActivity()

@@ -22,9 +22,7 @@
  */
 package org.catrobat.catroid.ui.recyclerview.controller
 
-import android.util.Log
 import org.catrobat.catroid.ProjectManager
-import org.catrobat.catroid.cast.CastManager
 import org.catrobat.catroid.content.Project
 import org.catrobat.catroid.content.Scene
 import org.catrobat.catroid.content.Scope
@@ -310,12 +308,6 @@ class ScriptController {
         val script = scriptToUnpack.clone()
         copyBroadcastMessages(script.scriptBrick)
         for (brick in script.brickList) {
-            if (projectManager.currentProject.isCastProject &&
-                CastManager.unsupportedBricks.contains(brick.javaClass)
-            ) {
-                Log.e(TAG, "CANNOT insert bricks into ChromeCast project")
-                return
-            }
             unpackUserVariable(projectManager.currentSprite, scriptName, brick)
             unpackUserList(projectManager.currentSprite, scriptName, brick)
             copyBroadcastMessages(brick)
@@ -473,12 +465,6 @@ class ScriptController {
         val script = scriptToUnpack.clone()
         for (brick in script.brickList) {
             when {
-                projectManager.currentProject.isCastProject && CastManager.unsupportedBricks.contains(
-                    brick.javaClass
-                ) -> {
-                    Log.e(TAG, "CANNOT insert bricks into ChromeCast project")
-                    return
-                }
                 brick is SetLookBrick && brick.look != null ->
                     brick.look = lookController.unpackForSprite(
                         brick.look,

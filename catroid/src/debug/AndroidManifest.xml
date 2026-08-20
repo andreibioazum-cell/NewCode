@@ -92,9 +92,6 @@
         android:usesCleartextTraffic="true">
 
     <activity
-        android:name=".ui.ConnectBluetoothDeviceTestActivity" />
-
-    <activity
         android:name=".ui.ProjectUploadTestActivity" />
 <!--
         <activity

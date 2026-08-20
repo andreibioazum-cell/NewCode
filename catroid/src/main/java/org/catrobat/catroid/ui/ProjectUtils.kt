@@ -47,7 +47,6 @@ import org.catrobat.catroid.content.bricks.IfLogicBeginBrick
 import org.catrobat.catroid.content.bricks.IfThenLogicBeginBrick
 import org.catrobat.catroid.content.bricks.LookRequestBrick
 import org.catrobat.catroid.content.bricks.ParameterizedBrick
-import org.catrobat.catroid.content.bricks.PhiroIfLogicBeginBrick
 import org.catrobat.catroid.content.bricks.RepeatBrick
 import org.catrobat.catroid.content.bricks.RepeatUntilBrick
 import org.catrobat.catroid.content.bricks.StartListeningBrick
@@ -100,11 +99,6 @@ public fun Sprite.getListAllBricks(): List<Brick> {
 
             is ParameterizedBrick ->
                 bricks.addAll(brick.nestedBricks)
-
-            is PhiroIfLogicBeginBrick -> {
-                bricks.addAll(brick.nestedBricks)
-                bricks.addAll(brick.secondaryNestedBricks)
-            }
         }
     }
     return bricks

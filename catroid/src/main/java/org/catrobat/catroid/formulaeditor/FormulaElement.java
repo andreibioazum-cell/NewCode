@@ -27,13 +27,11 @@ import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Scope;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.formulaeditor.function.ArduinoFunctionProvider;
 import org.catrobat.catroid.formulaeditor.function.BinaryFunction;
 import org.catrobat.catroid.formulaeditor.function.FormulaFunction;
 import org.catrobat.catroid.formulaeditor.function.FunctionProvider;
 import org.catrobat.catroid.formulaeditor.function.MathFunctionProvider;
 import org.catrobat.catroid.formulaeditor.function.ObjectDetectorFunctionProvider;
-import org.catrobat.catroid.formulaeditor.function.RaspiFunctionProvider;
 import org.catrobat.catroid.formulaeditor.function.TernaryFunction;
 import org.catrobat.catroid.formulaeditor.function.TextBlockFunctionProvider;
 import org.catrobat.catroid.formulaeditor.function.TouchFunctionProvider;
@@ -114,8 +112,6 @@ public class FormulaElement implements Serializable {
 	protected FormulaElement() {
 		textBlockFunctionProvider = new TextBlockFunctionProvider();
 		List<FunctionProvider> functionProviders = Arrays.asList(
-				new ArduinoFunctionProvider(),
-				new RaspiFunctionProvider(),
 				new MathFunctionProvider(),
 				new TouchFunctionProvider(),
 				textBlockFunctionProvider,

@@ -42,8 +42,6 @@ import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.common.DroneConfigPreference;
-import org.catrobat.catroid.devices.mindstorms.ev3.sensors.EV3Sensor;
-import org.catrobat.catroid.devices.mindstorms.nxt.sensors.NXTSensor;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
 import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.recyclerview.dialog.AppStoreDialogFragment;
@@ -251,18 +249,6 @@ public class SettingsFragment extends PreferenceFragment {
 				getFragmentManager().beginTransaction()
 						.replace(R.id.content_frame, new AccessibilitySettingsFragment(), AccessibilitySettingsFragment.TAG)
 						.addToBackStack(AccessibilitySettingsFragment.TAG)
-						.commit();
-				break;
-			case NXT_SCREEN_KEY:
-				getFragmentManager().beginTransaction()
-						.replace(R.id.content_frame, new NXTSensorsSettingsFragment(), NXTSensorsSettingsFragment.TAG)
-						.addToBackStack(NXTSensorsSettingsFragment.TAG)
-						.commit();
-				break;
-			case EV3_SCREEN_KEY:
-				getFragmentManager().beginTransaction()
-						.replace(R.id.content_frame, new Ev3SensorsSettingsFragment(), Ev3SensorsSettingsFragment.TAG)
-						.addToBackStack(Ev3SensorsSettingsFragment.TAG)
 						.commit();
 				break;
 			case DRONE_SCREEN_KEY:
@@ -478,26 +464,6 @@ public class SettingsFragment extends PreferenceFragment {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	public static NXTSensor.Sensor[] getLegoNXTSensorMapping(Context context) {
-		NXTSensor.Sensor[] sensorMapping = new NXTSensor.Sensor[4];
-		for (int i = 0; i < 4; i++) {
-			String sensor = getSharedPreferences(context).getString(NXT_SENSORS[i], null);
-			sensorMapping[i] = NXTSensor.Sensor.getSensorFromSensorCode(sensor);
-		}
-
-		return sensorMapping;
-	}
-
-	public static EV3Sensor.Sensor[] getLegoEV3SensorMapping(Context context) {
-		EV3Sensor.Sensor[] sensorMapping = new EV3Sensor.Sensor[4];
-		for (int i = 0; i < 4; i++) {
-			String sensor = getSharedPreferences(context).getString(EV3_SENSORS[i], null);
-			sensorMapping[i] = EV3Sensor.Sensor.getSensorFromSensorCode(sensor);
-		}
-
-		return sensorMapping;
-	}
-
 	public static String getRaspiHost(Context context) {
 		return getSharedPreferences(context).getString(RASPI_HOST, null);
 	}
@@ -508,36 +474,6 @@ public class SettingsFragment extends PreferenceFragment {
 
 	public static String getRaspiRevision(Context context) {
 		return getSharedPreferences(context).getString(RASPI_VERSION_SPINNER, null);
-	}
-
-	public static void setLegoMindstormsNXTSensorMapping(Context context, NXTSensor.Sensor[] sensorMapping) {
-		SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-		for (int i = 0; i < NXT_SENSORS.length; i++) {
-			editor.putString(NXT_SENSORS[i], sensorMapping[i].getSensorCode());
-		}
-
-		editor.apply();
-	}
-
-	public static void setLegoMindstormsEV3SensorMapping(Context context, EV3Sensor.Sensor[] sensorMapping) {
-		SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-		for (int i = 0; i < EV3_SENSORS.length; i++) {
-			editor.putString(EV3_SENSORS[i], sensorMapping[i].getSensorCode());
-		}
-
-		editor.apply();
-	}
-
-	public static void setLegoMindstormsNXTSensorMapping(Context context, NXTSensor.Sensor sensor, String sensorSetting) {
-		getSharedPreferences(context).edit()
-				.putString(sensorSetting, sensor.getSensorCode())
-				.apply();
-	}
-
-	public static void setLegoMindstormsEV3SensorMapping(Context context, EV3Sensor.Sensor sensor, String sensorSetting) {
-		getSharedPreferences(context).edit()
-				.putString(sensorSetting, sensor.getSensorCode())
-				.apply();
 	}
 
 	public static DroneConfigPreference.Preferences[] getDronePreferenceMapping(Context context) {

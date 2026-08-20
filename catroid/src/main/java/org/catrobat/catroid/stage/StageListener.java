@@ -22,9 +22,7 @@
  */
 package org.catrobat.catroid.stage;
 
-import android.content.res.Resources;
 import android.os.SystemClock;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -65,8 +63,6 @@ import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.XmlHeader;
 import org.catrobat.catroid.content.eventids.EventId;
 import org.catrobat.catroid.content.eventids.GamepadEventId;
-import org.catrobat.catroid.embroidery.DSTPatternManager;
-import org.catrobat.catroid.embroidery.EmbroideryPatternManager;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
 import org.catrobat.catroid.formulaeditor.UserDataWrapper;
 import org.catrobat.catroid.io.SoundManager;
@@ -131,7 +127,6 @@ public class StageListener implements ApplicationListener {
 	public ShapeRenderer shapeRenderer;
 	private PenActor penActor;
 	private PlotActor plotActor;
-	public EmbroideryPatternManager embroideryPatternManager;
 	public WebConnectionHolder webConnectionHolder;
 
 	private List<Sprite> sprites;
@@ -204,7 +199,6 @@ public class StageListener implements ApplicationListener {
 
 		resetConditionScriptTriggers();
 
-		embroideryPatternManager = new DSTPatternManager();
 		initActors(sprites);
 
 		passepartout = new Passepartout(
@@ -290,10 +284,6 @@ public class StageListener implements ApplicationListener {
 		stage.addActor(plotActor);
 		plotActor.setZIndex(Z_LAYER_PEN_ACTOR);
 
-		float screenRatio = calculateScreenRatio();
-		EmbroideryActor embroideryActor = new EmbroideryActor(screenRatio, embroideryPatternManager, shapeRenderer);
-		stage.addActor(embroideryActor);
-		embroideryActor.setZIndex(Z_LAYER_EMBROIDERY_ACTOR);
 	}
 
 	public void cloneSpriteAndAddToStage(Sprite cloneMe) {
@@ -497,8 +487,6 @@ public class StageListener implements ApplicationListener {
 				plotActor.dispose();
 			}
 
-			embroideryPatternManager.clear();
-
 			SoundManager.getInstance().clear();
 
 			physicsWorld = scene.resetPhysicsWorld();
@@ -540,6 +528,9 @@ public class StageListener implements ApplicationListener {
 				physicsWorld.step(optimizedDeltaTime);
 				stage.act(optimizedDeltaTime);
 				deltaTime -= optimizedDeltaTime;
+			}
+			if (penActor != null) {
+				penActor.stampToFrameBuffer();
 			}
 
 			long executionTimeOfActionsUpdate = SystemClock.uptimeMillis() - timeBeforeActionsUpdate;
@@ -671,7 +662,6 @@ public class StageListener implements ApplicationListener {
 
 		SoundManager.getInstance().clear();
 		PhysicsShapeBuilder.getInstance().reset();
-		embroideryPatternManager = null;
 		if (penActor != null)
 			penActor.dispose();
 
@@ -837,7 +827,6 @@ public class StageListener implements ApplicationListener {
 		Array<Actor> actors;
 		PenActor penActor;
 		PlotActor plotActor;
-		EmbroideryPatternManager embroideryPatternManager;
 		Map<Sprite, ShowBubbleActor> bubbleActorMap;
 		List<SoundBackup> soundBackupList;
 
@@ -870,8 +859,6 @@ public class StageListener implements ApplicationListener {
 		backup.penActor = penActor;
 		backup.plotActor = plotActor;
 		backup.bubbleActorMap = new HashMap<>(bubbleActorMap);
-		backup.embroideryPatternManager = embroideryPatternManager;
-
 		backup.paused = paused;
 		backup.finished = finished;
 		backup.reloadProject = reloadProject;
@@ -921,8 +908,6 @@ public class StageListener implements ApplicationListener {
 		bubbleActorMap.clear();
 		bubbleActorMap.putAll(backup.bubbleActorMap);
 
-		embroideryPatternManager = backup.embroideryPatternManager;
-
 		paused = backup.paused;
 		finished = backup.finished;
 		reloadProject = backup.reloadProject;
@@ -953,15 +938,6 @@ public class StageListener implements ApplicationListener {
 					soundBackup.getStartedBySprite(), soundBackup.getCurrentPosition());
 		}
 		initStageInputListener();
-	}
-
-	private float calculateScreenRatio() {
-		DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-		XmlHeader header = ProjectManager.getInstance().getCurrentProject().getXmlHeader();
-		float deviceDiagonalPixel = (float) Math.sqrt(Math.pow(metrics.widthPixels, 2) + Math.pow(metrics.heightPixels, 2));
-		float creatorDiagonalPixel = (float) Math.sqrt(Math.pow(header.getVirtualScreenWidth(), 2)
-				+ Math.pow(header.getVirtualScreenHeight(), 2));
-		return creatorDiagonalPixel / deviceDiagonalPixel;
 	}
 
 	@VisibleForTesting

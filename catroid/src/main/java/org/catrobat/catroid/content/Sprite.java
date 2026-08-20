@@ -25,7 +25,6 @@ package org.catrobat.catroid.content;
 import android.content.Context;
 import android.util.Log;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -48,7 +47,6 @@ import org.catrobat.catroid.content.bricks.PlaySoundBrick;
 import org.catrobat.catroid.content.bricks.UserDefinedBrick;
 import org.catrobat.catroid.content.bricks.WhenConditionBrick;
 import org.catrobat.catroid.content.eventids.EventId;
-import org.catrobat.catroid.embroidery.RunningStitch;
 import org.catrobat.catroid.formulaeditor.Formula;
 import org.catrobat.catroid.formulaeditor.FormulaElement;
 import org.catrobat.catroid.formulaeditor.UserData;
@@ -93,14 +91,12 @@ public class Sprite implements Nameable, Serializable {
 
 	public transient Look look = new Look(this);
 	public transient PenConfiguration penConfiguration = new PenConfiguration();
-	public transient RunningStitch runningStitch = new RunningStitch();
 	public transient Plot plot = new Plot();
 	private transient boolean convertToSprite = false;
 	private transient boolean convertToGroupItemSprite = false;
 	private transient Multimap<EventId, ScriptSequenceAction> idToEventThreadMap = LinkedHashMultimap.create();
 	private transient Set<ConditionScriptTrigger> conditionScriptTriggers = new HashSet<>();
 	private transient List<Integer> usedTouchPointer = new ArrayList<>();
-	private transient Color embroideryThreadColor = Color.BLACK;
 
 	@XStreamAsAttribute
 	private String name;
@@ -345,7 +341,6 @@ public class Sprite implements Nameable, Serializable {
 	public void resetDrawingState() {
 		penConfiguration = new PenConfiguration();
 		plot = new Plot();
-		runningStitch = new RunningStitch();
 	}
 
 	public void resetSprite() {
@@ -373,7 +368,6 @@ public class Sprite implements Nameable, Serializable {
 		conditionScriptTriggers = null;
 		penConfiguration = null;
 		plot = null;
-		runningStitch = null;
 	}
 
 	public void initConditionScriptTriggers() {
@@ -474,7 +468,6 @@ public class Sprite implements Nameable, Serializable {
 
 		convertedSprite.penConfiguration = penConfiguration;
 		convertedSprite.plot = plot;
-		convertedSprite.runningStitch = runningStitch;
 
 		convertedSprite.lookList = lookList;
 		convertedSprite.soundList = soundList;
@@ -762,14 +755,6 @@ public class Sprite implements Nameable, Serializable {
 		}
 
 		return idsToRemove;
-	}
-
-	public void setEmbroideryThreadColor(Color embroideryThreadColor) {
-		this.embroideryThreadColor = embroideryThreadColor;
-	}
-
-	public Color getEmbroideryThreadColor() {
-		return this.embroideryThreadColor;
 	}
 
 	public Sprite(Sprite sprite, Scene destinationScene) throws IOException {

@@ -26,11 +26,9 @@ package org.catrobat.catroid.ui.fragment
 import android.preference.PreferenceManager
 import android.view.View
 import androidx.fragment.app.FragmentActivity
-import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
 import org.catrobat.catroid.ui.adapter.BrickCategoryAdapter
 import org.catrobat.catroid.ui.settingsfragments.AccessibilityProfile
-import org.catrobat.catroid.ui.settingsfragments.RaspberryPiSettingsFragment
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import java.util.ArrayList
 
@@ -46,36 +44,9 @@ class BrickCategoryListBuilder(private val activity: FragmentActivity) {
 
         categories.add(inflater.inflate(R.layout.brick_category_recently_used, null))
 
-        if (SettingsFragment.isEmroiderySharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_embroidery, null))
-        }
         if (SettingsFragment.isPlotSharedPreferenceEnabled(activity)) {
             categories.add(inflater.inflate(R.layout.brick_category_plot, null))
             categories.add(inflater.inflate(R.layout.brick_category_laser, null))
-        }
-        if (SettingsFragment.isMindstormsNXTSharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_lego_nxt, null))
-        }
-        if (SettingsFragment.isMindstormsEV3SharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_lego_ev3, null))
-        }
-        if (SettingsFragment.isDroneSharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_drone, null))
-        }
-        if (SettingsFragment.isJSSharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_drone_js, null))
-        }
-        if (SettingsFragment.isArduinoSharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_arduino, null))
-        }
-        if (RaspberryPiSettingsFragment.isRaspiSharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_raspi, null))
-        }
-        if (SettingsFragment.isPhiroSharedPreferenceEnabled(activity)) {
-            categories.add(inflater.inflate(R.layout.brick_category_phiro, null))
-        }
-        if (ProjectManager.getInstance().currentProject.isCastProject) {
-            categories.add(inflater.inflate(R.layout.brick_category_chromecast, null))
         }
 
         categories.add(inflater.inflate(R.layout.brick_category_event, null))

@@ -37,7 +37,6 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder
 import org.catrobat.catroid.CatroidApplication
 import org.catrobat.catroid.R
-import org.catrobat.catroid.cast.CastManager
 import org.catrobat.catroid.ui.runtimepermissions.PermissionHandlingActivity
 import org.catrobat.catroid.ui.runtimepermissions.PermissionRequestActivityExtension
 import org.catrobat.catroid.ui.runtimepermissions.RequiresPermissionTask
@@ -59,10 +58,6 @@ abstract class BaseActivity : AppCompatActivity(), PermissionHandlingActivity {
         Thread.setDefaultUncaughtExceptionHandler(BaseExceptionHandler(this))
         checkIfCrashRecoveryAndFinishActivity(this)
         checkIfProcessRecreatedAndFinishActivity(savedInstanceState)
-
-        if (SettingsFragment.isCastSharedPreferenceEnabled(this)) {
-            CastManager.getInstance().initializeCast(this)
-        }
     }
 
     override fun onStart() {
@@ -109,9 +104,6 @@ abstract class BaseActivity : AppCompatActivity(), PermissionHandlingActivity {
     override fun onResume() {
         super.onResume()
         SettingsFragment.setToChosenLanguage(this)
-        if (SettingsFragment.isCastSharedPreferenceEnabled(this)) {
-            CastManager.getInstance().initializeCast(this)
-        }
 
         invalidateOptionsMenu()
         googleAnalyticsTrackScreenResume()

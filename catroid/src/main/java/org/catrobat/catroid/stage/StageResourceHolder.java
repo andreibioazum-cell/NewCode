@@ -38,22 +38,13 @@ import android.view.ContextThemeWrapper;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.bluetooth.base.BluetoothDevice;
-import org.catrobat.catroid.bluetooth.base.BluetoothDeviceService;
 import org.catrobat.catroid.camera.CameraManager;
-import org.catrobat.catroid.cast.CastManager;
-import org.catrobat.catroid.common.CatroidService;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.ServiceProvider;
-import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.devices.mindstorms.MindstormsException;
-import org.catrobat.catroid.devices.raspberrypi.RaspberryPiService;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
 import org.catrobat.catroid.formulaeditor.SensorLoudness;
 import org.catrobat.catroid.sensing.GatherCollisionInformationTask;
 import org.catrobat.catroid.ui.runtimepermissions.BrickResourcesToRuntimePermissions;
-import org.catrobat.catroid.ui.settingsfragments.SettingsFragment;
 import org.catrobat.catroid.utils.MobileServiceAvailability;
 import org.catrobat.catroid.utils.ToastUtil;
 import org.catrobat.catroid.utils.TouchUtil;
@@ -67,7 +58,6 @@ import java.util.List;
 import java.util.Set;
 
 import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 import static org.koin.java.KoinJavaComponent.get;
@@ -75,7 +65,6 @@ import static org.koin.java.KoinJavaComponent.get;
 public class StageResourceHolder implements GatherCollisionInformationTask.OnPolygonLoadedListener {
 	private static final String TAG = StageResourceHolder.class.getSimpleName();
 
-	private static final int REQUEST_CONNECT_DEVICE = 1000;
 	private static final int REQUEST_GPS = 1;
 
 	private Brick.ResourcesSet requiredResourcesSet;
@@ -150,26 +139,6 @@ public class StageResourceHolder implements GatherCollisionInformationTask.OnPol
 			} else if (mobileServiceAvailability.isHmsAvailable(stageActivity)) {
 				HuaweiTextToSpeechHolder.Companion.getInstance().initTextToSpeech(stageActivity, this);
 			}
-		}
-
-		if (requiredResourcesSet.contains(Brick.BLUETOOTH_LEGO_NXT)) {
-			connectBTDevice(BluetoothDevice.LEGO_NXT);
-		}
-
-		if (requiredResourcesSet.contains(Brick.BLUETOOTH_LEGO_EV3)) {
-			connectBTDevice(BluetoothDevice.LEGO_EV3);
-		}
-
-		if (requiredResourcesSet.contains(Brick.BLUETOOTH_PHIRO)) {
-			connectBTDevice(BluetoothDevice.PHIRO);
-		}
-
-		if (requiredResourcesSet.contains(Brick.BLUETOOTH_SENSORS_ARDUINO)) {
-			connectBTDevice(BluetoothDevice.ARDUINO);
-		}
-
-		if (requiredResourcesSet.contains(Brick.BLUETOOTH_MULTIPLAYER)) {
-			connectBTDevice(BluetoothDevice.MULTIPLAYER);
 		}
 
 		if (requiredResourcesSet.contains(Brick.CAMERA_BACK)) {
@@ -263,21 +232,6 @@ public class StageResourceHolder implements GatherCollisionInformationTask.OnPol
 			}
 		}
 
-		if (requiredResourcesSet.contains(Brick.CAST_REQUIRED)) {
-			if (CastManager.getInstance().isConnected()) {
-				resourceInitialized();
-			} else {
-				if (!SettingsFragment.isCastSharedPreferenceEnabled(stageActivity)) {
-					ToastUtil.showError(stageActivity, stageActivity.getString(R.string.cast_enable_cast_feature));
-				} else if (ProjectManager.getInstance().getCurrentProject().isCastProject()) {
-					ToastUtil.showError(stageActivity, stageActivity.getString(R.string.cast_error_not_connected_msg));
-				} else {
-					ToastUtil.showError(stageActivity, stageActivity.getString(R.string.cast_error_cast_bricks_in_no_cast_project));
-				}
-				endStageActivity();
-			}
-		}
-
 		if (requiredResourcesSet.contains(Brick.COLLISION)) {
 			GatherCollisionInformationTask task = new GatherCollisionInformationTask(this);
 			task.execute();
@@ -301,12 +255,6 @@ public class StageResourceHolder implements GatherCollisionInformationTask.OnPol
 			} else {
 				resourceInitialized();
 			}
-		}
-
-		if (requiredResourcesSet.contains(Brick.SOCKET_RASPI)) {
-			Project currentProject = ProjectManager.getInstance().getCurrentProject();
-			RaspberryPiService.getInstance().enableRaspberryInterruptPinsForProject(currentProject);
-			connectRaspberrySocket();
 		}
 
 		if (requiredResourcesSet.contains(Brick.STORAGE_WRITE)) {
@@ -341,11 +289,6 @@ public class StageResourceHolder implements GatherCollisionInformationTask.OnPol
 	}
 
 	public void initFinishedRunStage() {
-		try {
-			ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE).initialise();
-		} catch (MindstormsException e) {
-			Log.e(TAG, e.getMessage());
-		}
 		stageActivity.setupAskHandler();
 		speechRecognitionHolderFactory.getInstance().initSpeechRecognition(stageActivity, this);
 
@@ -483,17 +426,6 @@ public class StageResourceHolder implements GatherCollisionInformationTask.OnPol
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case REQUEST_CONNECT_DEVICE:
-				switch (resultCode) {
-					case RESULT_OK:
-						resourceInitialized();
-						break;
-
-					case RESULT_CANCELED:
-						endStageActivity();
-						break;
-				}
-				break;
 			case REQUEST_GPS:
 				if (resultCode == RESULT_CANCELED && SensorHandler.gpsAvailable()) {
 					resourceInitialized();
@@ -504,30 +436,6 @@ public class StageResourceHolder implements GatherCollisionInformationTask.OnPol
 			default:
 				endStageActivity();
 				break;
-		}
-	}
-
-	private void connectBTDevice(Class<? extends BluetoothDevice> deviceType) {
-		BluetoothDeviceService btService =
-				ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE);
-
-		if (btService.connectDevice(deviceType, stageActivity, REQUEST_CONNECT_DEVICE)
-				== BluetoothDeviceService.ConnectDeviceResult.ALREADY_CONNECTED) {
-			resourceInitialized();
-		}
-	}
-
-	private void connectRaspberrySocket() {
-		String host = SettingsFragment.getRaspiHost(stageActivity);
-		int port = SettingsFragment.getRaspiPort(stageActivity);
-
-		if (RaspberryPiService.getInstance().connect(host, port)) {
-			resourceInitialized();
-		} else {
-			ToastUtil.showError(
-					stageActivity,
-					stageActivity.getString(R.string.error_connecting_to, host, port));
-			endStageActivity();
 		}
 	}
 

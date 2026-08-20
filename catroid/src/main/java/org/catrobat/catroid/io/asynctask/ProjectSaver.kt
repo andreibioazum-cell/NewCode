@@ -27,12 +27,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.catrobat.catroid.content.LegoEV3Setting
-import org.catrobat.catroid.content.LegoNXTSetting
 import org.catrobat.catroid.content.Project
-import org.catrobat.catroid.content.bricks.Brick
 import org.catrobat.catroid.io.XstreamSerializer
-import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import java.lang.ref.WeakReference
 
 class ProjectSaver(private val project: Project, context: Context) {
@@ -56,39 +52,5 @@ class ProjectSaver(private val project: Project, context: Context) {
 
 fun saveProjectSerial(project: Project?, context: Context): Boolean {
     project ?: return false
-    saveLegoNXTSettingsToProject(project, context)
-    saveLegoEV3SettingsToProject(project, context)
     return XstreamSerializer.getInstance().saveProject(project)
-}
-
-private fun saveLegoNXTSettingsToProject(project: Project, context: Context) {
-    if (!project.requiredResources.contains(Brick.BLUETOOTH_LEGO_NXT)) {
-        project.settings.toTypedArray().filterIsInstance<LegoNXTSetting>().forEach { setting ->
-            project.settings.remove(setting)
-        }
-        return
-    }
-
-    val sensorMapping = SettingsFragment.getLegoNXTSensorMapping(context)
-    project.settings.filterIsInstance<LegoNXTSetting>().forEach { setting ->
-        setting.updateMapping(sensorMapping)
-        return
-    }
-    project.settings.add(LegoNXTSetting(sensorMapping))
-}
-
-private fun saveLegoEV3SettingsToProject(project: Project, context: Context) {
-    if (!project.requiredResources.contains(Brick.BLUETOOTH_LEGO_EV3)) {
-        project.settings.toTypedArray().filterIsInstance<LegoEV3Setting>().forEach { setting ->
-            project.settings.remove(setting)
-        }
-        return
-    }
-
-    val sensorMapping = SettingsFragment.getLegoEV3SensorMapping(context)
-    project.settings.filterIsInstance<LegoEV3Setting>().forEach { setting ->
-        setting.updateMapping(sensorMapping)
-        return
-    }
-    project.settings.add(LegoEV3Setting(sensorMapping))
 }

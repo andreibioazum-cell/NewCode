@@ -44,20 +44,15 @@ import org.catrobat.catroid.CatroidApplication
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
 import org.catrobat.catroid.common.Constants
-import org.catrobat.catroid.common.Constants.LegoSensorType
 import org.catrobat.catroid.common.SharedPreferenceKeys
 import org.catrobat.catroid.content.Sprite
-import org.catrobat.catroid.devices.mindstorms.ev3.sensors.EV3Sensor
-import org.catrobat.catroid.devices.mindstorms.nxt.sensors.NXTSensor
 import org.catrobat.catroid.formulaeditor.UserList
 import org.catrobat.catroid.ui.SpriteActivity
-import org.catrobat.catroid.ui.dialogs.LegoSensorPortConfigDialog
 import org.catrobat.catroid.ui.dialogs.regexassistant.RegularExpressionAssistantDialog
 import org.catrobat.catroid.ui.fragment.FormulaEditorFragment
 import org.catrobat.catroid.ui.recyclerview.adapter.CategoryListRVAdapter
 import org.catrobat.catroid.ui.recyclerview.adapter.CategoryListRVAdapter.CategoryListItem
 import org.catrobat.catroid.ui.recyclerview.dialog.TextInputDialog
-import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import org.catrobat.catroid.utils.AddUserListDialog
 import org.koin.java.KoinJavaComponent.inject
 import java.util.Locale
@@ -109,14 +104,6 @@ class CategoryListFragment : Fragment(), CategoryListRVAdapter.OnItemClickListen
 
     override fun onItemClick(item: CategoryListItem) {
         when (item.type) {
-            CategoryListRVAdapter.NXT -> showLegoSensorPortConfigDialog(
-                item.nameResId, Constants.NXT
-            )
-
-            CategoryListRVAdapter.EV3 -> showLegoSensorPortConfigDialog(
-                item.nameResId, Constants.EV3
-            )
-
             CategoryListRVAdapter.COLLISION -> showSelectSpriteDialog()
 
             CategoryListRVAdapter.DEFAULT -> if (categoryListItems.getListFunctions()
@@ -307,45 +294,6 @@ class CategoryListFragment : Fragment(), CategoryListRVAdapter.OnItemClickListen
                     activity.onBackPressed()
                 }
             })
-    }
-
-    private fun showLegoSensorPortConfigDialog(itemNameResId: Int, @LegoSensorType type: Int) {
-        LegoSensorPortConfigDialog.Builder(requireContext(), type, itemNameResId).setPositiveButton(
-            getString(R.string.ok)
-        ) { _, selectedPort, selectedSensor ->
-            if (type == Constants.NXT) {
-                SettingsFragment.setLegoMindstormsNXTSensorMapping(
-                    activity,
-                    selectedSensor as NXTSensor.Sensor?,
-                    SettingsFragment.NXT_SENSORS[selectedPort]
-                )
-            } else if (type == Constants.EV3) {
-                SettingsFragment.setLegoMindstormsEV3SensorMapping(
-                    activity,
-                    selectedSensor as EV3Sensor.Sensor?,
-                    SettingsFragment.EV3_SENSORS[selectedPort]
-                )
-            }
-
-            val formulaEditor = getFormulaEditorFragment()
-            val sensorPortsId = if (type == Constants.NXT) {
-                R.array.formula_editor_nxt_ports
-            } else {
-                R.array.formula_editor_ev3_ports
-            }
-            val sensorPorts = resources.obtainTypedArray(sensorPortsId)
-
-            try {
-                val resourceId = sensorPorts.getResourceId(selectedPort, 0)
-                if (resourceId != 0) {
-                    formulaEditor?.addResourceToActiveFormula(resourceId)
-                    formulaEditor?.updateButtonsOnKeyboardAndInvalidateOptionsMenu()
-                }
-            } finally {
-                sensorPorts.recycle()
-            }
-            requireActivity().onBackPressed()
-        }.show()
     }
 
     private fun showSelectSpriteDialog() {

@@ -1,6 +1,6 @@
 /*
  * Catroid: An on-device visual programming system for Android devices
- * Copyright (C) 2010-2025 The Catrobat Team
+ * Copyright (C) 2010-2026 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,40 +22,22 @@
  */
 package org.catrobat.catroid.content.actions;
 
-import android.util.Log;
-
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction;
 
-import org.catrobat.catroid.content.Scope;
-import org.catrobat.catroid.embroidery.SimpleRunningStitch;
-import org.catrobat.catroid.formulaeditor.Formula;
-import org.catrobat.catroid.formulaeditor.InterpretationException;
+import org.catrobat.catroid.content.Sprite;
 
-public class RunningStitchAction extends TemporalAction {
+public class StampAction extends TemporalAction {
 
-	private Scope scope;
-	private Formula length;
+	private Sprite sprite;
 
 	@Override
 	protected void update(float delta) {
-		int lengthInterpretation = 0;
-		try {
-			if (length != null) {
-				lengthInterpretation = length.interpretInteger(scope);
-			}
-		} catch (InterpretationException interpretationException) {
-			lengthInterpretation = 0;
-			Log.d(getClass().getSimpleName(), "Formula interpretation for this specific Brick failed.", interpretationException);
+		if (sprite != null && sprite.penConfiguration != null) {
+			sprite.penConfiguration.setStamp(true);
 		}
-		this.scope.getSprite().runningStitch.activateStitching(scope.getSprite(),
-				new SimpleRunningStitch(scope.getSprite(), lengthInterpretation));
 	}
 
-	public void setScope(Scope scope) {
-		this.scope = scope;
-	}
-
-	public void setLength(Formula length) {
-		this.length = length;
+	public void setSprite(Sprite sprite) {
+		this.sprite = sprite;
 	}
 }

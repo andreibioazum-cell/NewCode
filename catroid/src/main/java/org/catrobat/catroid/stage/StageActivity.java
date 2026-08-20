@@ -48,23 +48,17 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidGraphics;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.graphics.Color;
 
 import org.catrobat.catroid.BuildConfig;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.bluetooth.base.BluetoothDeviceService;
 import org.catrobat.catroid.camera.CameraManager;
-import org.catrobat.catroid.common.CatroidService;
 import org.catrobat.catroid.common.ScreenValues;
-import org.catrobat.catroid.common.ServiceProvider;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.devices.raspberrypi.RaspberryPiService;
 import org.catrobat.catroid.io.StageAudioFocus;
-import org.catrobat.catroid.nfc.NfcHandler;
 import org.catrobat.catroid.ui.MarketingActivity;
 import org.catrobat.catroid.ui.recyclerview.dialog.PlaySceneDialog;
 import org.catrobat.catroid.ui.runtimepermissions.BrickResourcesToRuntimePermissions;
@@ -194,32 +188,17 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		NfcHandler.processIntent(intent);
-
-		if (nfcTagMessage != null) {
-			Tag currentTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			synchronized (StageActivity.class) {
-				NfcHandler.writeTag(currentTag, nfcTagMessage);
-				setNfcTagMessage(null);
-			}
-		}
 	}
 
 	@Override
 	public void onBackPressed() {
 		if (BuildConfig.FEATURE_APK_GENERATOR_ENABLED) {
-			BluetoothDeviceService service = ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE);
-			if (service != null) {
-				service.disconnectDevices();
-			}
-
 			TextToSpeechHolder.getInstance().deleteSpeechFiles();
 			Intent marketingIntent = new Intent(this, MarketingActivity.class);
 			startActivity(marketingIntent);
 			finish();
 		} else {
 			clearBroadcastMaps();
-			resetEmbroideryThreadColor();
 			finish();
 		}
 	}
@@ -232,14 +211,6 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 		}
 	}
 
-	private void resetEmbroideryThreadColor() {
-		for (Scene scene : ProjectManager.getInstance().getCurrentProject().getSceneList()) {
-			for (Sprite sprite : scene.getSpriteList()) {
-				sprite.setEmbroideryThreadColor(Color.BLACK);
-			}
-		}
-	}
-
 	public void manageLoadAndFinish() {
 		if (stageListener != null) {
 			stageListener.pause();
@@ -248,13 +219,6 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 
 		TextToSpeechHolder.getInstance().shutDownTextToSpeech();
 		get(SpeechRecognitionHolderFactory.class).getInstance().destroy();
-
-		BluetoothDeviceService service = ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE);
-		if (service != null) {
-			service.pause();
-		}
-
-		RaspberryPiService.getInstance().disconnect();
 	}
 
 	public static CameraManager getActiveCameraManager() {

@@ -33,10 +33,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
-import org.catrobat.catroid.bluetooth.base.BluetoothDevice
-import org.catrobat.catroid.bluetooth.base.BluetoothDeviceService
-import org.catrobat.catroid.common.CatroidService
-import org.catrobat.catroid.common.ServiceProvider
 import org.catrobat.catroid.content.Scope
 import org.catrobat.catroid.content.bricks.Brick
 import org.catrobat.catroid.formulaeditor.Formula
@@ -76,26 +72,6 @@ open class FormulaEditorComputeDialog(
             SensorHandler.getInstance(context).setSensorLoudness(SensorLoudness())
         }
 
-        if (resourcesSet.contains(Brick.BLUETOOTH_LEGO_NXT)) {
-            val btService = ServiceProvider.getService<BluetoothDeviceService>(CatroidService.BLUETOOTH_DEVICE_SERVICE)
-            btService.connectDevice(BluetoothDevice.LEGO_NXT, context)
-        }
-
-        if (resourcesSet.contains(Brick.BLUETOOTH_LEGO_EV3)) {
-            val btService = ServiceProvider.getService<BluetoothDeviceService>(CatroidService.BLUETOOTH_DEVICE_SERVICE)
-            btService.connectDevice(BluetoothDevice.LEGO_EV3, context)
-        }
-
-        if (resourcesSet.contains(Brick.BLUETOOTH_SENSORS_ARDUINO)) {
-            val btService = ServiceProvider.getService<BluetoothDeviceService>(CatroidService.BLUETOOTH_DEVICE_SERVICE)
-            btService.connectDevice(BluetoothDevice.ARDUINO, context)
-        }
-
-        if (resourcesSet.contains(Brick.BLUETOOTH_PHIRO)) {
-            val btService = ServiceProvider.getService<BluetoothDeviceService>(CatroidService.BLUETOOTH_DEVICE_SERVICE)
-            btService.connectDevice(BluetoothDevice.PHIRO, context)
-        }
-
         if (formula.containsElement(ElementType.SENSOR)) {
             SensorHandler.startSensorListener(context)
             SensorHandler.registerListener(this)
@@ -105,7 +81,6 @@ open class FormulaEditorComputeDialog(
     override fun onStop() {
         SensorHandler.unregisterListener(this)
         SensorHandler.stopSensorListeners()
-        ServiceProvider.getService<BluetoothDeviceService>(CatroidService.BLUETOOTH_DEVICE_SERVICE).pause()
         super.onStop()
     }
 
