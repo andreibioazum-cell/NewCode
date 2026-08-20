@@ -1228,6 +1228,7 @@
     <string formatted="false" name="brick_c_items_of">items of</string>
     <string formatted="false" name="brick_c_resize">Resize pointer</string>
     <string formatted="false" name="brick_c_to">to</string>
+    <string formatted="false" name="brick_c_to_destination">to</string>
     <string formatted="false" name="brick_c_free">Free memory at pointer</string>
     <string formatted="false" name="brick_c_memcpy">Copy</string>
     <string formatted="false" name="brick_c_bytes_from">bytes from pointer</string>
@@ -1249,6 +1250,9 @@
     <string formatted="false" name="brick_c_type_default">double</string>
     <string formatted="false" name="brick_c_typedef_name_default">my_int</string>
     <string formatted="false" name="brick_c_base_type_default">int</string>
+    <string formatted="false" name="brick_execute_c_code">Execute C code</string>
+    <string formatted="false" name="brick_execute_java_code">Execute Java code</string>
+    <string formatted="false" name="brick_code_label">code</string>
     <string formatted="false" name="brick_add_item_to_userlist_add">Add</string>
     <string formatted="false" name="brick_add_item_to_userlist">to list</string>
     <string formatted="false" name="brick_clear_userlist">Delete all items from list</string>

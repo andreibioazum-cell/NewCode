@@ -292,7 +292,6 @@ open class CategoryBricksFactory {
         if (!isBackgroundSprite) {
             eventBrickList.add(WhenBounceOffBrick(WhenBounceOffScript(null)))
         }
-        eventBrickList.add(WhenBackgroundChangesBrick())
         eventBrickList.add(WhenClonedBrick())
         eventBrickList.add(CloneBrick())
         eventBrickList.add(DeleteThisCloneBrick())
@@ -513,7 +512,6 @@ open class CategoryBricksFactory {
         looksBrickList.add(SetParticleColorBrick(BrickValues.PARTICLE_COLOR))
         looksBrickList.add(ClearGraphicEffectBrick())
         looksBrickList.add(SetCameraFocusPointBrick())
-        looksBrickList.add(WhenBackgroundChangesBrick())
         looksBrickList.add(SetBackgroundBrick())
         looksBrickList.add(SetBackgroundByIndexBrick(BrickValues.SET_LOOK_BY_INDEX))
         looksBrickList.add(SetBackgroundAndWaitBrick())
