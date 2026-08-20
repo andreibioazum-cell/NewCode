@@ -26,7 +26,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="@string/main_menu_help"
+        android:title="@string/help"
         android:id="@+id/wiki_help"
         android:icon="@drawable/ic_formula_editor_help"
         app:showAsAction="always" />
