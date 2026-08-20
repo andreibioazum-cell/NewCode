@@ -48,7 +48,6 @@ public final class Constants {
 	public static final int CAST_NOT_SEEING_DEVICE_TIMEOUT = 3000; //in
 	public static final long PROGESSIVE_INPUT_DELAY = 400;
 	public static final long PROGESSIVE_INPUT_COUNTDOWN_INTERVALL = 500;
-	public static final long RETROFIT_WRITE_TIMEOUT = 15;
 
 	public static final String PLATFORM_NAME = "Android";
 	public static final int APPLICATION_BUILD_NUMBER = 0; // updated from jenkins nightly/release build
@@ -255,7 +254,6 @@ public final class Constants {
 	public static final String POCKET_PAINT_INTENT_ACTIVITY_NAME = "org.catrobat.paintroid.MainActivity";
 
 	// Intent Extra / Bundle Keys
-	public static final String EXTRA_PROJECT_NAME = "projectName";
 	public static final String EXTRA_PROJECT_DESCRIPTION = "projectDescription";
 	public static final String EXTRA_PROJECT_PATH = "projectPath";
 	public static final String EXTRA_PROJECT_ID = "projectId";

@@ -79,8 +79,6 @@
     <color name="terms_of_use_text_color">@color/orange</color>
 
     <!-- Stage Dialog Colors -->
-    <color name="stage_dialog_maximize_button_background">#CC00475E</color>
-    <color name="stage_dialog_share_embroidery_button_background">#CCCB709F</color>
 
     <!-- Scratch Converter Colors -->
     <color name="beta_label_color">#FF7700</color>
@@ -96,7 +94,6 @@
     <color name="bluetooth_device_color">#AADBF0</color>
 
     <!-- Icon Colors -->
-    <color name="landing_page_icons">@color/accent</color>
     <color name="project_icons">@color/accent</color>
     <color name="stage_icons_pressed">#e3f9fd</color>
 
@@ -109,7 +106,6 @@
     <!-- indicator colors -->
     <color name="indicator_selected_color">#FFFFFF</color>
     <color name="indicator_unselected_color">#ACA3A3</color>
-    <color name="no_internet_color">#606060</color>
 
     <!-- bricks -->
     <!-- NOTE: for SDK 23 & SDK 24 (Android 6.0 & Android 7.0) pngs are needed, see values/styles.xml

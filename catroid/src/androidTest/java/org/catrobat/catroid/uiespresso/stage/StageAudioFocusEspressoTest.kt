@@ -66,10 +66,6 @@ class StageAudioFocusEspressoTest {
 
         pressBack()
         assertFalse(baseActivityTestRule.getActivity()?.hasAudioFocus() ?: true)
-
-        onView(ViewMatchers.withId(R.id.stage_dialog_button_continue))
-            .perform(click())
-        assertTrue(baseActivityTestRule.getActivity()?.hasAudioFocus() ?: false)
     }
 
     @Test

@@ -22,7 +22,9 @@
  */
 package org.catrobat.catroid.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -31,18 +33,25 @@ import org.catrobat.catroid.R
 import org.catrobat.catroid.databinding.ActivityRecyclerBinding
 import org.catrobat.catroid.ui.dialogs.NewProjectDialogFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.ProjectListFragment
+import org.catrobat.catroid.utils.ScreenValueHandler
 
 class ProjectListActivity : BaseCastActivity() {
     private lateinit var binding: ActivityRecyclerBinding
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
+        PreferenceManager.setDefaultValues(this, R.xml.nxt_preferences, true)
+        PreferenceManager.setDefaultValues(this, R.xml.ev3_preferences, true)
+        ScreenValueHandler.updateScreenWidthAndHeight(this)
+
         binding = ActivityRecyclerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar.toolbar)
         supportActionBar?.apply {
             setTitle(R.string.project_list_title)
-            setDisplayHomeAsUpEnabled(true)
+            setDisplayHomeAsUpEnabled(false)
         }
 
         BottomBar.hidePlayButton(this)
@@ -54,7 +63,7 @@ class ProjectListActivity : BaseCastActivity() {
             supportActionBar?.setTitle(R.string.import_from_project)
         }
         intent?.apply {
-            if (action != null) {
+            if (action != null && (data != null || hasExtra(Intent.EXTRA_STREAM) || clipData != null)) {
                 val data = Bundle()
                 data.putParcelable("intent", intent)
                 projectListFragment.arguments = data

@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">Espere por favor</string>
     <string formatted="false" name="search_hint">Búsqueda…</string>
     <string formatted="false" name="backpack_add">Agregar a la Mochila</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">El proyecto que ha descargado escucha su voz. 
         en segundo plano y también envía datos a Internet. Esto puede ser inofensivo y necesario
@@ -86,19 +85,6 @@
     <string formatted="false" name="disconnect">Desconectar</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">Continuar proyecto</string>
-    <string formatted="false" name="main_menu_new">Nuevo proyecto</string>
-    <string formatted="false" name="main_menu_programs">Proyectos</string>
-    <string formatted="false" name="main_menu_help">Ayuda</string>
-    <string formatted="false" name="main_menu_web">Comunidad Catrobat</string>
-    <string formatted="false" name="main_menu_upload">Cargar programa</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">Valóranos!</string>
-    <string formatted="false" name="main_menu_terms_of_use">Términos de uso y servicios</string>
-    <string formatted="false" name="main_menu_privacy_policy">Política de privacidad</string>
-    <string formatted="false" name="main_menu_about">Información de esta app</string>
-    <string formatted="false" name="main_menu_login">Iniciar sesión</string>
-    <string formatted="false" name="main_menu_logout">Desconectarse</string>
     <string formatted="false" name="main_menu_scratch_converter">Convertidor Scratch</string>
     <string formatted="false" name="main_menu_play_store_not_installed">Google Play no está instalado</string>
     <!--  -->
@@ -325,8 +311,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">Para utilizar nuestra aplicación, es necesario aceptar nuestras condiciones de uso y servicio.
-        Sin embargo, si no te sientes cómodo para hacerlo, puedes utilizar nuestros servicios web gratuitos en</string>
     <string formatted="false" name="wtf_error">Se ha producido un error inesperado: no pude restaurar el proyecto de muestra.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">Se ha producido un error al copiar el proyecto</string>
@@ -614,7 +598,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">Ejemplo de proyecto</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">Apaisado</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -647,34 +630,17 @@
     <string formatted="false" name="note_picker_title">Recogedor de notas</string>
     <!--  -->
     <!-- Rating Dialog -->
-    <string formatted="false" name="rating_dialog_title">Evaluar Pocket Code</string>
+    <string formatted="false" name="rating_dialog_title">Evaluar NewCode</string>
     <string formatted="false" name="rating_google_play_dialog_text">Si disfrutas de esta aplicación, por favor califícanos en la App store.</string>
     <string formatted="false" name="rating_dialog_rate_now">Ahora</string>
     <string formatted="false" name="rating_dialog_rate_later">Despues</string>
     <string formatted="false" name="rating_dialog_rate_never">Nunca</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">Términos de uso y servicios</string>
-    <string formatted="false" name="dialog_terms_of_use_info">Para poder
-        utilizar las aplicaciones y otros servicios ofrecidos por el proyecto Catrobat, debe
-        debe aceptar nuestras condiciones de uso y servicio. Debe seguir estrictamente estos términos cuando utilice nuestras aplicaciones
-        y otros servicios. Por favor, consulte el siguiente enlace para ver su formulación precisa.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">Términos de uso y servicios</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">¡Bienvenido!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">Para utilizar esta aplicación, acepte nuestro</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">Acerca de esta aplicación</string>
-    <string formatted="false" name="dialog_about_license_info">Esta aplicación ofrece un entorno de codificación
-        entorno de codificación e intérprete para el lenguaje de programación visual Catrobat.\n
-        El código fuente de esta app está licenciado principalmente bajo la licencia GNU AGPL v3.
-        Para más detalles sobre la licencia consulte el siguiente enlace.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">Licencia de código fuente</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">Acerca de Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Versión lingüística de Catrobat</string>
-    <string formatted="false" name="dialog_about_version">versión:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">No hay red</string>
@@ -694,7 +660,7 @@
     <string formatted="false" name="save_project_to_external_storage_io_exception_message">No se ha podido guardar el proyecto, no hay suficiente memoria disponible.</string>
     <!--  -->
     <!-- SoundRecorderActivity -->
-    <string formatted="false" name="soundrecorder_name">Grabadora de Pocket Code</string>
+    <string formatted="false" name="soundrecorder_name">Grabadora de NewCode</string>
     <string formatted="false" name="soundrecorder_error">Error de grabación de sonido</string>
     <string formatted="false" name="soundrecorder_recorded_filename">grabación</string>
     <string formatted="false" name="soundrecorder_text_view">Pulse el icono de arriba para iniciar y detener la grabación.</string>
@@ -795,14 +761,6 @@
         de rendimiento.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">Atrás</string>
-    <string formatted="false" name="stage_dialog_resume">Restablecer</string>
-    <string formatted="false" name="stage_dialog_restart">Reiniciar</string>
-    <string formatted="false" name="stage_dialog_axes_on">Ejes Activados</string>
-    <string formatted="false" name="stage_dialog_axes_off">Ejes Desactivados</string>
-    <string formatted="false" name="stage_dialog_maximize">Maximizar/\nAlargar</string>
-    <string formatted="false" name="stage_dialog_screenshot">Previsualización</string>
-    <string formatted="false" name="stage_dialog_embroidery">Embroidery</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">Mensaje nuevo</string>
@@ -1209,21 +1167,9 @@
     <string formatted="false" name="default_script_group_name">Grupo de guiones</string>
     <string formatted="false" name="default_broadcast_message_name">Mensaje</string>
     <string formatted="false" name="default_list_name">Lista</string>
-    <string formatted="false" name="default_project_background_name">Fondo</string>
-    <string formatted="false" name="default_project_cloud_name">Nubes</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">Nubes1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Nubes2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">Animal</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">Alas arriba</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">Alas abajo</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Tweet1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Tweet2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Aguja</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Lazo de asiento</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Bucle interior</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">Fondo</string>
     <string formatted="false" name="default_cast_project_cloud_name">Nubes</string>
@@ -1271,7 +1217,6 @@
     <string formatted="false" name="channel_description">%1$s canal de notificación</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">Vista previa guardada</string>
     <string formatted="false" name="notification_download_project_cancel">Cancelar la descarga del proyecto</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">Descarga Cancelada/Reconvirtiendo programa</string>
     <string formatted="false" name="notification_upload_title_pending">"Cargando "</string>
@@ -1300,18 +1245,14 @@ necesita acceso de lectura y escritura a ella. Siempre puedes cambiar los permis
     <string formatted="false" name="error_new_project">Un error ha ocurrido al crear un nuevo programa.</string>
     <string formatted="false" name="error_rename_scene">Se ha producido un error al rnombrar la escena.</string>
     <string formatted="false" name="error_load_project">Un error ha ocurrido durante el proceso de carga.</string>
-    <string formatted="false" name="error_screenshot_failed">Se ha producido un error al guardar la imagen.</string>
     <string formatted="false" name="error_internet_connection">Se produjo un error desconocido. Compruebe su conexión a Internet.</string>
     <string formatted="false" name="error_project_compatibility">Este proyecto no es compatible con esta versión de la aplicación.</string>
     <string formatted="false" name="error_outdated_version">Esta versión está obsoleta. ¿Actualiza ahora?</string>
     <string formatted="false" name="error_upload_project_with_default_name">No puede cargar un proyecto con el nombre \"%s\".
         Por favor, cambie el nombre del proyecto.</string>
-    <string formatted="false" name="error_upload_default_project">No puede subir un proyecto de ejemplo sin modificar. Por favor,
-        cambie algo e inténtelo de nuevo.</string>
     <string formatted="false" name="error_adding_brick">Error al agregar este bloque</string>
     <string formatted="false" name="error_copying_brick">Error al copiar este bloque</string>
     <string formatted="false" name="error_rename_incompatible_project">No es posible renombrar un proyecto incompatible.</string>
-    <string formatted="false" name="error_embroidery_file_export">Algo salió mal al compartir el archivo de bordado.</string>
     <string formatted="false" name="error_embroidery_file_write">Algo salió mal al escribir el archivo de bordado.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Falta la borda.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2049,8 +1990,6 @@ necesita acceso de lectura y escritura a ella. Siempre puedes cambiar los permis
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">㎐</string>
-    <string formatted="false" name="no_internet_connection">No hay conexión a internet. Asegúrate de que los datos
-    Wi-Fi o móvil estén activados.</string>
     <string formatted="false" name="edit">Editar</string>
     <string formatted="false" name="data_value">Valor</string>
     <string formatted="false" name="category_recently_used">Usado recientemente</string>

@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">অনুগ্রহ করে অপেক্ষা করুন</string>
     <string formatted="false" name="search_hint">অনুসন্ধান</string>
     <string formatted="false" name="backpack_add">ব্যাকপ্যাক যোগ করুন</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">আপনি যে প্রকল্পটি ডাউনলোড করেছেন তা আপনার ভয়েস শুনে
         ব্যাকগ্রাউন্ডে এবং ইন্টারনেটে ডেটা প্রেরণ করে। এটি নিরীহ এবং প্রয়োজনীয় হতে পারে
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">সংযোগ বিচ্ছিন্ন</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">প্রজেক্ট চালিয়ে যান</string>
-    <string formatted="false" name="main_menu_new">নতুন প্রজেক্ট</string>
-    <string formatted="false" name="main_menu_programs">ডিভাইসে প্রজেক্টগুলি</string>
-    <string formatted="false" name="main_menu_help">সাহায্য</string>
-    <string formatted="false" name="main_menu_web">ক্যাট্রোব্যাট সম্প্রদায়</string>
-    <string formatted="false" name="main_menu_upload">আপলোডকৃত প্রজেক্ট</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">আমাদের মতামত দিন</string>
-    <string formatted="false" name="main_menu_terms_of_use">ব্যবহার এবং সেবার শর্তাদি</string>
-    <string formatted="false" name="main_menu_privacy_policy">গোপনীয়তার নীতি</string>
-    <string formatted="false" name="main_menu_about">অ্যাপ সম্পর্কে</string>
-    <string formatted="false" name="main_menu_login">প্রবেশ করুন</string>
-    <string formatted="false" name="main_menu_logout">লগআউট</string>
     <string formatted="false" name="main_menu_scratch_converter">স্ক্র্যাচ রূপান্তরকারী</string>
     <string formatted="false" name="main_menu_play_store_not_installed">অ্যাপ স্টোর পাওয়া যায় নি</string>
     <!--  -->
@@ -316,8 +302,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">আমাদের অ্যাপ্লিকেশনটি ব্যবহার করার জন্য, আমাদের ব্যবহারের শর্তাদি এবং পরিষেবার গ্রহণ করা প্রয়োজন।
-        তবে, যদি আপনি এটি করতে স্বাচ্ছন্দ্য বোধ করেন না তবে আপনি আমাদের বিনামূল্যে ওয়েব-পরিষেবাগুলি ব্যবহার করতে পারেন</string>
     <string formatted="false" name="wtf_error">একটি অপ্রত্যাশিত ভুল ঘটেছে: আমি নমুনা প্রজেক্টটি পুনরুদ্ধার করতে পারিনি।</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">প্রজেক্টটি অনুলিপি করার সময় একটি ভুল ঘটেছে</string>
@@ -604,7 +588,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">উদাহরণ প্রকল্প</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">আড়াআড়ি</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -644,21 +627,10 @@
     <string formatted="false" name="rating_dialog_rate_never">কখনও না</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">ব্যবহার এবং সেবার শর্তাদি</string>
-    <string formatted="false" name="dialog_terms_of_use_info">ক্যাট্রোব্যাট প্রকল্পের দেওয়া পকেট কোড এবং অন্যান্য এক্সিকিউটেবল ব্যবহার করার অনুমতি দেওয়ার জন্য, আপনাকে অবশ্যই আমাদের ব্যবহারের শর্তাদির সাথে সম্মত হতে হবে এবং আপনি পকেট কোড এবং আমাদের অন্যান্য এক্সিকিউটেবল ব্যবহার করার সময় সেগুলি কঠোরভাবে অনুসরণ করতে হবে। সঠিক সূত্রের জন্য নীচের লিঙ্কটি দেখুন।</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">ব্যবহার এবং সেবার শর্তাদি</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">স্বাগতম</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">এই অ্যাপ্লিকেশনটি ব্যবহার করতে, দয়া করে আমাদের গ্রহণ করুন</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">অ্যাপ সম্পর্কে</string>
-    <string formatted="false" name="dialog_about_license_info">এই অ্যাপটি ভিজ্যুয়াল প্রোগ্রামিং ল্যাঙ্গুয়েজ ক্যাট্রোব্যাটের জন্য একটি কোডিং পরিবেশ এবং অনুবাদক দেয়। এই অ্যাপ্লিকেশনটির সোর্স কোডটি মূলত জিএনইউ এজিপিএল ভি 3 লাইসেন্সের আওতায় লাইসেন্সযুক্ত। লাইসেন্স সম্পর্কিত আরও তথ্যের জন্য নীচের লিঙ্কটি দেখুন।</string>
-    <string formatted="false" name="dialog_about_license_link_text">সোর্স কোড লাইসেন্স</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">ক্যাট্রোব্যাট সম্পর্কে</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">ক্যাট্রোব্যাট ভাষার সংস্করণ</string>
-    <string formatted="false" name="dialog_about_version">সংস্করণ:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">নেটওয়ার্ক নেই</string>
@@ -775,14 +747,6 @@
     <string formatted="false" name="nfc_facedetection_support">একই সময়ে এনএফসি এবং মুখ সনাক্তকরণ ব্যবহার করা পারফরম্যান্স সমস্যার কারণ হতে পারে।</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">পিছনে</string>
-    <string formatted="false" name="stage_dialog_resume">আবার শুরু করুন</string>
-    <string formatted="false" name="stage_dialog_restart">পুনরায় চালু করা</string>
-    <string formatted="false" name="stage_dialog_axes_on">অক্ষ চালু</string>
-    <string formatted="false" name="stage_dialog_axes_off">অক্ষ বন্ধ</string>
-    <string formatted="false" name="stage_dialog_maximize">প্রসারিত সর্বাধিক</string>
-    <string formatted="false" name="stage_dialog_screenshot">পূর্বরূপ</string>
-    <string formatted="false" name="stage_dialog_embroidery">সূচিকর্ম</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">নতুন বার্তা</string>
@@ -1188,21 +1152,9 @@
     <string formatted="false" name="default_script_group_name">স্ক্রিপ্ট গ্রুপ</string>
     <string formatted="false" name="default_broadcast_message_name">বার্তা</string>
     <string formatted="false" name="default_list_name">তালিকা</string>
-    <string formatted="false" name="default_project_background_name">ব্যাকগ্রাউন্ড</string>
-    <string formatted="false" name="default_project_cloud_name">ক্লাউড</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">ক্লাউড1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">ক্লাউড2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">পশু-পাখি</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">ডানা উপর</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">ডানা নিচে</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">টুইট১</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">টুইট২</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">সুই</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">আউটার লুপ</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">ইনার লুপ</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">ব্যাকগ্রাউন্ড</string>
     <string formatted="false" name="default_cast_project_cloud_name">ক্লাউড</string>
@@ -1250,7 +1202,6 @@
     <string formatted="false" name="channel_description">%1$s বিজ্ঞপ্তি চ্যানেল</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">পূর্বরূপ চিত্র সংরক্ষণ করা হয়েছে</string>
     <string formatted="false" name="notification_download_project_cancel">প্রজেক্ট ডাউনলোড বাতিল করুন</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">ডাউনলোড করা / পুনর্নির্মাণ প্রজেক্ট বাতিল হয়েছে</string>
     <string formatted="false" name="notification_upload_title_pending">"আপলোড হচ্ছ …"</string>
@@ -1277,16 +1228,13 @@
     <string formatted="false" name="error_new_project">একটি নতুন প্রজেক্ট তৈরি করার সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_rename_scene">দৃশ্যটির নামকরণের সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_load_project">প্রজেক্টটি লোড করার সময় কিছু ভুল হয়েছে।</string>
-    <string formatted="false" name="error_screenshot_failed">পূর্বরূপ চিত্রটি সংরক্ষণ করার সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_internet_connection">একটি অজানা ভুল ঘটেছে. আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন</string>
     <string formatted="false" name="error_project_compatibility">প্রজেক্টটি এই সংস্করণটির সাথে সামঞ্জস্য নেই।</string>
     <string formatted="false" name="error_outdated_version">এই অ্যাপ্লিকেশন সংস্করণটি পুরানো। এখন আধুনিক করুন?</string>
     <string formatted="false" name="error_upload_project_with_default_name">আপনি \"%s\" নামে কোনও প্রজেক্ট আপলোড করতে পারবেন না l অনুগ্রহ করে প্রজেক্টটির নামকরণ করুন।</string>
-    <string formatted="false" name="error_upload_default_project">আপনি একটি অপরিবর্তিত উদাহরণ প্রজেক্ট আপলোড করতে পারবেন না। দয়া করে কিছু পরিবর্তন করুন এবং আবার চেষ্টা করুন।</string>
     <string formatted="false" name="error_adding_brick">এই ব্রিকটি যুক্ত করার সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_copying_brick">এই ব্রিকটি অনুলিপি করার সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_rename_incompatible_project">একটি অসঙ্গত প্রকল্পের নামকরণ সম্ভব নয়।</string>
-    <string formatted="false" name="error_embroidery_file_export">সূচিকর্ম ফাইলটি শেয়ার করার সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_embroidery_file_write">এমব্রয়ডারি ফাইলটি লেখার সময় কিছু ভুল হয়েছে।</string>
     <string formatted="false" name="error_embroidery_data_not_found">এমব্রয়ডারি অনুপস্থিত।</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2018,8 +1966,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">হের্ত্স্</string>
-    <string formatted="false" name="no_internet_connection">কোনও ইন্টারনেট সংযোগ নেই। ওয়াই-ফাই বা মোবাইল নিশ্চিত করুন
-    তথ্য চালু আছে।</string>
     <string formatted="false" name="edit">সম্পাদনা করুন</string>
     <string formatted="false" name="data_value">মান</string>
     <string formatted="false" name="category_recently_used">সম্প্রতি ব্যবহৃত</string>

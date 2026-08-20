@@ -39,7 +39,7 @@ import org.catrobat.catroid.common.Constants.CATROBAT_TERMS_OF_USE_ACCEPTED
 import org.catrobat.catroid.common.SharedPreferenceKeys.AGREED_TO_PRIVACY_POLICY_VERSION
 import org.catrobat.catroid.content.Project
 import org.catrobat.catroid.test.utils.TestUtils
-import org.catrobat.catroid.ui.MainMenuActivity
+import org.catrobat.catroid.ui.ProjectListActivity
 import org.catrobat.catroid.uiespresso.util.rules.BaseActivityTestRule
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
@@ -62,7 +62,7 @@ class NavigateUpTest {
 
     @get:Rule
     var baseActivityTestRule = BaseActivityTestRule(
-        MainMenuActivity::class.java,
+        ProjectListActivity::class.java,
         false,
         false
     )
@@ -99,7 +99,6 @@ class NavigateUpTest {
 
     @Test
     fun testNavigateUp() {
-        clickOnText(applicationContext.getString(R.string.main_menu_programs))
         clickOnText(projectName)
         clickOnText(spriteName)
 
@@ -108,7 +107,7 @@ class NavigateUpTest {
         navigateUp()
         checkIsTextDisplayed(projectName)
         navigateUp()
-        checkIsTextDisplayed(applicationContext.getString(R.string.main_menu_programs))
+        checkIsTextDisplayed(applicationContext.getString(R.string.project_list_title))
     }
 
     private fun checkIsTextDisplayed(text: String) =

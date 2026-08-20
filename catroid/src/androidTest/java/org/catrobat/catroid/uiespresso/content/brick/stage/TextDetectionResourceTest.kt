@@ -99,7 +99,6 @@ class TextDetectionResourceTest {
         assertTrue(textDetectionOn())
 
         Espresso.pressBack()
-        onView(ViewMatchers.withId(R.id.stage_dialog_button_back)).perform(ViewActions.click())
         formula.root = FormulaElement(FormulaElement.ElementType.NUMBER, "42", null)
         onView(ViewMatchers.withId(R.id.button_play)).perform(ViewActions.click())
 

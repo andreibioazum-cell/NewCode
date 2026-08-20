@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">Mohon tungggu</string>
     <string formatted="false" name="search_hint">Pencarian…</string>
     <string formatted="false" name="backpack_add">Tambahkan ke ransel</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">Proyek yang telah Anda unduh mendengarkan suara Anda
         di latar belakang dan juga mengirimkan data ke internet. Ini mungkin tidak berbahaya, dan perlu
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">Memutuskan</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">Lanjutkan proyek</string>
-    <string formatted="false" name="main_menu_new">Proyek baru</string>
-    <string formatted="false" name="main_menu_programs">Program</string>
-    <string formatted="false" name="main_menu_help">Membantu</string>
-    <string formatted="false" name="main_menu_web">Komunitas Catrobat</string>
-    <string formatted="false" name="main_menu_upload">Unggah proyek</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">Nilai kami!</string>
-    <string formatted="false" name="main_menu_terms_of_use">Syarat Penggunaan dan Layanan</string>
-    <string formatted="false" name="main_menu_privacy_policy">Kebijakan privasi</string>
-    <string formatted="false" name="main_menu_about">Tentang aplikasi ini</string>
-    <string formatted="false" name="main_menu_login">Gabung</string>
-    <string formatted="false" name="main_menu_logout">Logout</string>
     <string formatted="false" name="main_menu_scratch_converter">Konverter Scratch</string>
     <string formatted="false" name="main_menu_play_store_not_installed">App store tidak ditemukan</string>
     <!--  -->
@@ -324,8 +310,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">Untuk menggunakan aplikasi kami, Anda perlu menerima Ketentuan Penggunaan dan Layanan kami.
-        Namun, jika Anda merasa tidak nyaman melakukannya, Anda dapat menggunakan layanan web gratis kami di</string>
     <string formatted="false" name="wtf_error">Terjadi Error tak terduga: Tidak dapat mengembalikan default proyek.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">Terjadi kesalahan saat menyalin proyek</string>
@@ -582,7 +566,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">Proyek contoh</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">Pemandangan</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -622,27 +605,10 @@
     <string formatted="false" name="rating_dialog_rate_never">Tidak pernah</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">Syarat Penggunaan dan Layanan</string>
-    <string formatted="false" name="dialog_terms_of_use_info">Untuk
-        diizinkan untuk menggunakan aplikasi dan layanan lain yang ditawarkan oleh proyek Catrobat, Anda
-        harus menyetujui Persyaratan Penggunaan dan Layanan kami. Anda harus mengikuti persyaratan ini dengan ketat saat menggunakan aplikasi kami
-        dan layanan lainnya. Silakan lihat link di bawah untuk formulasi yang tepat.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">Syarat Penggunaan dan Layanan</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">Selamat datang!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">Untuk menggunakan aplikasi ini, terima kami</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">Tentang aplikasi ini</string>
-    <string formatted="false" name="dialog_about_license_info">Aplikasi ini menawarkan pengkodean
-        lingkungan dan interpreter untuk bahasa pemrograman visual Catrobat.\n
-        Kode sumber aplikasi ini terutama dilisensikan di bawah lisensi GNU AGPL v3.
-        Untuk detail lebih lanjut tentang lisensi, lihat tautan di bawah ini.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">Lisensi kode sumber</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">Tentang Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Versi bahasa Catrobat</string>
-    <string formatted="false" name="dialog_about_version">Versi:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">Tidak ada jaringan</string>
@@ -662,7 +628,7 @@
     <string formatted="false" name="save_project_to_external_storage_io_exception_message">Gagal menyimpan proyek, tidak tersedia cukup memori!</string>
     <!--  -->
     <!-- SoundRecorderActivity -->
-    <string formatted="false" name="soundrecorder_name">Perekam Pocket Code</string>
+    <string formatted="false" name="soundrecorder_name">Perekam NewCode</string>
     <string formatted="false" name="soundrecorder_error">Rekaman suara gagal</string>
     <string formatted="false" name="soundrecorder_recorded_filename">rekam</string>
     <string formatted="false" name="soundrecorder_text_view">Tekan ikon di atas untuk memulai dan menghentikan perekaman.</string>
@@ -763,14 +729,6 @@
         masalah.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">Kembali</string>
-    <string formatted="false" name="stage_dialog_resume">Resume</string>
-    <string formatted="false" name="stage_dialog_restart">Restart</string>
-    <string formatted="false" name="stage_dialog_axes_on">Sumbu pada</string>
-    <string formatted="false" name="stage_dialog_axes_off">Axes mati</string>
-    <string formatted="false" name="stage_dialog_maximize">Memaksimalkan /\nStretch</string>
-    <string formatted="false" name="stage_dialog_screenshot">Pratinjau</string>
-    <string formatted="false" name="stage_dialog_embroidery">Sulaman</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">Pesan baru</string>
@@ -1170,21 +1128,9 @@
     <string formatted="false" name="default_script_group_name">Grup skrip</string>
     <string formatted="false" name="default_broadcast_message_name">Pesan</string>
     <string formatted="false" name="default_list_name">Daftar</string>
-    <string formatted="false" name="default_project_background_name">Latar belakang</string>
-    <string formatted="false" name="default_project_cloud_name">Awan</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">Awan1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Awan2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">Satwa</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">Sayap di atas</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">Sayap di bawah</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Kicau1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Kicau2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Jarum</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Loop Luar</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Lingkaran Dalam</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">Latar belakang</string>
     <string formatted="false" name="default_cast_project_cloud_name">Awan</string>
@@ -1232,7 +1178,6 @@
     <string formatted="false" name="channel_description">%1$s saluran notifikasi</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">Pratinjau gambar disimpan</string>
     <string formatted="false" name="notification_download_project_cancel">Batalkan pengunduhan proyek</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">Membatalkan proses unduhan/mengubah kembali</string>
     <string formatted="false" name="notification_upload_title_pending">"Mengunggah "</string>
@@ -1262,18 +1207,14 @@ membutuhkan akses baca dan tulis untuk itu. Anda selalu dapat mengubah izin mela
     <string formatted="false" name="error_new_project">Terjadi kesalahan saat membuat program baru.</string>
     <string formatted="false" name="error_rename_scene">Terjadi kesalahan saat mengganti nama adegan.</string>
     <string formatted="false" name="error_load_project">Terjadi kesalahan saat memuat program.</string>
-    <string formatted="false" name="error_screenshot_failed">Terjadi kesalahan saat menyimpan gambar pratinjau.</string>
     <string formatted="false" name="error_internet_connection">Terjadi kesalahan yang tidak diketahui. Periksa koneksi Internet Anda.</string>
     <string formatted="false" name="error_project_compatibility">Proyek tidak kompatibel dengan versi aplikasi ini.</string>
     <string formatted="false" name="error_outdated_version">Versi aplikasi ini sudah usang. Memperbarui sekarang?</string>
     <string formatted="false" name="error_upload_project_with_default_name">Anda tidak dapat mengupload proyek dengan nama \"%s\".
         Harap ganti nama proyek.</string>
-    <string formatted="false" name="error_upload_default_project">Anda tidak dapat mengunggah proyek contoh yang tidak dimodifikasi. Silahkan
-        ubah sesuatu dan coba lagi.</string>
     <string formatted="false" name="error_adding_brick">Terjadi kesalahan saat menambahkan bata ini</string>
     <string formatted="false" name="error_copying_brick">Terjadi kesalahan saat menyalin bata ini</string>
     <string formatted="false" name="error_rename_incompatible_project">Mengganti nama sebuah proyek yang tidak kompatibel tidak mungkin dilakukan.</string>
-    <string formatted="false" name="error_embroidery_file_export">Ada yang salah saat berbagi file bordir.</string>
     <string formatted="false" name="error_embroidery_file_write">Ada yang tidak beres saat menulis file bordir.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Sulaman hilang.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2026,8 +1967,6 @@ membutuhkan akses baca dan tulis untuk itu. Anda selalu dapat mengubah izin mela
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">㎐</string>
-    <string formatted="false" name="no_internet_connection">Tidak ada koneksi internet. Pastikan Wi-Fi atau seluler
-    data dihidupkan.</string>
     <string formatted="false" name="edit">Edit</string>
     <string formatted="false" name="data_value">Nilai</string>
     <string formatted="false" name="category_recently_used">Baru - baru ini digunakan</string>

@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">잠시 기다려 주세요</string>
     <string formatted="false" name="search_hint">검색…</string>
     <string formatted="false" name="backpack_add">스크립트 모음에 추가</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">당신이 다운로드한 프로젝트는 뒤에서 당신의 목소리를 들을 수 있을 뿐만 아니라 인터넷으로 데이터를 보냅니다. 이는 위험하지 않을 수 있으며 목적을 달성하는 데에 필수적일 수 있습니다. 그러나 프로젝트가 안전하게 진행되고 있을 때 당신이 무엇을 말하는지 확실히 해주세요. 확실하지 않을 경우, 다운로드된 프로젝트를 삭제해 주세요. 또한 만약 그 프로젝트가 유해하다는 것이 확실할 경우, 당신은 카로봇 커뮤니티 플랫폼의 해당 페이지에 그 프로젝트를 신고할 수 있습니다.</string>
     <!-- Replace Api dialog -->
@@ -82,19 +81,6 @@
     <string formatted="false" name="disconnect">연결 종료</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">이어서 계속</string>
-    <string formatted="false" name="main_menu_new">새 프로젝트</string>
-    <string formatted="false" name="main_menu_programs">프로그램</string>
-    <string formatted="false" name="main_menu_help">도움말</string>
-    <string formatted="false" name="main_menu_web">Catrobat 공유</string>
-    <string formatted="false" name="main_menu_upload">프로그램 업로드</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">평가하기</string>
-    <string formatted="false" name="main_menu_terms_of_use">사용과 서비스 약관</string>
-    <string formatted="false" name="main_menu_privacy_policy">개인 정보 보호 정책</string>
-    <string formatted="false" name="main_menu_about">앱 소개</string>
-    <string formatted="false" name="main_menu_login">로그인</string>
-    <string formatted="false" name="main_menu_logout">로그아웃</string>
     <string formatted="false" name="main_menu_scratch_converter">스크래치 컨버터</string>
     <string formatted="false" name="main_menu_play_store_not_installed">앱 스토어 없음</string>
     <!--  -->
@@ -302,7 +288,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">이 앱을 사용하려면, 개인보호정책을 따라야 하며, 불편하지 않아야 무료 웹서비스를 사용할 수 있다.</string>
     <string formatted="false" name="wtf_error">예기치 않은 오류가 발생: 복원 기본 프로젝트 없음.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">프로그램을 복사하는 동안 오류가 발생했습니다.</string>
@@ -558,7 +543,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">예제 프로젝트</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">가로 보기</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -598,27 +582,10 @@
     <string formatted="false" name="rating_dialog_rate_never">사용 안 함</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">사용과 서비스 약관</string>
-    <string formatted="false" name="dialog_terms_of_use_info">하기 위해
-        Catrobat 프로젝트에서 제공하는 앱 및 기타 서비스를 사용할 수 있도록 허용하려면
-        사용 및 서비스 약관에 동의해야 합니다. 앱을 사용할 때 이 약관을 엄격히 준수해야 합니다.
-        및 기타 서비스. 정확한 공식은 아래 링크를 참조하십시오.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">사용과 서비스 약관</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">환영합니다!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">앱 사용을 위해, 허용</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">앱 소개</string>
-    <string formatted="false" name="dialog_about_license_info">이 앱은 코딩을 제공합니다
-        비주얼 프로그래밍 언어 Catrobat용 환경 및 인터프리터입니다.\n
-        이 앱의 소스 코드는 주로 GNU AGPL v3 라이선스에 따라 라이선스가 부여됩니다.
-        라이센스에 대한 자세한 내용은 아래 링크를 참조하십시오.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">소스 코드 라이센스</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">Catrobat에 대하여</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Catrobat 언어 버전</string>
-    <string formatted="false" name="dialog_about_version">버전:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">네트워크 연결 불가</string>
@@ -737,14 +704,6 @@
     <string formatted="false" name="nfc_facedetection_support">NFC와 얼굴인식을 동시에 사용하면 문제가 될 수 있다.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">돌아가기</string>
-    <string formatted="false" name="stage_dialog_resume">이어서 실행</string>
-    <string formatted="false" name="stage_dialog_restart">다시 시작</string>
-    <string formatted="false" name="stage_dialog_axes_on">축 보이기</string>
-    <string formatted="false" name="stage_dialog_axes_off">축 감추기</string>
-    <string formatted="false" name="stage_dialog_maximize">최대화</string>
-    <string formatted="false" name="stage_dialog_screenshot">캡처하기</string>
-    <string formatted="false" name="stage_dialog_embroidery">자수</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">새 신호</string>
@@ -1144,21 +1103,9 @@
     <string formatted="false" name="default_script_group_name">스크립트 그룹</string>
     <string formatted="false" name="default_broadcast_message_name">메시지</string>
     <string formatted="false" name="default_list_name">명부</string>
-    <string formatted="false" name="default_project_background_name">배경</string>
-    <string formatted="false" name="default_project_cloud_name">클라우드</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">클라우드1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">클라우드2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">동물</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">날개 위로</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">날개 아래로</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Tweet1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Tweet2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">바늘</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">외부 루프</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">내부 루프</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">배경</string>
     <string formatted="false" name="default_cast_project_cloud_name">클라우드</string>
@@ -1206,7 +1153,6 @@
     <string formatted="false" name="channel_description">%1$s 알림 채널</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">캡쳐 하기 이미지 저장</string>
     <string formatted="false" name="notification_download_project_cancel">프로젝트 다운로드 취소</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">프로그램 다운로드/변환 취소</string>
     <string formatted="false" name="notification_upload_title_pending">"업로드 중"</string>
@@ -1233,18 +1179,14 @@
     <string formatted="false" name="error_new_project">새로운 프로그램을 생성하는 동안 오류가 발생했습니다.</string>
     <string formatted="false" name="error_rename_scene">장면 이름 변경하는 동안 오류가 발생했습니다.</string>
     <string formatted="false" name="error_load_project">프로그램을 로드하는 동안 오류가 발생했습니다.</string>
-    <string formatted="false" name="error_screenshot_failed">캡쳐 하기 이미지를 저장하는 동안 오류가 발생했습니다.</string>
     <string formatted="false" name="error_internet_connection">알 수 없는 오류가 발생했습니다. 인터넷 연결을 확인하십시오.</string>
     <string formatted="false" name="error_project_compatibility">프로젝트가 이 버전과 호환되지 않습니다.</string>
     <string formatted="false" name="error_outdated_version">포켓 코드 버전이 너무 오래되었습니다. 지금 업데이트하시겠습니까?</string>
     <string formatted="false" name="error_upload_project_with_default_name">You cannot upload a project with the name \"%s\".
         Please rename the project.</string>
-    <string formatted="false" name="error_upload_default_project">예시 프로젝트를 그대로 업로드 할 수 없습니다.
-        수정후 다시 시도 하세요.</string>
     <string formatted="false" name="error_adding_brick">이 블록을 추가하는 동안 오류가 발생했습니다.</string>
     <string formatted="false" name="error_copying_brick">이 블록을 복사하는 동안 오류가 발생했습니다.</string>
     <string formatted="false" name="error_rename_incompatible_project">호환 되지 않는 프로그램의 이름을 바꿀 수 없습니다.</string>
-    <string formatted="false" name="error_embroidery_file_export">자수 파일을 공유하는데 문제가 생겼습니다.</string>
     <string formatted="false" name="error_embroidery_file_write">패턴 파일을 작성하는 중 문제가 생겼습니다.</string>
     <string formatted="false" name="error_embroidery_data_not_found">패턴이 없습니다.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -1991,8 +1933,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">Hz</string>
-    <string formatted="false" name="no_internet_connection">인터넷에 연결되지 않음. Wi-Fi 또는 모바일 확인
-    데이터가 켜져 있습니다.</string>
     <string formatted="false" name="edit">편집</string>
     <string formatted="false" name="data_value">값</string>
     <string formatted="false" name="category_recently_used">최근 사용</string>

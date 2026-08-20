@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">الرجاء الانتظار</string>
     <string formatted="false" name="search_hint">جاري البحث…</string>
     <string formatted="false" name="backpack_add">إضافة الى حزمة الظهر</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">المشروع الذي قمت بتنزيله، يستمع إلى صوتك
         في الخلفية وكذلك يرسل معلومات إلى الإنترنت. هذا قد يكون غير ضار، وضروري
@@ -85,19 +84,6 @@
     <string formatted="false" name="disconnect">قطع الاتصال</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">متابعة المشروع</string>
-    <string formatted="false" name="main_menu_new">مشروع جديد</string>
-    <string formatted="false" name="main_menu_programs">البرامج</string>
-    <string formatted="false" name="main_menu_help">المساعدة</string>
-    <string formatted="false" name="main_menu_web">مجتمع كاتروبات</string>
-    <string formatted="false" name="main_menu_upload">تحميل البرنامج</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">قم بالتقييم!</string>
-    <string formatted="false" name="main_menu_terms_of_use">شروط الاستخدام والخدمات</string>
-    <string formatted="false" name="main_menu_privacy_policy">سياسة الخصوصية</string>
-    <string formatted="false" name="main_menu_about">حول تطبيق بوكت كوود</string>
-    <string formatted="false" name="main_menu_login">تسجيل الدخول</string>
-    <string formatted="false" name="main_menu_logout">خروج</string>
     <string formatted="false" name="main_menu_scratch_converter">محول سكراتش</string>
     <string formatted="false" name="main_menu_play_store_not_installed">لم يتم العثور على متجر جوجل بلي</string>
     <!--  -->
@@ -353,8 +339,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">لاستخدام تطبيقنا، من الضروري قبول شروط الاستخدام والخدمة لدينا.
-        ومع ذلك، إذا كنت لا تشعر بالارتياح للقيام بذلك، يمكنك استخدام خدمات الويب المجانية لدينا على</string>
     <string formatted="false" name="wtf_error">حدث خطأ غير متوقع: لا يمكن إستعادة البرنامج الإفتراضي.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">حدث خطأ أثناء نسخ المشروع</string>
@@ -766,7 +750,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">مثال على المشروع</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">أفقي</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -806,27 +789,10 @@
     <string formatted="false" name="rating_dialog_rate_never">أبداً</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">شروط الاستخدام والخدمات</string>
-    <string formatted="false" name="dialog_terms_of_use_info">من أجل
-        أن يسمح لك باستخدام التطبيقات وغيرها من الخدمات التي يقدمها مشروع كاتروبات، يجب عليك
-        أن توافق على شروط الاستخدام والخدمة لدينا. يجب عليك اتباع هذه الشروط بدقة عند استخدام تطبيقاتنا
-        وغيرها من الخدمات. يرجى الاطلاع على الرابط أدناه للحصول على صياغته الدقيقة.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">شروط الاستخدام والخدمات</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">مرحبا!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">لاستخدام هذا التطبيق، يرجى قبول</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">حول تطبيق بوكت كوود</string>
-    <string formatted="false" name="dialog_about_license_info">يوفر هذا التطبيق بيئة برمجة
-        ومترجم شفوي للغة البرمجة البصرية كاتروبات.\n
-        رمز المصدر لهذا التطبيق مرخص أساسا بموجب ترخيص GNU AGPL v3.
-        للحصول على مزيد من التفاصيل عن الترخيص، انظر الرابط أدناه\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">ترخيص مصدر النص البرمجي</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">حول كاتروبات</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">إصدار لغة كاتروبات</string>
-    <string formatted="false" name="dialog_about_version">الإصدار:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">لا يوجد اتصال بالشبكة</string>
@@ -948,14 +914,6 @@
         مشاكل بالأداء.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">رجوع</string>
-    <string formatted="false" name="stage_dialog_resume">استمرار</string>
-    <string formatted="false" name="stage_dialog_restart">اعادة تشغيل</string>
-    <string formatted="false" name="stage_dialog_axes_on">تفعيل المحاور</string>
-    <string formatted="false" name="stage_dialog_axes_off">إلغاء تفعيل المحاور</string>
-    <string formatted="false" name="stage_dialog_maximize">زيادة الامتداد\n</string>
-    <string formatted="false" name="stage_dialog_screenshot">معاينة</string>
-    <string formatted="false" name="stage_dialog_embroidery">التطريز</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">رسالة جديدة</string>
@@ -1390,21 +1348,9 @@
     <string formatted="false" name="default_script_group_name">مجموعة سكريبت</string>
     <string formatted="false" name="default_broadcast_message_name">رسالة</string>
     <string formatted="false" name="default_list_name">قائمة</string>
-    <string formatted="false" name="default_project_background_name">خلفية الشاشة</string>
-    <string formatted="false" name="default_project_cloud_name">السُحب</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">سحابة 1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">سحابة 2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">حيوان</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">الأجنحة للاعلى</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">الأجنحة للاسفل</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">زقزقة1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">زقزقة2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">إحتياطي</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">حلقة خارجية</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">حلقة داخلية</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">خلفية الشاشة</string>
     <string formatted="false" name="default_cast_project_cloud_name">السُحب</string>
@@ -1452,7 +1398,6 @@
     <string formatted="false" name="channel_description">%1$s قناة الاشعارات</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">معاينة الصورة المحفوظة</string>
     <string formatted="false" name="notification_download_project_cancel">الغاء تحميل المشروع</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">إلغاء اللتحميل/إعادة التحويل البرنامج</string>
     <string formatted="false" name="notification_upload_title_pending">"التحميل "</string>
@@ -1483,18 +1428,14 @@
     <string formatted="false" name="error_new_project">حدث خطأ أثناء إنشاء برنامج جديد.</string>
     <string formatted="false" name="error_rename_scene">حدث خطأ أثناء إعادة تسمية المشهد.</string>
     <string formatted="false" name="error_load_project">حدث خطأ أثناء تحميل البرنامج.</string>
-    <string formatted="false" name="error_screenshot_failed">حدث خطأ أثناء حفظ صورة المعاينة.</string>
     <string formatted="false" name="error_internet_connection">حدث خطأ غير معروف. تحقق من اتصال الإنترنت الخاص بك.</string>
     <string formatted="false" name="error_project_compatibility">المشروع غير متكامل مع هذا الإصدار من البرنامج.</string>
     <string formatted="false" name="error_outdated_version">إصدار \"البوكت كوود\" قديم جداً. قم بالتحديث الآن؟</string>
     <string formatted="false" name="error_upload_project_with_default_name">لا يمكنك رفع مشروع مُسمى \"%s\".
         من فضلك قم بإعادة تسمية المشروع.</string>
-    <string formatted="false" name="error_upload_default_project">لا يمكنك رفع المشروع الإفتراضي. فضلاً
-        قم بتغيير شيئاً ما ثم حاول مجدداً.</string>
     <string formatted="false" name="error_adding_brick">حدث خطأ أثناء إضافة هذه اللبّنة البرمجية</string>
     <string formatted="false" name="error_copying_brick">حدث خطأ أثناء نسخ هذه اللبّنة البرمجية</string>
     <string formatted="false" name="error_rename_incompatible_project">إعادة تسمية مشروع \"غير متوافق\" هو غير ممكن.</string>
-    <string formatted="false" name="error_embroidery_file_export">حدث خطأ أثناء مشاركة ملف التطريز.</string>
     <string formatted="false" name="error_embroidery_file_write">حدث خطأ أثناء كتابة ملف التطريز.</string>
     <string formatted="false" name="error_embroidery_data_not_found">الامبراطور مفقود.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2241,8 +2182,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">هرتز</string>
-    <string formatted="false" name="no_internet_connection">لا يوجد اتصال بالإنترنت. تأكد من تشغيل Wi-Fi أو
-    بيانات الجوال.</string>
     <string formatted="false" name="edit">تحرير</string>
     <string formatted="false" name="data_value">القيمة</string>
     <string formatted="false" name="category_recently_used">مستخدم مؤخرا</string>

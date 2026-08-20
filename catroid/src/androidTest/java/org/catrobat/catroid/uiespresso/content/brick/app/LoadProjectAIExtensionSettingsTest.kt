@@ -122,7 +122,7 @@ import org.catrobat.catroid.formulaeditor.Sensors.SECOND_FACE_X
 import org.catrobat.catroid.formulaeditor.Sensors.SECOND_FACE_Y
 import org.catrobat.catroid.formulaeditor.Sensors.SPEECH_RECOGNITION_LANGUAGE
 import org.catrobat.catroid.formulaeditor.Sensors.TEXT_FROM_CAMERA
-import org.catrobat.catroid.ui.MainMenuActivity
+import org.catrobat.catroid.ui.ProjectListActivity
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment.SETTINGS_SHOW_AI_FACE_DETECTION_SENSORS
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment.SETTINGS_SHOW_AI_POSE_DETECTION_SENSORS
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment.SETTINGS_SHOW_AI_SPEECH_RECOGNITION_SENSORS
@@ -151,8 +151,8 @@ class LoadProjectAIExtensionSettingsTest(
     private val projectName = "projectName"
 
     @get:Rule
-    var baseActivityTestRule: BaseActivityTestRule<MainMenuActivity> = BaseActivityTestRule(
-        MainMenuActivity::class.java, false, false
+    var baseActivityTestRule: BaseActivityTestRule<ProjectListActivity> = BaseActivityTestRule(
+        ProjectListActivity::class.java, false, false
     )
 
     companion object {
@@ -654,9 +654,6 @@ class LoadProjectAIExtensionSettingsTest(
         script.addBrick(brick)
 
         assertFalse(getSetting(setting))
-        onView(ViewMatchers.withText(applicationContext.getString(R.string.main_menu_programs))).perform(
-            click()
-        )
         onView(ViewMatchers.withText(projectName)).perform(click())
         assertTrue(getSetting(setting))
     }

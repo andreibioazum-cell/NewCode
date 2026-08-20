@@ -50,7 +50,6 @@ import org.catrobat.catroid.formulaeditor.UserDataWrapper;
 import org.catrobat.catroid.io.SoundManager;
 import org.catrobat.catroid.io.StageAudioFocus;
 import org.catrobat.catroid.pocketmusic.mididriver.MidiSoundManager;
-import org.catrobat.catroid.ui.dialogs.StageDialog;
 import org.catrobat.catroid.ui.runtimepermissions.RequiresPermissionTask;
 
 import java.util.List;
@@ -92,7 +91,6 @@ public final class StageLifeCycleController {
 		stageActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		StageActivity.stageListener = new StageListener();
-		stageActivity.stageDialog = new StageDialog(stageActivity, StageActivity.stageListener, R.style.StageDialog);
 		stageActivity.brickDialogManager = new BrickDialogManager(stageActivity);
 		stageActivity.calculateScreenSizes();
 

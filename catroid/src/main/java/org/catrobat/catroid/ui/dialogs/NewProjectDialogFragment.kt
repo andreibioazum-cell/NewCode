@@ -38,7 +38,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
-import org.catrobat.catroid.common.DefaultProjectHandler
 import org.catrobat.catroid.common.Nameable
 import org.catrobat.catroid.databinding.DialogNewProjectBinding
 import org.catrobat.catroid.merge.NewProjectNameTextWatcher
@@ -101,22 +100,17 @@ class NewProjectDialogFragment : DialogFragment() {
     fun createProject() {
         val projectName = binding.inputEditText.text.toString().trim()
         var landscapeMode = false
-        var projectCreatorType = DefaultProjectHandler.ProjectCreatorType.PROJECT_CREATOR_DEFAULT
         var castProject = false
 
         when (binding.radioGroup.checkedRadioButtonId) {
             R.id.landscape_radio_button -> landscapeMode = true
             R.id.cast_radio_button -> {
                 castProject = true
-                projectCreatorType = DefaultProjectHandler.ProjectCreatorType.PROJECT_CREATOR_CAST
             }
         }
 
         try {
-            when (binding.exampleProjectSwitch.isChecked) {
-                true -> projectManager.createNewExampleProject(projectName, projectCreatorType, landscapeMode)
-                false -> projectManager.createNewEmptyProject(projectName, landscapeMode, castProject)
-            }
+            projectManager.createNewEmptyProject(projectName, landscapeMode, castProject)
 
             activity?.startActivity(Intent(activity, ProjectActivity::class.java))
         } catch (_: IOException) {

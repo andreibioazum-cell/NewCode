@@ -56,7 +56,6 @@
     <string formatted="false" name="please_wait">Сачекајте</string>
     <string formatted="false" name="search_hint">Тражи&#8230;</string>
     <string formatted="false" name="backpack_add">Додај у ранац</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">The project you have downloaded listens to your voice
         in the background and also sends data to the internet. This may be harmless, and necessary
@@ -78,18 +77,6 @@
     <string formatted="false" name="disconnect">Прекини везу</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">Настави пројекат</string>
-    <string formatted="false" name="main_menu_new">Нови пројекат</string>
-    <string formatted="false" name="main_menu_programs">Пројекти на уређају</string>
-    <string formatted="false" name="main_menu_help">Помоћ</string>
-    <string formatted="false" name="main_menu_web">Catrobat заједница</string>
-    <string formatted="false" name="main_menu_upload">Окачи пројекат</string>
-    <string formatted="false" name="main_menu_rate_app">Оцените нас!</string>
-    <string formatted="false" name="main_menu_terms_of_use">Услови коришћења и услуге</string>
-    <string formatted="false" name="main_menu_privacy_policy">Правила о приватности</string>
-    <string formatted="false" name="main_menu_about">О апликацији</string>
-    <string formatted="false" name="main_menu_login">Пријављивање</string>
-    <string formatted="false" name="main_menu_logout">Одјави се</string>
     <string formatted="false" name="main_menu_scratch_converter">Scratch конвертер</string>
     <string formatted="false" name="main_menu_play_store_not_installed">App продавница није пронађен</string>
     <!--  -->
@@ -280,8 +267,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">To use our app, it is necessary to accept our Terms of Use and Service.
-        However, if you don\’t feel comfortable to do so, you can use our free web-services on</string>
     <string formatted="false" name="wtf_error">An unexpected error occurred: I could not restore the sample project.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">Дошло је до грешке током копирања пројекта</string>
@@ -565,7 +550,6 @@
     <string formatted="false" name="unpack">Unpack</string>
     <!--  -->
     <!-- NewProjectDialog -->
-    <string formatted="false" name="new_project_dialog_example_project">Example project</string>
     <!--  -->
     <!-- NewMergedProjectDialog -->
     <string formatted="false" name="new_merge_project_dialog_title">Merged project</string>
@@ -597,12 +581,6 @@
     <string formatted="false" name="rating_dialog_rate_never">Никад</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">Услови коришћења и услуге</string>
-    <string formatted="false" name="dialog_terms_of_use_info">In order to
-        be allowed to use the apps and other services offered by the Catrobat project, you
-        must agree to our Terms of Use and Service. You have to follow these terms strictly when using our apps
-        and other services. Please see the link below for their precise formulation.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">Услови коришћења и услуге</string>
     <!--  -->
     <!-- Terms of Use Dialog Parrot ARDrone-->
     <string formatted="false" name="dialog_terms_of_use_link_text_parrot_reminder">Услови коришћења и услуге</string>
@@ -617,8 +595,6 @@
     <!--  -->
     <!-- Privacy Policy -->
     <string formatted="false" name="dialog_privacy_policy_title">Правила приватности</string>
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">Добродошли!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">To use this app, please accept our</string>
     <string formatted="false" name="dialog_privacy_policy_text">To offer you all the benefits of our services and the associated account,
         it is necessary to collect certain data from you.\n\n
 
@@ -686,13 +662,6 @@
     </string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">О апликацији</string>
-    <string formatted="false" name="dialog_about_license_info">This app offers a coding
-        environment and interpreter for the visual programming language Catrobat.\n
-        The source code of this app is mainly licensed under the GNU AGPL v3 license.
-        For further details on the license see the link below.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">Source code license</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">О Catrobat</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">No network</string>
@@ -814,14 +783,6 @@
         issues.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">Back</string>
-    <string formatted="false" name="stage_dialog_resume">Resume</string>
-    <string formatted="false" name="stage_dialog_restart">Restart</string>
-    <string formatted="false" name="stage_dialog_axes_on">Axes on</string>
-    <string formatted="false" name="stage_dialog_axes_off">Axes off</string>
-    <string formatted="false" name="stage_dialog_maximize">Maximize/\nstretch</string>
-    <string formatted="false" name="stage_dialog_screenshot">Preview</string>
-    <string formatted="false" name="stage_dialog_embroidery">Embroidery</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">New message</string>
@@ -1203,21 +1164,9 @@
     <!-- Default Values -->
     <string formatted="false" name="default_project_name">My project</string>
     <string formatted="false" name="default_scene_name">Scene</string>
-    <string formatted="false" name="default_project_background_name">Позадина</string>
-    <string formatted="false" name="default_project_cloud_name">Clouds</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">Clouds1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Clouds2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">Animal</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">Wings up</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">Wings down</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Tweet1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Tweet2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Needle</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Outer Loop</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Inner Loop</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">Позадина</string>
     <string formatted="false" name="default_cast_project_cloud_name">Clouds</string>
@@ -1265,7 +1214,6 @@
     <string formatted="false" name="channel_description">%1$s канал обавештења</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">Слика за преглед је сачувана</string>
     <string formatted="false" name="notification_download_project_cancel">Откажи преузимање пројекта</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">Отказано је преузимање / поновно конвертовање пројекта</string>
     <string formatted="false" name="notification_upload_title_pending">"Слање"</string>
@@ -1305,14 +1253,11 @@
     <string formatted="false" name="error_new_project">Something went wrong while creating a new project.</string>
     <string formatted="false" name="error_rename_scene">Something went wrong while renaming the scene.</string>
     <string formatted="false" name="error_load_project">Something went wrong while loading the project.</string>
-    <string formatted="false" name="error_screenshot_failed">Something went wrong while saving the preview image.</string>
     <string formatted="false" name="error_internet_connection">An unknown error occurred. Check your Internet connection.</string>
     <string formatted="false" name="error_project_compatibility">The project is not compatible with this version of the app.</string>
     <string formatted="false" name="error_outdated_version">This app version is outdated. Update now?</string>
     <string formatted="false" name="error_upload_project_with_default_name">You cannot upload a project with the name \"%s\".
         Please rename the project.</string>
-    <string formatted="false" name="error_upload_default_project">You cannot upload an unmodified example project. Please
-        change something and try again.</string>
     <string formatted="false" name="error_adding_brick">Something went wrong while adding this brick.</string>
     <string formatted="false" name="error_copying_brick">Something went wrong while copying this brick.</string>
     <string formatted="false" name="error_no_drone_connected_title">Cannot find AR.Drone 2.0.</string>
@@ -1328,7 +1273,6 @@
     <string formatted="false" name="error_drone_wrong_platform_title">No AR.Drone 2.0 support.</string>
     <string formatted="false" name="error_drone_wrong_platform">We cannot run an AR.Drone 2.0 project on your device.</string>
     <string formatted="false" name="error_rename_incompatible_project">Renaming an incompatible project is not possible.</string>
-    <string formatted="false" name="error_embroidery_file_export">Something went wrong while sharing the embroidery file.</string>
     <string formatted="false" name="error_embroidery_file_write">Something went wrong while writing the embroidery file.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Embroidery is missing.</string>
     <string formatted="false" name="error_unknown_error">Something went wrong.</string>

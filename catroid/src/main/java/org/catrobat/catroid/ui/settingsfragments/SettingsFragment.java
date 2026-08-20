@@ -45,8 +45,7 @@ import org.catrobat.catroid.common.DroneConfigPreference;
 import org.catrobat.catroid.devices.mindstorms.ev3.sensors.EV3Sensor;
 import org.catrobat.catroid.devices.mindstorms.nxt.sensors.NXTSensor;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
-import org.catrobat.catroid.sync.ProjectsCategoriesSync;
-import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.recyclerview.dialog.AppStoreDialogFragment;
 import org.catrobat.catroid.ui.recyclerview.dialog.AppStoreDialogFragment.Companion.Extension;
 import org.catrobat.catroid.ui.recyclerview.repository.MqttPasswordRepository;
@@ -605,9 +604,8 @@ public class SettingsFragment extends PreferenceFragment {
 		listPreference.setOnPreferenceChangeListener((preference, languageTag) -> {
 			String selectedLanguageTag = languageTag.toString();
 			setLanguageSharedPreference(getActivity().getBaseContext(), selectedLanguageTag);
-			startActivity(new Intent(getActivity().getBaseContext(), MainMenuActivity.class));
+			startActivity(new Intent(getActivity().getBaseContext(), ProjectListActivity.class));
 			getActivity().finishAffinity();
-			new Thread(() -> inject(ProjectsCategoriesSync.class).getValue().sync(true));
 			return true;
 		});
 	}

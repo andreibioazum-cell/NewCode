@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">请等待</string>
     <string formatted="false" name="search_hint">搜索…</string>
     <string formatted="false" name="backpack_add">添加到背包</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">您所下载的项目能听到您的声音。
         在后台，也会向互联网发送数据。这可能是无害的，也是必要的
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">断开连接</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">继续</string>
-    <string formatted="false" name="main_menu_new">新建</string>
-    <string formatted="false" name="main_menu_programs">Các chương trình</string>
-    <string formatted="false" name="main_menu_help">Trợ giúp</string>
-    <string formatted="false" name="main_menu_web">Catrobat社区</string>
-    <string formatted="false" name="main_menu_upload">Tải lên chương trình</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">给我们评分！</string>
-    <string formatted="false" name="main_menu_terms_of_use">使用与服务条例</string>
-    <string formatted="false" name="main_menu_privacy_policy">Chính sách bảo mật</string>
-    <string formatted="false" name="main_menu_about">关于本应用</string>
-    <string formatted="false" name="main_menu_login">登录</string>
-    <string formatted="false" name="main_menu_logout">登出</string>
     <string formatted="false" name="main_menu_scratch_converter">Scratch转换模块</string>
     <string formatted="false" name="main_menu_play_store_not_installed">找不到 google play</string>
     <!--  -->
@@ -316,7 +302,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">要使用我们的应用软件，必须接受我们的隐私政策。但是，如果您感到不合适，您可以在这里使用我们的免费网络服务。</string>
     <string formatted="false" name="wtf_error">发生一个意外错误：我无法恢复项目样品。</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">在复制项目的时候发生了一个错误。</string>
@@ -573,7 +558,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">创建项目</string>
-    <string formatted="false" name="new_project_dialog_example_project">示例项目</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">横向</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -613,21 +597,10 @@
     <string formatted="false" name="rating_dialog_rate_never">从不</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">使用与服务条例</string>
-    <string formatted="false" name="dialog_terms_of_use_info">为了获权使用Catrobat 项目提供的应用程序和其他可执行文件，当您使用我们的应用程序和其他可执行文件时，您必须同意我们的使用和服务条款并严格遵循它们。请参阅下面的链接获取详细的条款 \n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">使用与服务条例</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">欢迎!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">要使用这个应用，请接受我们的应用</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">关于本应用</string>
-    <string formatted="false" name="dialog_about_license_info">这个应用程序为可视化编程语言Catrobat提供了编程环境和解释器.\n\n 这款应用程序的源代码主要根据 GNU AGPL v3 许可证的许可下开发和使用。        详细信息请参阅下面的链接。 \n</string>
-    <string formatted="false" name="dialog_about_license_link_text">源代码许可证</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">关于 Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Catrobat语言版本</string>
-    <string formatted="false" name="dialog_about_version">版本。</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">没有网络</string>
@@ -647,7 +620,7 @@
     <string formatted="false" name="save_project_to_external_storage_io_exception_message">保存项目失败，可用内存量不够！</string>
     <!--  -->
     <!-- SoundRecorderActivity -->
-    <string formatted="false" name="soundrecorder_name">Pocket Code ghi âm</string>
+    <string formatted="false" name="soundrecorder_name">NewCode ghi âm</string>
     <string formatted="false" name="soundrecorder_error">Ghi âm không thành công</string>
     <string formatted="false" name="soundrecorder_recorded_filename">ghi âm</string>
     <string formatted="false" name="soundrecorder_text_view">Bấm vào biểu tượng trên để bắt đầu và ngừng ghi âm.</string>
@@ -747,14 +720,6 @@ dash(-), 下划线 (_), 和 句号(.).</string>
     <string formatted="false" name="nfc_facedetection_support">同时使用 NFC 和面部检测可能会导致性能问题。</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">后退</string>
-    <string formatted="false" name="stage_dialog_resume">继续</string>
-    <string formatted="false" name="stage_dialog_restart">重新开始</string>
-    <string formatted="false" name="stage_dialog_axes_on">显示坐标轴</string>
-    <string formatted="false" name="stage_dialog_axes_off">隐藏坐标轴</string>
-    <string formatted="false" name="stage_dialog_maximize">最大化/\n拉伸</string>
-    <string formatted="false" name="stage_dialog_screenshot">预览</string>
-    <string formatted="false" name="stage_dialog_embroidery">刺绣</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">新消息</string>
@@ -1154,21 +1119,9 @@ dash(-), 下划线 (_), 和 句号(.).</string>
     <string formatted="false" name="default_script_group_name">脚本组</string>
     <string formatted="false" name="default_broadcast_message_name">消息</string>
     <string formatted="false" name="default_list_name">列表</string>
-    <string formatted="false" name="default_project_background_name">背景</string>
-    <string formatted="false" name="default_project_cloud_name">云</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">云1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">云2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">动物</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">双翼上移</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">双翼下移</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">鸟鸣1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">鸟鸣2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">针头</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">外部循环</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">内部循环</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">背景</string>
     <string formatted="false" name="default_cast_project_cloud_name">云</string>
@@ -1216,7 +1169,6 @@ dash(-), 下划线 (_), 和 句号(.).</string>
     <string formatted="false" name="channel_description">%1$s 通知频道</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">预览图像已保存</string>
     <string formatted="false" name="notification_download_project_cancel">取消项目下载</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">已取消下载/重新转换程序</string>
     <string formatted="false" name="notification_upload_title_pending">"上传中 "</string>
@@ -1245,18 +1197,14 @@ dash(-), 下划线 (_), 和 句号(.).</string>
     <string formatted="false" name="error_new_project">创建新程序时发生了一个错误。</string>
     <string formatted="false" name="error_rename_scene">在重命名场景时发生了一个错误。</string>
     <string formatted="false" name="error_load_project">Lỗi xảy ra trong khi tải chương trình.</string>
-    <string formatted="false" name="error_screenshot_failed">在保存预览图片时发生了一个错误。</string>
     <string formatted="false" name="error_internet_connection">Lỗi đã xảy ra. Kiểm tra kết nối Internet của bạn.</string>
     <string formatted="false" name="error_project_compatibility">此项目与此版本的应用程序不兼容。</string>
     <string formatted="false" name="error_outdated_version">您的应用版本已过时，立即更新?</string>
     <string formatted="false" name="error_upload_project_with_default_name">You cannot upload a project with the name \"%s\".
         Please rename the project.</string>
-    <string formatted="false" name="error_upload_default_project">您不能上传一个未经修改的示例项目。请
-        更改某些内容，然后重试。</string>
     <string formatted="false" name="error_adding_brick">Có lỗi khi thêm gạch này</string>
     <string formatted="false" name="error_copying_brick">Lỗi đã xảy ra trong khi sao chép gạch này</string>
     <string formatted="false" name="error_rename_incompatible_project">重命名不兼容的程序是不可能的。</string>
-    <string formatted="false" name="error_embroidery_file_export">分享刺绣文件时出了错。</string>
     <string formatted="false" name="error_embroidery_file_write">写刺绣文件时出了错。</string>
     <string formatted="false" name="error_embroidery_data_not_found">不存在刺绣。</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -1993,8 +1941,6 @@ dash(-), 下划线 (_), 和 句号(.).</string>
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">㎐</string>
-    <string formatted="false" name="no_internet_connection">没有网络连接。请确保开启Wi-Fi或手机
-    数据。</string>
     <string formatted="false" name="edit">编辑</string>
     <string formatted="false" name="data_value">值</string>
     <string formatted="false" name="category_recently_used">最近使用的</string>

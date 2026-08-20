@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">โปรดรอสักครู่</string>
     <string formatted="false" name="search_hint">ค้นหา…</string>
     <string formatted="false" name="backpack_add">จัดเก็บชุดคำสั่ง</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">โครงการที่คุณดาวน์โหลดไว้ฟังเสียงของคุณ
          อยู่เบื้องหลังและส่งข้อมูลไปยังอินเทอร์เน็ต สิ่งนี้อาจไม่เป็นอันตรายและจำเป็น
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">ตัดการเชื่อมต่อ</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">ทำโปรเจ็กต์ต่อ</string>
-    <string formatted="false" name="main_menu_new">โปรเจ็กต์ใหม่</string>
-    <string formatted="false" name="main_menu_programs">โปรเจ็กต์บนอุปกรณ์</string>
-    <string formatted="false" name="main_menu_help">ช่วยเหลือ</string>
-    <string formatted="false" name="main_menu_web">ชุมชน Catrobat</string>
-    <string formatted="false" name="main_menu_upload">อัพโหลดโปรเจกต์</string>
-    <string formatted="false" name="main_menu_play">รันโครงการ</string>
-    <string formatted="false" name="main_menu_rate_app">ให้คะแนนเรา</string>
-    <string formatted="false" name="main_menu_terms_of_use">ข้อกำหนดการใช้งานและบริการ</string>
-    <string formatted="false" name="main_menu_privacy_policy">นโยบายความเป็นส่วนตัว</string>
-    <string formatted="false" name="main_menu_about">เกี่ยวกับ App นี้</string>
-    <string formatted="false" name="main_menu_login">เข้าสู่ระบบ</string>
-    <string formatted="false" name="main_menu_logout">ออกจากระบบ</string>
     <string formatted="false" name="main_menu_scratch_converter">ตัวแปลงรอยขีดข่วน</string>
     <string formatted="false" name="main_menu_play_store_not_installed">ไม่พบ App store</string>
     <!--  -->
@@ -314,7 +300,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">ในการใช้แอพของเราจำเป็นต้องยอมรับข้อกำหนดการใช้งานและบริการของเรา อย่างไรก็ตามหากคุณไม่สบายใจที่จะทำเช่นนั้นคุณสามารถใช้บริการบนเว็บฟรีของเราได้ที่</string>
     <string formatted="false" name="wtf_error">มีข้อผิดพลาดที่ไม่คาดคิดเกิดขึ้น: ฉันไม่สามารถกู้คืนโปรเจ็กต์ตัวอย่างได้</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">เกิดข้อผิดพลาดขณะคัดลอกโครงการ</string>
@@ -570,7 +555,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">สร้างโครงการ</string>
-    <string formatted="false" name="new_project_dialog_example_project">ตัวอย่างโครงการ</string>
     <string name="new_project_dialog_portrait">แนวตั้ง</string>
     <string name="new_project_dialog_landscape">แนวนอน</string>
     <string name="new_project_dialog_cast">ทิ้ง</string>
@@ -610,27 +594,10 @@
     <string formatted="false" name="rating_dialog_rate_never">ไม่เลย</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">เงื่อนไขการใช้งานและบริการ</string>
-    <string formatted="false" name="dialog_terms_of_use_info">เพื่อที่จะ
-        ได้รับอนุญาตให้ใช้แอพและบริการอื่น ๆ ที่นำเสนอโดยโครงการ Catrobat คุณ
-        ต้องยอมรับข้อกำหนดการใช้งานและบริการของเรา คุณต้องปฏิบัติตามข้อกำหนดเหล่านี้อย่างเคร่งครัดเมื่อใช้แอพของเรา
-        และบริการอื่นๆ โปรดดูลิงก์ด้านล่างสำหรับสูตรที่แม่นยำ\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">เงื่อนไขการใช้งานและบริการ</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">ยินดีต้อนรับ!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">ในการใช้แอพนี้โปรดยอมรับไฟล์</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">เกี่ยวกับ App นี้</string>
-    <string formatted="false" name="dialog_about_license_info">แอพนี้มีการเข้ารหัส
-        สภาพแวดล้อมและล่ามสำหรับภาษาโปรแกรมภาพ Catrobat\n
-        ซอร์สโค้ดของแอพนี้ส่วนใหญ่ได้รับอนุญาตภายใต้ใบอนุญาต GNU AGPL v3
-        สำหรับรายละเอียดเพิ่มเติมเกี่ยวกับใบอนุญาตโปรดดูลิงก์ด้านล่าง\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">ใบอนุญาตรหัสที่มา</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">เกี่ยวกับ Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Catrobat เวอร์ชันภาษา </string>
-    <string formatted="false" name="dialog_about_version">รุ่น:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">ไม่มีเครือข่าย</string>
@@ -650,7 +617,7 @@
     <string formatted="false" name="save_project_to_external_storage_io_exception_message">ไม่สามารถบันทึกโครงการหน่วยความจำไม่เพียงพอ!</string>
     <!--  -->
     <!-- SoundRecorderActivity -->
-    <string formatted="false" name="soundrecorder_name">ตัวบันทึกเสียง Pocket Code</string>
+    <string formatted="false" name="soundrecorder_name">ตัวบันทึกเสียง NewCode</string>
     <string formatted="false" name="soundrecorder_error">ไม่สามารถบันทึกเสียง</string>
     <string formatted="false" name="soundrecorder_recorded_filename">บันทึกเสียง</string>
     <string formatted="false" name="soundrecorder_text_view">แตะไอคอนด้านบนเพื่อเริ่ม หรือหยุดการบันทึก</string>
@@ -749,14 +716,6 @@
     <string formatted="false" name="nfc_facedetection_support">การใช้ NFC และการตรวจจับใบหน้าในเวลาเดียวกันอาจนำไปสู่ปัญหาด้านประสิทธิภาพ</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">ย้อนกลับ</string>
-    <string formatted="false" name="stage_dialog_resume">ทำต่อ</string>
-    <string formatted="false" name="stage_dialog_restart">เริ่มต้นใหม่</string>
-    <string formatted="false" name="stage_dialog_axes_on">เปิดใช้แกน</string>
-    <string formatted="false" name="stage_dialog_axes_off">ปิดใช้แกน</string>
-    <string formatted="false" name="stage_dialog_maximize">ขยาย/\nยืด</string>
-    <string formatted="false" name="stage_dialog_screenshot">แสดงตัวอย่าง</string>
-    <string formatted="false" name="stage_dialog_embroidery">การตกแต่ง</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">ข้อความใหม่</string>
@@ -1153,21 +1112,9 @@
     <string formatted="false" name="default_script_group_name">กลุ่มสคริปต์</string>
     <string formatted="false" name="default_broadcast_message_name">ข้อความ</string>
     <string formatted="false" name="default_list_name">รายการ</string>
-    <string formatted="false" name="default_project_background_name">พื้นหลัง</string>
-    <string formatted="false" name="default_project_cloud_name">เมฆ</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">เมฆ 1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">เมฆ 2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">สัตว์</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">ปีกขึ้น</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">ปีกลง</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">ทวีต 1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">ทวีต 2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">เข็ม</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">วงรอบนอก</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">วงใน</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">พื้นหลัง</string>
     <string formatted="false" name="default_cast_project_cloud_name">เมฆ</string>
@@ -1215,7 +1162,6 @@
     <string formatted="false" name="channel_description">%1$s ช่องการแจ้งเตือน</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">ภาพตัวอย่างที่บันทึกไว้</string>
     <string formatted="false" name="notification_download_project_cancel">ยกเลิกการดาวน์โหลดโครงการ</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">ยกเลิกโครงการดาวน์โหลด / กู้คืน</string>
     <string formatted="false" name="notification_upload_title_pending">"กำลังอัปโหลด "</string>
@@ -1241,16 +1187,13 @@
     <string formatted="false" name="error_new_project">เกิดข้อผิดพลาดขณะสร้างโปรแกรมใหม่</string>
     <string formatted="false" name="error_rename_scene">เกิดข้อผิดพลาดขณะเปลี่ยนชื่อฉาก</string>
     <string formatted="false" name="error_load_project">เกิดข้อผิดพลาดขณะโหลดโปรแกรม</string>
-    <string formatted="false" name="error_screenshot_failed">เกิดข้อผิดพลาดขณะบันทึกภาพตัวอย่าง</string>
     <string formatted="false" name="error_internet_connection">เกิดข้อผิดพลาดที่ไม่รู้จักขึ้น กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</string>
     <string formatted="false" name="error_project_compatibility">โครงการเข้ากันไม่ได้กับแอพเวอร์ชันนี้</string>
     <string formatted="false" name="error_outdated_version">แอพเวอร์ชันนี้ล้าสมัยแล้ว อัปเดตตอนนี้หรือไม่</string>
     <string formatted="false" name="error_upload_project_with_default_name">คุณไม่สามารถอัปโหลดโครงการที่มีชื่อ \"%s\"  โปรดเปลี่ยนชื่อโครงการ</string>
-    <string formatted="false" name="error_upload_default_project">คุณไม่สามารถอัพโหลดโครงการตัวอย่างที่ไม่ได้แก้ไข  โปรดเปลี่ยนบางสิ่งและลองอีกครั้ง</string>
     <string formatted="false" name="error_adding_brick">เกิดข้อผิดพลาดขณะเพิ่มก้อนนี้</string>
     <string formatted="false" name="error_copying_brick">เกิดข้อผิดพลาดขณะคัดลอกก้อนนี้</string>
     <string formatted="false" name="error_rename_incompatible_project">ไม่สามารถเปลี่ยนชื่อโครงการที่เข้ากันไม่ได้</string>
-    <string formatted="false" name="error_embroidery_file_export">เกิดข้อผิดพลาดบางอย่างขณะแชร์ไฟล์การปัก</string>
     <string formatted="false" name="error_embroidery_file_write">เกิดข้อผิดพลาดขณะเขียนไฟล์ปัก</string>
     <string formatted="false" name="error_embroidery_data_not_found">เย็บปักถักร้อยขาดหายไป</string>
     <string formatted="false" name="error_plot_file_write">มีบางอย่างผิดพลาดขณะเขียนไฟล์พล็อต svg</string>
@@ -2001,7 +1944,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">㎐</string>
-    <string formatted="false" name="no_internet_connection">ไม่มีการเชื่อมต่ออินเทอร์เน็ต. ตรวจสอบว่า Wi-Fi หรือเน็ตมือถือปิดอยู่</string>
     <string formatted="false" name="edit">แก้ไข</string>
     <string formatted="false" name="data_value">ค่า</string>
     <string formatted="false" name="category_recently_used">ใช้ล่าสุด</string>

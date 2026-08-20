@@ -37,7 +37,6 @@ import org.catrobat.catroid.web.ServerAuthenticationConstants.CHECK_GOOGLE_TOKEN
 import org.catrobat.catroid.web.ServerAuthenticationConstants.CHECK_TOKEN_URL
 import org.catrobat.catroid.web.ServerAuthenticationConstants.CHECK_USERNAME_AVAILABLE_URL
 import org.catrobat.catroid.web.ServerAuthenticationConstants.EMAIL_AVAILABLE
-import org.catrobat.catroid.web.ServerAuthenticationConstants.FILE_SURVEY_URL_HTTP
 import org.catrobat.catroid.web.ServerAuthenticationConstants.FILE_TAG_URL_HTTP
 import org.catrobat.catroid.web.ServerAuthenticationConstants.JSON_ANSWER
 import org.catrobat.catroid.web.ServerAuthenticationConstants.JSON_STATUS_CODE
@@ -95,19 +94,6 @@ class CatrobatServerCalls(private val okHttpClient: OkHttpClient = CatrobatWebCl
             var serverUrl = FILE_TAG_URL_HTTP
             if (language != null) {
                 serverUrl += "?language=$language"
-            }
-            getRequest(serverUrl)
-        } catch (e: WebConnectionException) {
-            Log.e(tag, Log.getStackTraceString(e))
-            ""
-        }
-    }
-
-    fun getSurvey(language: String?): String {
-        return try {
-            var serverUrl = FILE_SURVEY_URL_HTTP
-            if (language != null) {
-                serverUrl += language
             }
             getRequest(serverUrl)
         } catch (e: WebConnectionException) {

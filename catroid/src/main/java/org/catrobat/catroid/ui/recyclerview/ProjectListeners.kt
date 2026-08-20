@@ -27,11 +27,3 @@ import org.catrobat.catroid.common.ProjectData
 interface ProjectListener {
     fun onProjectClick(projectData: ProjectData?)
 }
-
-interface FeaturedProjectCallback {
-    fun onFeatureProjectClicked(projectUrl: String)
-}
-
-interface CategoryTitleCallback {
-    fun onCategoryTitleClicked(categoryId: String)
-}

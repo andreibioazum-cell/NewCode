@@ -48,6 +48,7 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidGraphics;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.graphics.Color;
 
 import org.catrobat.catroid.BuildConfig;
 import org.catrobat.catroid.ProjectManager;
@@ -65,7 +66,6 @@ import org.catrobat.catroid.devices.raspberrypi.RaspberryPiService;
 import org.catrobat.catroid.io.StageAudioFocus;
 import org.catrobat.catroid.nfc.NfcHandler;
 import org.catrobat.catroid.ui.MarketingActivity;
-import org.catrobat.catroid.ui.dialogs.StageDialog;
 import org.catrobat.catroid.ui.recyclerview.dialog.PlaySceneDialog;
 import org.catrobat.catroid.ui.runtimepermissions.BrickResourcesToRuntimePermissions;
 import org.catrobat.catroid.ui.runtimepermissions.PermissionAdaptingActivity;
@@ -85,9 +85,7 @@ import java.util.Random;
 import androidx.annotation.NonNull;
 import androidx.test.espresso.idling.CountingIdlingResource;
 
-import static org.catrobat.catroid.common.Constants.SCREENSHOT_AUTOMATIC_FILE_NAME;
 import static org.catrobat.catroid.stage.TestResult.TEST_RESULT_MESSAGE;
-import static org.catrobat.catroid.ui.MainMenuActivity.surveyCampaign;
 import static org.koin.java.KoinJavaComponent.get;
 
 public class StageActivity extends AndroidApplication implements PermissionHandlingActivity, PermissionAdaptingActivity {
@@ -106,7 +104,6 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	PendingIntent pendingIntent;
 	NfcAdapter nfcAdapter;
 	private static NdefMessage nfcTagMessage;
-	StageDialog stageDialog;
 	BrickDialogManager brickDialogManager;
 	private boolean resizePossible;
 
@@ -137,31 +134,6 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	public void onPause() {
 		StageLifeCycleController.stagePause(this);
 		super.onPause();
-
-		if (surveyCampaign != null) {
-			surveyCampaign.endStageTime();
-
-			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
-			if (isApplicationSentToBackground(this) || !pm.isInteractive()) {
-				surveyCampaign.endAppTime(this);
-			}
-		}
-	}
-
-	private boolean isApplicationSentToBackground(final Context context) {
-		ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		List<ActivityManager.RunningAppProcessInfo> runningProcesses = activityManager.getRunningAppProcesses();
-		for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-			if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-				for (String activeProcess : processInfo.pkgList) {
-					if (activeProcess.equals(context.getPackageName())) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -169,11 +141,6 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 		StageLifeCycleController.stageResume(this);
 		super.onResume();
 		activeStageActivity = new WeakReference<>(this);
-
-		if (surveyCampaign != null) {
-			surveyCampaign.startAppTime(this);
-			surveyCampaign.startStageTime();
-		}
 	}
 
 	@Override
@@ -217,7 +184,7 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	}
 
 	public boolean dialogIsShowing() {
-		return (stageDialog.isShowing() || brickDialogManager.dialogIsShowing());
+		return brickDialogManager.dialogIsShowing();
 	}
 
 	private void showToastMessage(String message) {
@@ -251,11 +218,25 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 			startActivity(marketingIntent);
 			finish();
 		} else {
-			StageLifeCycleController.stagePause(this);
-			idlingResource.increment();
-			stageListener.requestTakingScreenshot(SCREENSHOT_AUTOMATIC_FILE_NAME,
-					success -> runOnUiThread(() -> idlingResource.decrement()));
-			stageDialog.show();
+			clearBroadcastMaps();
+			resetEmbroideryThreadColor();
+			finish();
+		}
+	}
+
+	private void clearBroadcastMaps() {
+		for (Scene scene : ProjectManager.getInstance().getCurrentProject().getSceneList()) {
+			for (Sprite sprite : scene.getSpriteList()) {
+				sprite.getIdToEventThreadMap().clear();
+			}
+		}
+	}
+
+	private void resetEmbroideryThreadColor() {
+		for (Scene scene : ProjectManager.getInstance().getCurrentProject().getSceneList()) {
+			for (Sprite sprite : scene.getSpriteList()) {
+				sprite.setEmbroideryThreadColor(Color.BLACK);
+			}
 		}
 	}
 

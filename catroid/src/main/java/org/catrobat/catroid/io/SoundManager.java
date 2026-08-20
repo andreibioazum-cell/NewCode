@@ -38,7 +38,7 @@ import java.util.Set;
 import androidx.annotation.VisibleForTesting;
 
 /**
- * As long as both OpenGL render() and StageDialog access the SoundManager, the public methods have to stay
+ * The OpenGL render thread and the UI thread access the SoundManager, so the public methods have to stay
  * synchronized.
  */
 public class SoundManager {

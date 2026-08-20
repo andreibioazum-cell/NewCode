@@ -43,7 +43,7 @@ import org.catrobat.catroid.R
 import org.catrobat.catroid.common.Constants.CATROBAT_TERMS_OF_USE_ACCEPTED
 import org.catrobat.catroid.common.SharedPreferenceKeys.AGREED_TO_PRIVACY_POLICY_VERSION
 import org.catrobat.catroid.runner.Flaky
-import org.catrobat.catroid.ui.MainMenuActivity
+import org.catrobat.catroid.ui.ProjectListActivity
 import org.catrobat.catroid.ui.ProjectActivity
 import org.catrobat.catroid.ui.ProjectListActivity
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
@@ -66,7 +66,7 @@ class CreateProjectTest {
 
     @get:Rule
     var baseActivityTestRule = BaseActivityTestRule(
-        MainMenuActivity::class.java, false, false
+        ProjectListActivity::class.java, false, false
     )
 
     @Before
@@ -96,7 +96,7 @@ class CreateProjectTest {
 
     @Test
     fun testNewProjectDialogFragment() {
-        onView(withId(R.id.newProjectFloatingActionButton))
+        onView(withId(R.id.button_add))
             .perform(click())
 
         onView(withText(R.string.new_project_title))
@@ -117,8 +117,6 @@ class CreateProjectTest {
         onView(withId(R.id.cast_radio_button))
             .check(matches(allOf(isDisplayed(), isNotChecked())))
 
-        onView(withId(R.id.example_project_switch))
-            .check(matches(allOf(isDisplayed(), isNotChecked())))
     }
 
     @Test
@@ -128,7 +126,7 @@ class CreateProjectTest {
             .putBoolean(SettingsFragment.SETTINGS_CAST_GLOBALLY_ENABLED, false)
             .commit()
 
-        onView(withId(R.id.newProjectFloatingActionButton))
+        onView(withId(R.id.button_add))
             .perform(click())
 
         onView(withId(R.id.portrait_radio_button))
@@ -143,7 +141,7 @@ class CreateProjectTest {
 
     @Test
     fun testCreateNewCastProject() {
-        onView(withId(R.id.newProjectFloatingActionButton))
+        onView(withId(R.id.button_add))
             .perform(click())
 
         closeSoftKeyboard()
@@ -159,9 +157,6 @@ class CreateProjectTest {
 
     @Test
     fun testCreateProjectInProjectList() {
-        onView(withId(R.id.myProjectsTextView))
-            .perform(click())
-
         onView(withId(R.id.button_add))
             .perform(click())
 
@@ -169,9 +164,6 @@ class CreateProjectTest {
             .perform(replaceText(newProjectName))
 
         closeSoftKeyboard()
-
-        onView(withId(R.id.example_project_switch))
-            .perform(click())
 
         onView(withId(R.id.confirm))
             .perform(click())
@@ -190,41 +182,8 @@ class CreateProjectTest {
     }
 
     @Test
-    @Flaky
-    fun testCreateProjectInMainMenu() {
-        onView(withId(R.id.newProjectFloatingActionButton))
-            .perform(click())
-
-        onView(withId(R.id.input_edit_text))
-            .perform(replaceText(newProjectName))
-
-        closeSoftKeyboard()
-
-        onView(withId(R.id.example_project_switch))
-            .perform(click())
-
-        onView(withId(R.id.confirm))
-            .perform(click())
-
-        onView(withText(newProjectName))
-            .check(matches(isDisplayed()))
-
-        assertCurrentActivityIsInstanceOf(ProjectActivity::class.java)
-
-        pressBack()
-
-        assertCurrentActivityIsInstanceOf(MainMenuActivity::class.java)
-
-        onView(withId(R.id.projectImageView))
-            .perform(click())
-
-        onView(withText(newProjectName))
-            .check(matches(isDisplayed()))
-    }
-
-    @Test
     fun testCreateProjectWithExistingName() {
-        onView(withId(R.id.newProjectFloatingActionButton))
+        onView(withId(R.id.button_add))
             .perform(click())
 
         onView(withId(R.id.input_edit_text))
@@ -237,7 +196,7 @@ class CreateProjectTest {
 
         pressBack()
 
-        onView(withId(R.id.newProjectFloatingActionButton))
+        onView(withId(R.id.button_add))
             .perform(click())
 
         onView(withId(R.id.input_edit_text))
@@ -251,6 +210,6 @@ class CreateProjectTest {
 
         pressBack()
 
-        assertCurrentActivityIsInstanceOf(MainMenuActivity::class.java)
+        assertCurrentActivityIsInstanceOf(ProjectListActivity::class.java)
     }
 }

@@ -25,12 +25,7 @@ package org.catrobat.catroid.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityManager
-import android.app.ActivityManager.RunningAppProcessInfo
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
@@ -43,7 +38,6 @@ import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder
 import org.catrobat.catroid.CatroidApplication
 import org.catrobat.catroid.R
 import org.catrobat.catroid.cast.CastManager
-import org.catrobat.catroid.ui.MainMenuActivity.Companion.surveyCampaign
 import org.catrobat.catroid.ui.runtimepermissions.PermissionHandlingActivity
 import org.catrobat.catroid.ui.runtimepermissions.PermissionRequestActivityExtension
 import org.catrobat.catroid.ui.runtimepermissions.RequiresPermissionTask
@@ -94,7 +88,7 @@ abstract class BaseActivity : AppCompatActivity(), PermissionHandlingActivity {
     }
 
     private fun checkIfProcessRecreatedAndFinishActivity(savedInstanceState: Bundle?) {
-        if (savedInstanceStateExpected || savedInstanceState == null || this is MainMenuActivity) {
+        if (savedInstanceStateExpected || savedInstanceState == null || this is ProjectListActivity) {
             savedInstanceStateExpected = true
         } else {
             val activityName = javaClass.simpleName
@@ -121,8 +115,6 @@ abstract class BaseActivity : AppCompatActivity(), PermissionHandlingActivity {
 
         invalidateOptionsMenu()
         googleAnalyticsTrackScreenResume()
-
-        surveyCampaign?.startAppTime(this)
     }
 
     protected fun googleAnalyticsTrackScreenResume() {
@@ -141,7 +133,7 @@ abstract class BaseActivity : AppCompatActivity(), PermissionHandlingActivity {
 
     private fun checkIfCrashRecoveryAndFinishActivity(activity: Activity) {
         if (isRecoveringFromCrash) {
-            if (activity is MainMenuActivity) {
+            if (activity is ProjectListActivity) {
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .putBoolean(RECOVERED_FROM_CRASH, false)
                     .apply()
@@ -170,45 +162,5 @@ abstract class BaseActivity : AppCompatActivity(), PermissionHandlingActivity {
             permissions,
             grantResults
         )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        val pm = getSystemService(POWER_SERVICE) as PowerManager
-        if (isApplicationSentToBackground(this) || !pm.isInteractive) {
-            surveyCampaign?.endAppTime(this)
-        }
-    }
-
-    private fun isApplicationSentToBackground(context: Context): Boolean {
-        val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val tasks = activityManager.getRunningTasks(1)
-            if (tasks == null || tasks.isEmpty()) {
-                return true
-            }
-            val topActivity = tasks[0].topActivity
-            if (topActivity?.packageName == context.packageName) {
-                return false
-            }
-        } else {
-            val runningProcesses = activityManager.runningAppProcesses
-            for (processInfo in runningProcesses) {
-                if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    return checkActiveProcess(processInfo, context)
-                }
-            }
-        }
-        return true
-    }
-
-    private fun checkActiveProcess(processInfo: RunningAppProcessInfo, context: Context): Boolean {
-        for (activeProcess in processInfo.pkgList) {
-            if (activeProcess == context.packageName) {
-                return false
-            }
-        }
-        return true
     }
 }

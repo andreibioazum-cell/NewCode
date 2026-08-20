@@ -31,7 +31,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.SettingsActivity;
 import org.catrobat.catroid.utils.ToastUtil;
 
@@ -75,7 +75,7 @@ public class AccessibilitySettingsFragment extends PreferenceFragment implements
 	public void onDetach() {
 		super.onDetach();
 		if (preferenceChanged) {
-			startActivity(new Intent(getActivity().getBaseContext(), MainMenuActivity.class));
+			startActivity(new Intent(getActivity().getBaseContext(), ProjectListActivity.class));
 			startActivity(new Intent(getActivity().getBaseContext(), SettingsActivity.class));
 			ToastUtil.showSuccess(getActivity(), getString(R.string.accessibility_settings_applied));
 			getActivity().finishAffinity();

@@ -43,7 +43,6 @@ import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
 import org.catrobat.catroid.WaitForConditionAction.Companion.waitFor
 import org.catrobat.catroid.common.Constants
-import org.catrobat.catroid.common.defaultprojectcreators.ChromeCastProjectCreator
 import org.catrobat.catroid.ui.ProjectActivity
 import org.catrobat.catroid.ui.WebViewActivity
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
@@ -77,10 +76,8 @@ class ChromeCastDialogTest {
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        val project = ChromeCastProjectCreator()
-            .createDefaultProject(projectName, ApplicationProvider.getApplicationContext(), true)
-        projectManager.currentProject = project
-        projectManager.currentlyEditedScene = project.defaultScene
+        projectManager.createNewEmptyProject(projectName, true, true)
+        projectManager.currentlyEditedScene = projectManager.currentProject.defaultScene
         baseActivityTestRule.launchActivity(null)
 
         Intents.init()

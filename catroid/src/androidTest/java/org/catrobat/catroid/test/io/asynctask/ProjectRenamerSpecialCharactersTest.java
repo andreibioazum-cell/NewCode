@@ -89,8 +89,8 @@ public class ProjectRenamerSpecialCharactersTest {
 
 	@Test
 	public void testRenameFromSpecialCharacter() throws IOException {
-		Project project = DefaultProjectHandler.createAndSaveDefaultProject(specialCharacterProjectName,
-				ApplicationProvider.getApplicationContext(), false);
+		Project project = DefaultProjectHandler.createAndSaveEmptyProject(specialCharacterProjectName,
+				ApplicationProvider.getApplicationContext(), false, false);
 
 		File renamedDirectory = renameProject(project.getDirectory(), projectNameWithoutSpecialCharacter);
 		assertNotNull(renamedDirectory);
@@ -105,8 +105,8 @@ public class ProjectRenamerSpecialCharactersTest {
 
 	@Test
 	public void testRenameToSpecialCharacter() throws IOException {
-		Project project = DefaultProjectHandler.createAndSaveDefaultProject(projectNameWithoutSpecialCharacter,
-				ApplicationProvider.getApplicationContext(), false);
+		Project project = DefaultProjectHandler.createAndSaveEmptyProject(projectNameWithoutSpecialCharacter,
+				ApplicationProvider.getApplicationContext(), false, false);
 
 		File renamedDirectory = renameProject(project.getDirectory(), specialCharacterProjectName);
 		assertNotNull(renamedDirectory);

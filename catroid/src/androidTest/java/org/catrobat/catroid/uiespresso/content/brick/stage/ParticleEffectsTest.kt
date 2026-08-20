@@ -88,15 +88,6 @@ class ParticleEffectsTest {
     }
 
     @Test
-    fun particleEffectResumeTest() {
-        script.addBrick(FadeParticleEffectBrick(FADE_IN))
-        onView(ViewMatchers.withId(R.id.button_play)).perform(click())
-        pressBack()
-        onView(ViewMatchers.withId(R.id.stage_dialog_button_continue)).perform(click())
-        assertFalse(projectManager.currentSprite.look.isParticleEffectPaused)
-    }
-
-    @Test
     fun particleEffectAfterSceneRestartsTest() {
         script.apply {
             addBrick(WaitBrick(1000))

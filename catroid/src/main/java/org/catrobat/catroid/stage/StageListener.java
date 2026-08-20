@@ -76,7 +76,6 @@ import org.catrobat.catroid.physics.PhysicsObject;
 import org.catrobat.catroid.physics.PhysicsWorld;
 import org.catrobat.catroid.physics.shapebuilder.PhysicsShapeBuilder;
 import org.catrobat.catroid.pocketmusic.mididriver.MidiSoundManager;
-import org.catrobat.catroid.ui.dialogs.StageDialog;
 import org.catrobat.catroid.ui.recyclerview.controller.SpriteController;
 import org.catrobat.catroid.utils.Resolution;
 import org.catrobat.catroid.utils.TouchUtil;
@@ -151,8 +150,6 @@ public class StageListener implements ApplicationListener {
 	private int testY = 0;
 	private int testWidth = 0;
 	private int testHeight = 0;
-
-	private StageDialog stageDialog;
 
 	private Resolution maxViewPort = null;
 
@@ -336,16 +333,6 @@ public class StageListener implements ApplicationListener {
 		return removedSprite;
 	}
 
-	private void removeAllClonedSpritesFromStage() {
-		List<Sprite> spritesCopy = new ArrayList<>(sprites);
-		for (Sprite sprite : spritesCopy) {
-			if (sprite.isClone) {
-				removeClonedSpriteFromStage(sprite);
-			}
-		}
-		StageActivity.resetNumberOfClonedSprites();
-	}
-
 	public List<Sprite> getAllClonesOfSprite(Sprite sprite) {
 		List<Sprite> clonesOfSprite = new ArrayList<>();
 		for (Sprite spriteOfStage : sprites) {
@@ -469,39 +456,7 @@ public class StageListener implements ApplicationListener {
 		create();
 	}
 
-	public void reloadProject(StageDialog stageDialog) {
-		if (reloadProject) {
-			return;
-		}
-		this.stageDialog = stageDialog;
-		if (!ProjectManager.getInstance().getStartScene().getName().equals(scene.getName())) {
-			transitionToScene(ProjectManager.getInstance().getStartScene().getName());
-		}
-		stageBackupMap.clear();
-		embroideryPatternManager.clear();
 
-		CameraManager cameraManager = StageActivity.getActiveCameraManager();
-		if (cameraManager != null) {
-			cameraManager.reset();
-		}
-		VibrationManager vibrationManager = StageActivity.getActiveVibrationManager();
-		if (vibrationManager != null) {
-			vibrationManager.reset();
-		}
-		TouchUtil.reset();
-		MidiSoundManager.getInstance().reset();
-		removeAllClonedSpritesFromStage();
-
-		UserDataWrapper.resetAllUserData(ProjectManager.getInstance().getCurrentProject());
-
-		for (Scene scene : ProjectManager.getInstance().getCurrentProject().getSceneList()) {
-			for (Sprite sprite : scene.getSpriteList()) {
-				sprite.resetDrawingState();
-			}
-			scene.firstStart = true;
-		}
-		reloadProject = true;
-	}
 
 	@Override
 	public void resume() {
@@ -558,12 +513,6 @@ public class StageListener implements ApplicationListener {
 			reloadProject = false;
 
 			cameraPositioner.reset();
-
-			if (stageDialog != null) {
-				synchronized (stageDialog) {
-					stageDialog.notify();
-				}
-			}
 		}
 
 		batch.setProjectionMatrix(camera.combined);

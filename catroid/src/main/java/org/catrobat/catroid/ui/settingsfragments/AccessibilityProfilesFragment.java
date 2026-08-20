@@ -36,7 +36,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.SettingsActivity;
 import org.catrobat.catroid.utils.ToastUtil;
 
@@ -176,7 +176,7 @@ public class AccessibilityProfilesFragment extends Fragment implements View.OnCl
 				.apply();
 
 		newProfile.setAsCurrent(sharedPreferences);
-		startActivity(new Intent(getActivity().getBaseContext(), MainMenuActivity.class));
+		startActivity(new Intent(getActivity().getBaseContext(), ProjectListActivity.class));
 		Intent settingsIntent = new Intent(getActivity().getBaseContext(), SettingsActivity.class);
 		settingsIntent.putExtra(SETTINGS_FRAGMENT_INTENT_KEY, true);
 		startActivity(settingsIntent);
