@@ -30,6 +30,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import org.catrobat.catroid.ProjectManager
@@ -368,6 +369,11 @@ class ProjectActivity : BaseCastActivity() {
         val dialogNewActorBinding = DialogNewActorBinding.inflate(layoutInflater)
         val alertDialog = AlertDialog.Builder(this).setTitle(R.string.new_sprite_dialog_title)
             .setView(dialogNewActorBinding.root).create()
+
+        // Спрайты из камеры и глобальный «портфель» отключены: они создавали
+        // тяжёлые временные файлы и ломали восстановление нового проекта.
+        dialogNewActorBinding.dialogNewLookCamera.visibility = View.GONE
+        dialogNewActorBinding.dialogNewLookBackpack.visibility = View.GONE
 
         dialogNewActorBinding.dialogNewLookPaintroid.setOnClickListener {
             ImportFromPocketPaintLauncher(this).startActivityForResult(SPRITE_POCKET_PAINT)

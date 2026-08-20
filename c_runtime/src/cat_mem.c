@@ -25,6 +25,8 @@ size_t cat_mem_peak(void)         { return g_peak; }
 size_t cat_mem_alloc_count(void)  { return g_allocs; }
 size_t cat_mem_free_count(void)   { return g_frees; }
 void   cat_mem_set_limit(size_t b){ g_limit = b; }
+size_t cat_mem_limit(void)      { return g_limit; }
+void cat_mem_reset_stats(void)  { g_peak = g_used; g_allocs = 0; g_frees = 0; }
 
 void *cat_malloc(size_t n) {
     if (n == 0) n = 1;

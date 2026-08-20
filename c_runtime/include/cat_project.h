@@ -78,7 +78,15 @@ typedef enum {
     CB_INSERT_INTO_LIST, CB_REPLACE_IN_LIST,
 
     /* Печать (базовая, для CLI-исполнения) */
-    CB_PRINT
+    CB_PRINT,
+
+    /* Низкоуровневые C-блоки. Они не имитируют Java-объекты и
+       выполняются тем же C-интерпретатором. */
+    CB_MALLOC, CB_CALLOC, CB_REALLOC, CB_FREE,
+    CB_MEMCPY, CB_MEMSET,
+    CB_TYPEDEF, CB_CAST,
+    CB_POINTER_SET, CB_POINTER_GET,
+    CB_RETURN, CB_BREAK, CB_CONTINUE
 } CatBrickKind;
 
 /*
