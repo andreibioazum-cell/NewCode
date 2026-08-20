@@ -306,6 +306,11 @@ const char *cat_brick_kind_name(CatBrickKind k) {
     case CB_RETURN: return "return";
     case CB_BREAK: return "break";
     case CB_CONTINUE: return "continue";
+    case CB_C_CODE: return "execute C code";
+    case CB_JAVA_CODE: return "execute Java code";
+    case CB_WHEN_CLONED: return "WhenCloned";
+    case CB_CLONE: return "clone";
+    case CB_DELETE_THIS_CLONE: return "delete this clone";
     default: return "?";
     }
 }

@@ -499,28 +499,36 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
             }
             break;
         }
-        /* --- движение --- */
+        /* --- движение ---
+         * ВАЖНО: поля спрайта (SP->x, SP->y, ...) имеют тип double, а формулы
+         * генерируют значения типа NcVal (структура). Поэтому любое присваивание
+         * поля спрайта обязано оборачивать формулу в nc_d(...), иначе С-компилятор
+         * выдаёт «incompatible types when assigning to type 'double' from type 'NcVal'». */
         case CB_PLACE_AT:
-            sb_indent(o); sb_puts(o, "SP->x = "); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
-            sb_indent(o); sb_puts(o, "SP->y = "); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            sb_indent(o); sb_puts(o, "SP->x = nc_d("); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->y = nc_d("); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
             break;
         case CB_SET_X:
-            sb_indent(o); sb_puts(o, "SP->x = "); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            sb_indent(o); sb_puts(o, "SP->x = nc_d("); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
             break;
         case CB_SET_Y:
-            sb_indent(o); sb_puts(o, "SP->y = "); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            sb_indent(o); sb_puts(o, "SP->y = nc_d("); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
             break;
         case CB_CHANGE_X:
+            /* Оптимизация: было SP->x = nc_d(nc_add(nc_num(SP->x), e)) —
+               лишний NcVal-раунд и расхождение с интерпретатором (тот делал
+               строковую конкатенацию для координат). Теперь напрямую +=, как
+               в cat_interpreter.c (sp->x += to_number(v)). */
             sb_indent(o);
-            sb_puts(o, "SP->x = nc_num(nc_add(nc_num(SP->x), ");
+            sb_puts(o, "SP->x += nc_d(");
             gen_c_expr(g, fml(b, "x", "X_POSITION_CHANGE", NULL), "nc_num(0)");
-            sb_puts(o, ").n);\n");
+            sb_puts(o, ");\n");
             break;
         case CB_CHANGE_Y:
             sb_indent(o);
-            sb_puts(o, "SP->y = nc_num(nc_add(nc_num(SP->y), ");
+            sb_puts(o, "SP->y += nc_d(");
             gen_c_expr(g, fml(b, "y", "Y_POSITION_CHANGE", NULL), "nc_num(0)");
-            sb_puts(o, ").n);\n");
+            sb_puts(o, ");\n");
             break;
         case CB_MOVE_STEPS: {
             int t = ++g->out.counter;
@@ -814,6 +822,63 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
         case CB_CONTINUE:
             if (g->loop_depth > 0) sb_line(o, "continue;");
             else sb_line(o, "; /* continue вне цикла */");
+            break;
+        /* --- Выполнение произвольного кода (free-text inline) --- */
+        case CB_C_CODE: {
+            /* Сырой C из строкового слота встраивается прямо в вывод —
+               выполняется как нативный машинный код вместе с программой. */
+            CatFormula *cf = fml(b, "code", "ccode", "c_code", "value", NULL);
+            char *owned = (cf && cf->kind == CF_STRING) ? cat_value_to_cstring(&cf->literal) : NULL;
+            const char *raw = owned ? owned : (b->arg0 ? b->arg0 : "");
+            sb_line(o, "{ /* выполнить код C */");
+            g->out.indent++;
+            if (raw && raw[0]) {
+                for (const char *p = raw; *p; ) {
+                    const char *nl = strchr(p, '\n');
+                    size_t len = nl ? (size_t)(nl - p) : strlen(p);
+                    sb_indent(o);
+                    sb_printf(o, "%.*s\n", (int)len, p);
+                    if (!nl) break;
+                    p = nl + 1;
+                }
+            } else {
+                sb_line(o, "; /* пустой блок кода C */");
+            }
+            g->out.indent--;
+            sb_line(o, "}");
+            cat_free(owned);
+            break;
+        }
+        case CB_JAVA_CODE: {
+            /* В нативной C-сборке JVM нет — исходник Java сохраняется как
+               документирующий комментарий. Исполняется скриптовым движком
+               в Android-интерпретаторе. */
+            CatFormula *cf = fml(b, "code", "jcode", "java_code", "value", NULL);
+            char *owned = (cf && cf->kind == CF_STRING) ? cat_value_to_cstring(&cf->literal) : NULL;
+            const char *raw = owned ? owned : (b->arg0 ? b->arg0 : "");
+            sb_line(o, "/* выполнить код Java: недоступно в нативной C-компиляции */");
+            if (raw && raw[0]) {
+                for (const char *p = raw; *p; ) {
+                    const char *nl = strchr(p, '\n');
+                    size_t len = nl ? (size_t)(nl - p) : strlen(p);
+                    sb_indent(o);
+                    sb_printf(o, "// %.*s\n", (int)len, p);
+                    if (!nl) break;
+                    p = nl + 1;
+                }
+            }
+            cat_free(owned);
+            break;
+        }
+        /* --- Клоны спрайтов --- */
+        case CB_CLONE:
+            /* В статической C-компиляции спрайты — статические структуры;
+               динамическое клонирование не моделируется. Безопасный no-op. */
+            sb_line(o, "; /* clone: в статической компиляции клоны не создаются */");
+            break;
+        case CB_DELETE_THIS_CLONE:
+            /* Ближайший эквивалент «удалить клон» — завершить его скрипт. */
+            sb_line(o, "return; /* delete this clone */");
             break;
         default:
             sb_line(o, "; /* brick #%d пропущен */", (int)b->kind);

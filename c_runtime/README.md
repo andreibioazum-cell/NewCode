@@ -68,6 +68,8 @@ code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_pro
 | Данные         | SetVariable, ChangeVariable, AddToList, DeleteFromList, ClearList, InsertIntoList, ReplaceInList |
 | Формулы        | +, −, ×, ÷, %, ^, сравнения, AND/OR/NOT, sin/cos/tan/sqrt/abs/round/floor/ceil/ln/log/exp/min/max/random/length/join/letter, USER_VARIABLE, USER_LIST, SENSOR |
 | C-блоки        | Malloc, Calloc, Realloc, Free, Memcpy, Memset, Typedef, Cast, PointerSet, PointerGet — настоящие операции с памятью |
+| Код (inline)   | ExecuteCCode (сырой C встраивается в вывод и исполняется нативно), ExecuteJavaCode (хранит исходник Java; исполняется скриптовым движком в Android-интерпретаторе) |
+| Клоны          | Clone, DeleteThisClone, WhenCloned — распознаются при загрузке; в статической C-компиляции Clone — no-op, DeleteThisClone → return |
 | Отладка/CLI    | PrintBrick (наше расширение — печатает значение в stdout)             |
 
 **Расширения** (Lego NXT/EV3, Raspberry Pi, Arduino, Phiro, Parrot Drone,

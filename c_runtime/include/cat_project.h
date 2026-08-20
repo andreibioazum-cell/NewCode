@@ -86,7 +86,22 @@ typedef enum {
     CB_MEMCPY, CB_MEMSET,
     CB_TYPEDEF, CB_CAST,
     CB_POINTER_SET, CB_POINTER_GET,
-    CB_RETURN, CB_BREAK, CB_CONTINUE
+    CB_RETURN, CB_BREAK, CB_CONTINUE,
+
+    /* Выполнение произвольного кода (free-text inline):
+       CB_C_CODE встраивает сырой C прямо в сгенерированный вывод
+       (выполняется как нативный машинный код вместе с программой);
+       CB_JAVA_CODE хранит исходник Java (выполняется скриптовым движком
+       в Android-интерпретаторе; в нативной C-компиляции недоступен). */
+    CB_C_CODE,
+    CB_JAVA_CODE,
+
+    /* Клоны спрайтов (распознаются при загрузке, чтобы проекты с клонами
+       не теряли скрипты; в статической C-компиляции модель клонов
+       ограничена — см. cat_compiler.c). */
+    CB_WHEN_CLONED,
+    CB_CLONE,
+    CB_DELETE_THIS_CLONE
 } CatBrickKind;
 
 /*
