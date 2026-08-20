@@ -89,16 +89,4 @@ object LoopUtil {
         }
         return false
     }
-
-    @JvmStatic
-    fun isAnyStitchRunning(): Boolean {
-        ProjectManager.getInstance() ?: return false
-        ProjectManager.getInstance().currentProject ?: return false
-        ProjectManager.getInstance().currentProject.spriteListWithClones?.forEach {
-            if (it.runningStitch.isRunning) {
-                return true
-            }
-        }
-        return false
-    }
 }

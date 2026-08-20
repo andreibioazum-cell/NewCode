@@ -78,8 +78,6 @@ class CategoryListItems {
     }
 
     fun getSensorItems(activity: Activity) = buildList {
-        addAll(getNxtSensorItems(activity))
-        addAll(getEv3SensorItems(activity))
         addAll(getPhiroSensorItems(activity))
         addAll(getArduinoSensorItems(activity))
         addAll(getDroneSensorItems(activity))
@@ -121,32 +119,6 @@ class CategoryListItems {
         addAll(toCategoryListItems(activity, OBJECT_PHYSICAL_2))
         addAll(toCategoryListItems(activity, OBJECT_COLOR_COLLISION, OBJECT_COLOR_PARAMS))
     }.let { addHeader(it, activity.getString(R.string.formula_editor_object_movement)) }
-
-    private fun getNxtSensorItems(activity: Activity): List<CategoryListRVAdapter.CategoryListItem> {
-        return if (SettingsFragment.isMindstormsNXTSharedPreferenceEnabled(
-                activity.applicationContext
-            )
-        ) {
-            addHeader(
-                toCategoryListItems(activity, SENSORS_NXT, null, CategoryListRVAdapter.NXT),
-                activity.getString(R.string.formula_editor_device_lego_nxt)
-            )
-        } else emptyList()
-    }
-
-    private fun getEv3SensorItems(activity: Activity): List<CategoryListRVAdapter.CategoryListItem> {
-        return if (SettingsFragment.isMindstormsEV3SharedPreferenceEnabled(
-                activity.applicationContext
-            )
-        ) {
-            addHeader(
-                toCategoryListItems(activity, SENSORS_EV3, null, CategoryListRVAdapter.EV3),
-                activity.getString(R.string.formula_editor_device_lego_ev3)
-            )
-        } else {
-            emptyList()
-        }
-    }
 
     private fun getPhiroSensorItems(activity: Activity): List<CategoryListRVAdapter.CategoryListItem> {
         return if (SettingsFragment.isPhiroSharedPreferenceEnabled(
@@ -849,27 +821,6 @@ class CategoryListItems {
             R.string.formula_editor_sensor_time_hour,
             R.string.formula_editor_sensor_time_minute,
             R.string.formula_editor_sensor_time_second
-        )
-        private val SENSORS_NXT = listOf(
-            R.string.formula_editor_sensor_lego_nxt_touch,
-            R.string.formula_editor_sensor_lego_nxt_sound,
-            R.string.formula_editor_sensor_lego_nxt_light,
-            R.string.formula_editor_sensor_lego_nxt_light_active,
-            R.string.formula_editor_sensor_lego_nxt_ultrasonic
-        )
-        private val SENSORS_EV3 = listOf(
-            R.string.formula_editor_sensor_lego_ev3_sensor_touch,
-            R.string.formula_editor_sensor_lego_ev3_sensor_infrared,
-            R.string.formula_editor_sensor_lego_ev3_sensor_color,
-            R.string.formula_editor_sensor_lego_ev3_sensor_color_ambient,
-            R.string.formula_editor_sensor_lego_ev3_sensor_color_reflected,
-            R.string.formula_editor_sensor_lego_ev3_sensor_hitechnic_color,
-            R.string.formula_editor_sensor_lego_ev3_sensor_nxt_temperature_c,
-            R.string.formula_editor_sensor_lego_ev3_sensor_nxt_temperature_f,
-            R.string.formula_editor_sensor_lego_ev3_sensor_nxt_light,
-            R.string.formula_editor_sensor_lego_ev3_sensor_nxt_light_active,
-            R.string.formula_editor_sensor_lego_ev3_sensor_nxt_sound,
-            R.string.formula_editor_sensor_lego_ev3_sensor_nxt_ultrasonic
         )
         private val SENSORS_PHIRO = listOf(
             R.string.formula_editor_phiro_sensor_front_left,

@@ -34,8 +34,6 @@ import org.catrobat.catroid.common.SoundInfo;
 import org.catrobat.catroid.content.actions.AddItemToUserListAction;
 import org.catrobat.catroid.content.actions.AdditiveParticleEffectAction;
 import org.catrobat.catroid.content.actions.ArcAction;
-import org.catrobat.catroid.content.actions.ArduinoSendDigitalValueAction;
-import org.catrobat.catroid.content.actions.ArduinoSendPWMValueAction;
 import org.catrobat.catroid.content.actions.AskAction;
 import org.catrobat.catroid.content.actions.AskSpeechAction;
 import org.catrobat.catroid.content.actions.AssertEqualsAction;
@@ -77,15 +75,6 @@ import org.catrobat.catroid.content.actions.GoToTouchPositionAction;
 import org.catrobat.catroid.content.actions.HideTextAction;
 import org.catrobat.catroid.content.actions.IfLogicAction;
 import org.catrobat.catroid.content.actions.InsertItemIntoUserListAction;
-import org.catrobat.catroid.content.actions.LegoEv3MotorMoveAction;
-import org.catrobat.catroid.content.actions.LegoEv3MotorStopAction;
-import org.catrobat.catroid.content.actions.LegoEv3MotorTurnAngleAction;
-import org.catrobat.catroid.content.actions.LegoEv3PlayToneAction;
-import org.catrobat.catroid.content.actions.LegoEv3SetLedAction;
-import org.catrobat.catroid.content.actions.LegoNxtMotorMoveAction;
-import org.catrobat.catroid.content.actions.LegoNxtMotorStopAction;
-import org.catrobat.catroid.content.actions.LegoNxtMotorTurnAngleAction;
-import org.catrobat.catroid.content.actions.LegoNxtPlayToneAction;
 import org.catrobat.catroid.content.actions.LookRequestAction;
 import org.catrobat.catroid.content.actions.MoveNStepsAction;
 import org.catrobat.catroid.content.actions.OpenUrlAction;
@@ -94,21 +83,12 @@ import org.catrobat.catroid.content.actions.ParameterizedAssertAction;
 import org.catrobat.catroid.content.actions.PauseForBeatsAction;
 import org.catrobat.catroid.content.actions.PenDownAction;
 import org.catrobat.catroid.content.actions.PenUpAction;
-import org.catrobat.catroid.content.actions.PhiroMotorMoveBackwardAction;
-import org.catrobat.catroid.content.actions.PhiroMotorMoveForwardAction;
-import org.catrobat.catroid.content.actions.PhiroMotorStopAction;
-import org.catrobat.catroid.content.actions.PhiroPlayToneAction;
-import org.catrobat.catroid.content.actions.PhiroRGBLightAction;
-import org.catrobat.catroid.content.actions.PhiroSensorAction;
 import org.catrobat.catroid.content.actions.PlayDrumForBeatsAction;
 import org.catrobat.catroid.content.actions.PlayNoteForBeatsAction;
 import org.catrobat.catroid.content.actions.PlaySoundAction;
 import org.catrobat.catroid.content.actions.PlaySoundAtAction;
 import org.catrobat.catroid.content.actions.PointInDirectionAction;
 import org.catrobat.catroid.content.actions.PointToAction;
-import org.catrobat.catroid.content.actions.RaspiIfLogicAction;
-import org.catrobat.catroid.content.actions.RaspiPwmAction;
-import org.catrobat.catroid.content.actions.RaspiSendDigitalValueAction;
 import org.catrobat.catroid.content.actions.ReadListFromDeviceAction;
 import org.catrobat.catroid.content.actions.ReadVariableFromDeviceAction;
 import org.catrobat.catroid.content.actions.ReadVariableFromFileAction;
@@ -118,7 +98,6 @@ import org.catrobat.catroid.content.actions.RepeatUntilAction;
 import org.catrobat.catroid.content.actions.ReplaceItemInUserListAction;
 import org.catrobat.catroid.content.actions.ReportAction;
 import org.catrobat.catroid.content.actions.ResetTimerAction;
-import org.catrobat.catroid.content.actions.RunningStitchAction;
 import org.catrobat.catroid.content.actions.SaveLaserAction;
 import org.catrobat.catroid.content.actions.SavePlotAction;
 import org.catrobat.catroid.content.actions.SceneStartAction;
@@ -132,7 +111,6 @@ import org.catrobat.catroid.content.actions.SetListeningLanguageAction;
 import org.catrobat.catroid.content.actions.SetLookAction;
 import org.catrobat.catroid.content.actions.SetLookByIndexAction;
 import org.catrobat.catroid.content.actions.SetNextLookAction;
-import org.catrobat.catroid.content.actions.SetNfcTagAction;
 import org.catrobat.catroid.content.actions.SetParticleColorAction;
 import org.catrobat.catroid.content.actions.SetPenColorAction;
 import org.catrobat.catroid.content.actions.SetPenSizeAction;
@@ -141,14 +119,12 @@ import org.catrobat.catroid.content.actions.SetRotationStyleAction;
 import org.catrobat.catroid.content.actions.SetSizeToAction;
 import org.catrobat.catroid.content.actions.SetTempoAction;
 import org.catrobat.catroid.content.actions.SetTextAction;
-import org.catrobat.catroid.content.actions.SetThreadColorAction;
 import org.catrobat.catroid.content.actions.SetTransparencyAction;
 import org.catrobat.catroid.content.actions.SetVariableAction;
 import org.catrobat.catroid.content.actions.SetVisibleAction;
 import org.catrobat.catroid.content.actions.SetVolumeToAction;
 import org.catrobat.catroid.content.actions.SetXAction;
 import org.catrobat.catroid.content.actions.SetYAction;
-import org.catrobat.catroid.content.actions.SewUpAction;
 import org.catrobat.catroid.content.actions.ShareLaserAction;
 import org.catrobat.catroid.content.actions.SharePlotAction;
 import org.catrobat.catroid.content.actions.ShowTextAction;
@@ -160,20 +136,17 @@ import org.catrobat.catroid.content.actions.StartCutAction;
 import org.catrobat.catroid.content.actions.StartEngraveAction;
 import org.catrobat.catroid.content.actions.StartListeningAction;
 import org.catrobat.catroid.content.actions.StartPlotAction;
-import org.catrobat.catroid.content.actions.StitchAction;
 import org.catrobat.catroid.content.actions.StopAllScriptsAction;
 import org.catrobat.catroid.content.actions.StopAllSoundsAction;
 import org.catrobat.catroid.content.actions.StopCutAction;
 import org.catrobat.catroid.content.actions.StopEngraveAction;
 import org.catrobat.catroid.content.actions.StopOtherScriptsAction;
 import org.catrobat.catroid.content.actions.StopPlotAction;
-import org.catrobat.catroid.content.actions.StopRunningStitchAction;
 import org.catrobat.catroid.content.actions.StopSoundAction;
 import org.catrobat.catroid.content.actions.StopThisScriptAction;
 import org.catrobat.catroid.content.actions.StoreCSVIntoUserListAction;
 import org.catrobat.catroid.content.actions.TapAtAction;
 import org.catrobat.catroid.content.actions.ThinkSayBubbleAction;
-import org.catrobat.catroid.content.actions.TripleStitchAction;
 import org.catrobat.catroid.content.actions.TurnLeftAction;
 import org.catrobat.catroid.content.actions.TurnRightAction;
 import org.catrobat.catroid.content.actions.UserDefinedBrickAction;
@@ -184,25 +157,11 @@ import org.catrobat.catroid.content.actions.WaitForSoundAction;
 import org.catrobat.catroid.content.actions.WaitTillIdleAction;
 import org.catrobat.catroid.content.actions.WaitUntilAction;
 import org.catrobat.catroid.content.actions.WebRequestAction;
-import org.catrobat.catroid.content.actions.WriteEmbroideryToFileAction;
 import org.catrobat.catroid.content.actions.WriteUserDataOnDeviceAction;
 import org.catrobat.catroid.content.actions.WriteVariableToFileAction;
-import org.catrobat.catroid.content.actions.ZigZagStitchAction;
 import org.catrobat.catroid.content.actions.conditional.GlideToAction;
 import org.catrobat.catroid.content.actions.conditional.IfOnEdgeBounceAction;
 import org.catrobat.catroid.content.bricks.ArcBrick;
-import org.catrobat.catroid.content.bricks.LegoEv3MotorMoveBrick;
-import org.catrobat.catroid.content.bricks.LegoEv3MotorStopBrick;
-import org.catrobat.catroid.content.bricks.LegoEv3MotorTurnAngleBrick;
-import org.catrobat.catroid.content.bricks.LegoEv3SetLedBrick;
-import org.catrobat.catroid.content.bricks.LegoNxtMotorMoveBrick;
-import org.catrobat.catroid.content.bricks.LegoNxtMotorStopBrick;
-import org.catrobat.catroid.content.bricks.LegoNxtMotorTurnAngleBrick;
-import org.catrobat.catroid.content.bricks.PhiroMotorMoveBackwardBrick;
-import org.catrobat.catroid.content.bricks.PhiroMotorMoveForwardBrick;
-import org.catrobat.catroid.content.bricks.PhiroMotorStopBrick;
-import org.catrobat.catroid.content.bricks.PhiroPlayToneBrick;
-import org.catrobat.catroid.content.bricks.PhiroRGBLightBrick;
 import org.catrobat.catroid.content.bricks.brickspinner.PickableDrum;
 import org.catrobat.catroid.content.bricks.brickspinner.PickableMusicalInstrument;
 import org.catrobat.catroid.formulaeditor.Formula;
@@ -427,144 +386,6 @@ public class ActionFactory extends Actions {
 		return action;
 	}
 
-	public Action createLegoNxtMotorMoveAction(Sprite sprite, SequenceAction sequence,
-			LegoNxtMotorMoveBrick.Motor motorEnum, Formula speed) {
-		LegoNxtMotorMoveAction action = Actions.action(LegoNxtMotorMoveAction.class);
-		action.setMotorEnum(motorEnum);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setSpeed(speed);
-		return action;
-	}
-
-	public Action createLegoNxtMotorStopAction(LegoNxtMotorStopBrick.Motor motorEnum) {
-		LegoNxtMotorStopAction action = Actions.action(LegoNxtMotorStopAction.class);
-		action.setMotorEnum(motorEnum);
-		return action;
-	}
-
-	public Action createLegoNxtMotorTurnAngleAction(Sprite sprite, SequenceAction sequence,
-			LegoNxtMotorTurnAngleBrick.Motor motorEnum, Formula degrees) {
-		LegoNxtMotorTurnAngleAction action = Actions.action(LegoNxtMotorTurnAngleAction.class);
-		action.setMotorEnum(motorEnum);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setDegrees(degrees);
-		return action;
-	}
-
-	public Action createLegoNxtPlayToneAction(Sprite sprite, SequenceAction sequence, Formula hertz,
-			Formula durationInSeconds) {
-		LegoNxtPlayToneAction action = Actions.action(LegoNxtPlayToneAction.class);
-		action.setHertz(hertz);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setDurationInSeconds(durationInSeconds);
-		return action;
-	}
-
-	public Action createLegoEv3SingleMotorMoveAction(Sprite sprite, SequenceAction sequence,
-			LegoEv3MotorMoveBrick.Motor motorEnum, Formula speed) {
-		LegoEv3MotorMoveAction action = action(LegoEv3MotorMoveAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setMotorEnum(motorEnum);
-		action.setSpeed(speed);
-		return action;
-	}
-
-	public Action createLegoEv3MotorStopAction(LegoEv3MotorStopBrick.Motor motorEnum) {
-		LegoEv3MotorStopAction action = action(LegoEv3MotorStopAction.class);
-		action.setMotorEnum(motorEnum);
-		return action;
-	}
-
-	public Action createLegoEv3SetLedAction(LegoEv3SetLedBrick.LedStatus ledStatusEnum) {
-		LegoEv3SetLedAction action = action(LegoEv3SetLedAction.class);
-		action.setLedStatusEnum(ledStatusEnum);
-		return action;
-	}
-
-	public Action createLegoEv3PlayToneAction(Sprite sprite, SequenceAction sequence,
-			Formula hertz, Formula durationInSeconds, Formula volumeInPercent) {
-		LegoEv3PlayToneAction action = action(LegoEv3PlayToneAction.class);
-		action.setHertz(hertz);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setDurationInSeconds(durationInSeconds);
-		action.setVolumeInPercent(volumeInPercent);
-		return action;
-	}
-
-	public Action createLegoEv3MotorTurnAngleAction(Sprite sprite, SequenceAction sequence,
-			LegoEv3MotorTurnAngleBrick.Motor motorEnum, Formula degrees) {
-		LegoEv3MotorTurnAngleAction action = action(LegoEv3MotorTurnAngleAction.class);
-		action.setMotorEnum(motorEnum);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setDegrees(degrees);
-		return action;
-	}
-
-	public Action createPhiroPlayToneActionAction(Sprite sprite, SequenceAction sequence,
-			PhiroPlayToneBrick.Tone toneEnum, Formula duration) {
-		PhiroPlayToneAction action = action(PhiroPlayToneAction.class);
-		action.setSelectedTone(toneEnum);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setDurationInSeconds(duration);
-		return action;
-	}
-
-	public Action createPhiroMotorMoveForwardActionAction(Sprite sprite, SequenceAction sequence,
-			PhiroMotorMoveForwardBrick.Motor motorEnum, Formula speed) {
-		PhiroMotorMoveForwardAction action = action(PhiroMotorMoveForwardAction.class);
-		action.setMotorEnum(motorEnum);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setSpeed(speed);
-		return action;
-	}
-
-	public Action createPhiroMotorMoveBackwardActionAction(Sprite sprite, SequenceAction sequence,
-			PhiroMotorMoveBackwardBrick.Motor motorEnum, Formula speed) {
-		PhiroMotorMoveBackwardAction action = action(PhiroMotorMoveBackwardAction.class);
-		action.setMotorEnum(motorEnum);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setSpeed(speed);
-		return action;
-	}
-
-	public Action createPhiroRgbLedEyeActionAction(Sprite sprite, SequenceAction sequence,
-			PhiroRGBLightBrick.Eye eye, Formula red, Formula green, Formula blue) {
-		PhiroRGBLightAction action = action(PhiroRGBLightAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setEyeEnum(eye);
-		action.setRed(red);
-		action.setGreen(green);
-		action.setBlue(blue);
-		return action;
-	}
-
-	public Action createPhiroSendSelectedSensorAction(Sprite sprite, SequenceAction sequence,
-			int sensorNumber, Action ifAction, Action elseAction) {
-		PhiroSensorAction action = action(PhiroSensorAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setSensor(sensorNumber);
-		action.setIfAction(ifAction);
-		action.setElseAction(elseAction);
-		return action;
-	}
-
-	public Action createPhiroMotorStopActionAction(PhiroMotorStopBrick.Motor motorEnum) {
-		PhiroMotorStopAction action = action(PhiroMotorStopAction.class);
-		action.setMotorEnum(motorEnum);
-		return action;
-	}
-
 	public Action createMoveNStepsAction(Sprite sprite, SequenceAction sequence, Formula steps) {
 		MoveNStepsAction action = Actions.action(MoveNStepsAction.class);
 		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
@@ -608,7 +429,6 @@ public class ActionFactory extends Actions {
 		action.setSprite(sprite);
 		return action;
 	}
-
 
 	public Action createStartCutAction(Sprite sprite) {
 		StartCutAction action = Actions.action(StartCutAction.class);
@@ -1184,54 +1004,6 @@ public class ActionFactory extends Actions {
 		return action;
 	}
 
-	public static Action createStitchAction(Sprite sprite) {
-		StitchAction action = Actions.action(StitchAction.class);
-		action.setSprite(sprite);
-		return action;
-	}
-
-	public Action createRunningStitchAction(Sprite sprite, SequenceAction sequence, Formula length) {
-		RunningStitchAction action = Actions.action(RunningStitchAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setLength(length);
-		return action;
-	}
-
-	public Action createTripleStitchAction(Sprite sprite, SequenceAction sequence, Formula steps) {
-		TripleStitchAction action = Actions.action(TripleStitchAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setSteps(steps);
-		return action;
-	}
-
-	public Action createZigZagStitchAction(Sprite sprite, SequenceAction sequence, Formula length,
-			Formula width) {
-		ZigZagStitchAction action = Actions.action(ZigZagStitchAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setLength(length);
-		action.setWidth(width);
-		return action;
-	}
-
-	public static Action createStopRunningStitchAction(Sprite sprite) {
-		StopRunningStitchAction action = Actions.action(StopRunningStitchAction.class);
-		action.setSprite(sprite);
-		return action;
-	}
-
-	public Action createWriteEmbroideryToFileAction(Sprite sprite, SequenceAction sequence,
-			Formula fileName) {
-		WriteEmbroideryToFileAction action = Actions.action(WriteEmbroideryToFileAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setFormula(fileName);
-
-		return action;
-	}
-
 	public Action createSavePlotAction(Sprite sprite, SequenceAction sequence, Formula fileName){
 		SavePlotAction action = Actions.action(SavePlotAction.class);
 		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
@@ -1259,21 +1031,6 @@ public class ActionFactory extends Actions {
 		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
 		action.setScope(scope);
 		action.setFormula(fileName);
-		return action;
-	}
-
-	public Action createSewUpAction(Sprite sprite) {
-		SewUpAction action = Actions.action(SewUpAction.class);
-		action.setSprite(sprite);
-		return action;
-	}
-
-	public Action createSetThreadColorAction(Sprite sprite, SequenceAction sequence, Formula color) {
-		SetThreadColorAction action = Actions.action(SetThreadColorAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setSprite(sprite);
-		action.setScope(scope);
-		action.setColor(color);
 		return action;
 	}
 
@@ -1420,58 +1177,6 @@ public class ActionFactory extends Actions {
 		return action;
 	}
 
-	public Action createSendDigitalArduinoValueAction(Sprite sprite, SequenceAction sequence,
-			Formula pinNumber, Formula pinValue) {
-		ArduinoSendDigitalValueAction action = action(ArduinoSendDigitalValueAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setPinNumber(pinNumber);
-		action.setPinValue(pinValue);
-		return action;
-	}
-
-	public Action createSendPWMArduinoValueAction(Sprite sprite, SequenceAction sequence,
-			Formula pinNumber, Formula pinValue) {
-		ArduinoSendPWMValueAction action = action(ArduinoSendPWMValueAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setPinNumber(pinNumber);
-		action.setPinValue(pinValue);
-		return action;
-	}
-
-	public Action createSendDigitalRaspiValueAction(Sprite sprite, SequenceAction sequence,
-			Formula pinNumber, Formula pinValue) {
-		RaspiSendDigitalValueAction action = action(RaspiSendDigitalValueAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setPinNumber(pinNumber);
-		action.setPinValue(pinValue);
-		return action;
-	}
-
-	public Action createSendRaspiPwmValueAction(Sprite sprite, SequenceAction sequence,
-			Formula pinNumber, Formula pwmFrequency, Formula pwmPercentage) {
-		RaspiPwmAction action = action(RaspiPwmAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setPinNumberFormula(pinNumber);
-		action.setPwmFrequencyFormula(pwmFrequency);
-		action.setPwmPercentageFormula(pwmPercentage);
-		return action;
-	}
-
-	public Action createRaspiIfLogicActionAction(Sprite sprite, SequenceAction sequence,
-			Formula pinNumber, Action ifAction, Action elseAction) {
-		RaspiIfLogicAction action = action(RaspiIfLogicAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setPinNumber(pinNumber);
-		action.setIfAction(ifAction);
-		action.setElseAction(elseAction);
-		return action;
-	}
-
 	public Action createStopScriptAction(int spinnerSelection, Script currentScript, Sprite sprite) {
 		switch (spinnerSelection) {
 			case BrickValues.STOP_THIS_SCRIPT:
@@ -1501,15 +1206,6 @@ public class ActionFactory extends Actions {
 			stopThisScriptAction.setCurrentScript(currentScript);
 			return stopThisScriptAction;
 		}
-	}
-
-	public Action createSetNfcTagAction(Sprite sprite, SequenceAction sequence, Formula nfcNdefMessage, int nfcNdefSpinnerSelection) {
-		SetNfcTagAction setNfcTagAction = Actions.action(SetNfcTagAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		setNfcTagAction.setScope(scope);
-		setNfcTagAction.setNfcTagNdefSpinnerSelection(nfcNdefSpinnerSelection);
-		setNfcTagAction.setNfcNdefMessage(nfcNdefMessage);
-		return setNfcTagAction;
 	}
 
 	public Action createAssertEqualsAction(Sprite sprite, SequenceAction sequence, Formula actual,

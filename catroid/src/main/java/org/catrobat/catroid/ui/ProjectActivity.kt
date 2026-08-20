@@ -28,11 +28,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
@@ -55,7 +53,6 @@ import org.catrobat.catroid.stage.TestResult
 import org.catrobat.catroid.ui.BottomBar.showBottomBar
 import org.catrobat.catroid.ui.controller.BackpackListManager
 import org.catrobat.catroid.ui.controller.ActorsAndObjectsManager
-import org.catrobat.catroid.ui.dialogs.LegoSensorConfigInfoDialog
 import org.catrobat.catroid.ui.fragment.ProjectOptionsFragment
 import org.catrobat.catroid.ui.recyclerview.backpack.ActorAndObjectActivity
 import org.catrobat.catroid.ui.recyclerview.backpack.BackpackActivity
@@ -67,7 +64,6 @@ import org.catrobat.catroid.ui.recyclerview.fragment.RecyclerViewFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.SceneListFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.SpriteListFragment
 import org.catrobat.catroid.ui.recyclerview.util.UniqueNameProvider
-import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import org.catrobat.catroid.utils.ToastUtil
 import org.catrobat.catroid.utils.Utils
 import org.catrobat.catroid.utils.setVisibleOrGone
@@ -111,7 +107,6 @@ class ProjectActivity : BaseCastActivity() {
         }
         loadFragment(fragmentPosition)
         showWarningForSuspiciousBricksOnce(this)
-        showLegoSensorConfigInfo()
         binding.bottomBar.apply {
             buttonAdd.setOnClickListener {
                 handleAddButton()
@@ -435,24 +430,5 @@ class ProjectActivity : BaseCastActivity() {
 
     private fun handlePlayButton() {
         StageActivity.handlePlayButton(projectManager, this)
-    }
-
-    private fun showLegoSensorConfigInfo() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val nxtDialogDisabled = preferences.getBoolean(
-            SettingsFragment.SETTINGS_MINDSTORMS_NXT_SHOW_SENSOR_INFO_BOX_DISABLED, false
-        )
-        val ev3DialogDisabled = preferences.getBoolean(
-            SettingsFragment.SETTINGS_MINDSTORMS_EV3_SHOW_SENSOR_INFO_BOX_DISABLED, false
-        )
-        val resourcesSet = projectManager.currentProject.requiredResources
-        if (!nxtDialogDisabled && resourcesSet.contains(Brick.BLUETOOTH_LEGO_NXT)) {
-            val dialog: DialogFragment = LegoSensorConfigInfoDialog.newInstance(Constants.NXT)
-            dialog.show(supportFragmentManager, LegoSensorConfigInfoDialog.DIALOG_FRAGMENT_TAG)
-        }
-        if (!ev3DialogDisabled && resourcesSet.contains(Brick.BLUETOOTH_LEGO_EV3)) {
-            val dialog: DialogFragment = LegoSensorConfigInfoDialog.newInstance(Constants.EV3)
-            dialog.show(supportFragmentManager, LegoSensorConfigInfoDialog.DIALOG_FRAGMENT_TAG)
-        }
     }
 }

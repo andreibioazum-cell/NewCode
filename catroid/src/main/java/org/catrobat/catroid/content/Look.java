@@ -301,7 +301,6 @@ public class Look extends Image {
 	public void act(float delta) {
 		scheduler.tick(delta);
 		if (sprite != null) {
-			sprite.runningStitch.update();
 			sprite.evaluateConditionScriptTriggers();
 		}
 	}
@@ -324,10 +323,6 @@ public class Look extends Image {
 				sprite.plot.addCutPoint(new PointF(x, y));
 			if (sprite.plot.isEngraving())
 				sprite.plot.addEngravePoint(new PointF(x, y));
-		}
-		if (sprite != null && sprite.runningStitch != null
-				&& !simultaneousMovementXY) {
-			sprite.runningStitch.update();
 		}
 	}
 

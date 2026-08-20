@@ -32,19 +32,13 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.badlogic.gdx.backends.android.surfaceview.GLSurfaceView20;
 
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
-import org.catrobat.catroid.bluetooth.base.BluetoothDeviceService;
-import org.catrobat.catroid.cast.CastManager;
-import org.catrobat.catroid.common.CatroidService;
-import org.catrobat.catroid.common.ServiceProvider;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.bricks.Brick;
-import org.catrobat.catroid.devices.mindstorms.MindstormsException;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
 import org.catrobat.catroid.formulaeditor.UserDataWrapper;
 import org.catrobat.catroid.io.SoundManager;
@@ -96,15 +90,7 @@ public final class StageLifeCycleController {
 
 		stageActivity.configuration = new AndroidApplicationConfiguration();
 		stageActivity.configuration.r = stageActivity.configuration.g = stageActivity.configuration.b = stageActivity.configuration.a = 8;
-		if (ProjectManager.getInstance().getCurrentProject().isCastProject()) {
-			stageActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			stageActivity.setContentView(R.layout.activity_stage_gamepad);
-			CastManager.getInstance().initializeGamepadActivity(stageActivity);
-			CastManager.getInstance()
-					.addStageViewToLayout((GLSurfaceView20) stageActivity.initializeForView(StageActivity.stageListener, stageActivity.configuration));
-		} else {
-			stageActivity.initialize(StageActivity.stageListener, stageActivity.configuration);
-		}
+		stageActivity.initialize(StageActivity.stageListener, stageActivity.configuration);
 
 		//CATROID-105 - TODO: does this make any difference? probably necessary for cast:
 		if (stageActivity.getGdxGraphics().getView() instanceof SurfaceView) {
@@ -158,16 +144,8 @@ public final class StageLifeCycleController {
 			if (stageActivity.cameraManager != null) {
 				stageActivity.cameraManager.pause();
 			}
-			BluetoothDeviceService bluetoothDeviceService =
-					ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE);
-			if (bluetoothDeviceService != null) {
-				bluetoothDeviceService.pause();
-			}
 			if (stageActivity.vibrationManager != null) {
 				stageActivity.vibrationManager.pause();
-			}
-			if (ProjectManager.getInstance().getCurrentProject().isCastProject()) {
-				CastManager.getInstance().setRemoteLayoutToPauseScreen(stageActivity);
 			}
 		}
 	}
@@ -203,18 +181,6 @@ public final class StageLifeCycleController {
 				stageActivity.vibrationManager.resume();
 			}
 
-			if (resourcesSet.contains(Brick.BLUETOOTH_LEGO_NXT)
-					|| resourcesSet.contains(Brick.BLUETOOTH_LEGO_EV3)
-					|| resourcesSet.contains(Brick.BLUETOOTH_PHIRO)
-					|| resourcesSet.contains(Brick.BLUETOOTH_SENSORS_ARDUINO)
-					|| resourcesSet.contains(Brick.BLUETOOTH_MULTIPLAYER)) {
-				try {
-					ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE).start();
-				} catch (MindstormsException e) {
-					Log.e(TAG, e.getMessage());
-				}
-			}
-
 			if (stageActivity.cameraManager != null) {
 				stageActivity.cameraManager.resume();
 			}
@@ -226,10 +192,6 @@ public final class StageLifeCycleController {
 			if (resourcesSet.contains(Brick.NFC_ADAPTER)
 					&& stageActivity.nfcAdapter != null) {
 				stageActivity.nfcAdapter.enableForegroundDispatch(stageActivity, stageActivity.pendingIntent, null, null);
-			}
-
-			if (ProjectManager.getInstance().getCurrentProject().isCastProject()) {
-				CastManager.getInstance().resumeRemoteLayoutFromPauseScreen();
 			}
 
 			SoundManager.getInstance().resume();
@@ -246,19 +208,12 @@ public final class StageLifeCycleController {
 			if (stageActivity.brickDialogManager != null) {
 				stageActivity.brickDialogManager.dismissAllDialogs();
 			}
-			BluetoothDeviceService service = ServiceProvider.getService(CatroidService.BLUETOOTH_DEVICE_SERVICE);
-			if (service != null) {
-				service.destroy();
-			}
 			stageActivity.vibrationManager = null;
 			if (stageActivity.cameraManager != null) {
 				stageActivity.cameraManager.destroy();
 				stageActivity.cameraManager = null;
 			}
 			SensorHandler.destroy();
-			if (ProjectManager.getInstance().getCurrentProject().isCastProject()) {
-				CastManager.getInstance().onStageDestroyed();
-			}
 			stageActivity.manageLoadAndFinish();
 			StageActivity.stageListener = null;
 		}

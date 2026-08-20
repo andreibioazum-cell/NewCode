@@ -40,7 +40,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.ListFragment
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
-import org.catrobat.catroid.cast.CastManager
 import org.catrobat.catroid.content.bricks.Brick
 import org.catrobat.catroid.ui.EdgeToEdge
 import org.catrobat.catroid.ui.SpriteActivity
@@ -154,10 +153,6 @@ class AddBrickFragment : ListFragment() {
     }
 }
 fun addBrickToScript(brick: Brick, activity: SpriteActivity, addBrickListener: AddBrickFragment.OnAddBrickListener?, parentFragmentManager: FragmentManager, tag: String) {
-    if (ProjectManager.getInstance().currentProject.isCastProject && CastManager.unsupportedBricks.contains(brick.javaClass)) {
-        ToastUtil.showError(activity, R.string.error_unsupported_bricks_chromecast)
-        return
-    }
     try {
         val brickToAdd = brick.clone()
         addBrickListener?.addBrick(brickToAdd)

@@ -34,8 +34,6 @@ import org.catrobat.catroid.common.DefaultProjectHandler;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.ScreenModes;
 import org.catrobat.catroid.common.SoundInfo;
-import org.catrobat.catroid.content.LegoEV3Setting;
-import org.catrobat.catroid.content.LegoNXTSetting;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.Scene;
 import org.catrobat.catroid.content.Script;
@@ -43,7 +41,6 @@ import org.catrobat.catroid.content.Setting;
 import org.catrobat.catroid.content.Sprite;
 import org.catrobat.catroid.content.WhenBounceOffScript;
 import org.catrobat.catroid.content.backwardcompatibility.BrickTreeBuilder;
-import org.catrobat.catroid.content.bricks.ArduinoSendPWMValueBrick;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.FormulaBrick;
 import org.catrobat.catroid.content.bricks.SetBackgroundByIndexAndWaitBrick;
@@ -149,9 +146,6 @@ public final class ProjectManager {
 		if (project.getCatrobatLanguageVersion() <= 0.993) {
 			ProjectManager.updateSetPenColorFormulasTo994(project);
 		}
-		if (project.getCatrobatLanguageVersion() <= 0.994) {
-			ProjectManager.updateArduinoValuesTo995(project);
-		}
 		if (project.getCatrobatLanguageVersion() <= 0.995) {
 			ProjectManager.updateCollisionScriptsTo996(project);
 		}
@@ -178,9 +172,6 @@ public final class ProjectManager {
 
 		localizeBackgroundSprites(project, context.getString(R.string.background));
 		initializeScripts(project);
-
-		loadLegoNXTSettingsFromProject(project, context);
-		loadLegoEV3SettingsFromProject(project, context);
 
 		Brick.ResourcesSet resourcesSet = project.getRequiredResources();
 
@@ -297,26 +288,6 @@ public final class ProjectManager {
 		}
 	}
 
-	private static void loadLegoNXTSettingsFromProject(Project project, Context context) {
-		for (Setting setting : project.getSettings()) {
-			if (setting instanceof LegoNXTSetting) {
-				SettingsFragment.enableLegoMindstormsNXTBricks(context);
-				SettingsFragment.setLegoMindstormsNXTSensorMapping(context, ((LegoNXTSetting) setting).getSensorMapping());
-				return;
-			}
-		}
-	}
-
-	private static void loadLegoEV3SettingsFromProject(Project project, Context context) {
-		for (Setting setting : project.getSettings()) {
-			if (setting instanceof LegoEV3Setting) {
-				SettingsFragment.enableLegoMindstormsEV3Bricks(context);
-				SettingsFragment.setLegoMindstormsEV3SensorMapping(context, ((LegoEV3Setting) setting).getSensorMapping());
-				return;
-			}
-		}
-	}
-
 	public List<UserVariable> getGlobalVariableConflicts(Project project1, Project project2) {
 		List<UserVariable> project1GlobalVars = project1.getUserVariables();
 		List<UserVariable> project2GlobalVars = project2.getUserVariables();
@@ -414,23 +385,6 @@ public final class ProjectManager {
 			}
 		}
 	}
-
-	@VisibleForTesting
-	public static void updateArduinoValuesTo995(Project project) {
-		for (Scene scene : project.getSceneList()) {
-			for (Sprite sprite : scene.getSpriteList()) {
-				for (Script script : sprite.getScriptList()) {
-					for (Brick brick : script.getBrickList()) {
-						if (brick instanceof ArduinoSendPWMValueBrick) {
-							ArduinoSendPWMValueBrick spcBrick = (ArduinoSendPWMValueBrick) brick;
-							spcBrick.updateArduinoValues994to995();
-						}
-					}
-				}
-			}
-		}
-	}
-
 	@VisibleForTesting
 	public static void updateCollisionScriptsTo996(Project project) {
 		for (Scene scene : project.getSceneList()) {

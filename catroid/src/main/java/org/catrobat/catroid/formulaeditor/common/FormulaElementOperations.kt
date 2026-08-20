@@ -40,7 +40,6 @@ import org.catrobat.catroid.formulaeditor.Sensors
 import org.catrobat.catroid.formulaeditor.UserData
 import org.catrobat.catroid.formulaeditor.UserList
 import org.catrobat.catroid.formulaeditor.UserVariable
-import org.catrobat.catroid.nfc.NfcHandler
 import org.catrobat.catroid.sensing.CollisionDetection
 import org.catrobat.catroid.stage.StageActivity
 import org.catrobat.catroid.stage.StageListener
@@ -175,8 +174,6 @@ object FormulaElementOperations {
             Sensors.OBJECT_NUMBER_OF_LOOKS -> getNumberOfLooks(lookData, lookDataList).toDouble()
             Sensors.OBJECT_LOOK_NAME,
             Sensors.OBJECT_BACKGROUND_NAME -> getLookName(lookData)
-            Sensors.NFC_TAG_MESSAGE -> NfcHandler.getLastNfcTagMessage()
-            Sensors.NFC_TAG_ID -> NfcHandler.getLastNfcTagId()
             Sensors.COLLIDES_WITH_EDGE -> tryCalculateCollidesWithEdge(
                 look,
                 StageActivity.stageListener,
