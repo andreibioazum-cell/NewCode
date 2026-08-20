@@ -326,7 +326,6 @@ public final class SensorHandler implements SensorEventListener, SensorCustomEve
 			default:
 				return Objects.requireNonNull(instance.sensorValueMap.getOrDefault(sensor, 0.0d));
 		}
-		return 0.0d;
 	}
 
 	private static Double calculateCompassDirection(float[] rotationMatrixOut) {
