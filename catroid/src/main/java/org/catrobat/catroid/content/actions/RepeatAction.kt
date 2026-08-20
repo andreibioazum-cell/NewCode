@@ -53,16 +53,28 @@ class RepeatAction : LoopAction() {
         if (executedCount >= repeatCountValue && !isForeverRepeat) {
             return true
         }
-        if (action != null && action.act(delta) && !isLoopDelayNeeded()) {
-            executedCount++
-            if (executedCount >= repeatCountValue && !isForeverRepeat) {
+        if (action != null) {
+            val script = loopScript()
+            val bodyDone = action.act(delta)
+            if (LoopController.consumeBreak(script)) {
                 return true
             }
-            isCurrentLoopInitialized = false
-            action?.restart()
+            val iterationDone = LoopController.consumeContinue(script) ||
+                bodyDone && !isLoopDelayNeeded()
+            if (iterationDone) {
+                executedCount++
+                if (executedCount >= repeatCountValue && !isForeverRepeat) {
+                    return true
+                }
+                isCurrentLoopInitialized = false
+                action?.restart()
+            }
         }
         return false
     }
+
+    private fun loopScript(): org.catrobat.catroid.content.Script? =
+        (scope?.sequence as? ScriptSequenceAction)?.script
 
     override fun restart() {
         isCurrentLoopInitialized = false

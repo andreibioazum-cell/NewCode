@@ -67,9 +67,9 @@ static int map_brick(const char *type) {
         {"HideBrick", CB_HIDE},
         {"SetSizeToBrick", CB_SET_SIZE_TO},
         {"ChangeSizeByNBrick", CB_CHANGE_SIZE_BY},
-        {"SayBubbleBrick", CB_SAY},
+        {"SayBubbleBrick", CB_SAY}, {"SayBrick", CB_SAY},
         {"SayForBubbleBrick", CB_SAY_FOR},
-        {"ThinkBubbleBrick", CB_THINK},
+        {"ThinkBubbleBrick", CB_THINK}, {"ThinkBrick", CB_THINK},
         {"ThinkForBubbleBrick", CB_THINK_FOR},
         {"SetLookBrick", CB_SET_LOOK},
         {"NextLookBrick", CB_NEXT_LOOK},
@@ -87,6 +87,20 @@ static int map_brick(const char *type) {
         {"ReplaceItemInUserListBrick", CB_REPLACE_IN_LIST},
         /* Наш собственный удобный: */
         {"PrintBrick", CB_PRINT},
+        /* Низкоуровневые C-блоки (см. cat_project.h). */
+        {"MallocBrick", CB_MALLOC},
+        {"CallocBrick", CB_CALLOC},
+        {"ReallocBrick", CB_REALLOC},
+        {"FreeBrick", CB_FREE},
+        {"MemcpyBrick", CB_MEMCPY},
+        {"MemsetBrick", CB_MEMSET},
+        {"TypedefBrick", CB_TYPEDEF},
+        {"CastBrick", CB_CAST},
+        {"PointerSetBrick", CB_POINTER_SET},
+        {"PointerGetBrick", CB_POINTER_GET},
+        {"ReturnBrick", CB_RETURN},
+        {"BreakBrick", CB_BREAK},
+        {"ContinueBrick", CB_CONTINUE},
     };
     for (size_t i = 0; i < sizeof(M)/sizeof(M[0]); ++i)
         if (strcmp(M[i].n, type) == 0) return M[i].k;
@@ -178,7 +192,12 @@ static void parse_extras(CatXmlNode *host, CatBrick *b) {
     if (uv) {
         const char *ref = cat_xml_attr(uv, "reference");
         if (ref) b->arg0 = cat_strdup(ref); /* упрощение */
-        else if (uv->text) b->arg0 = cat_strdup(uv->text);
+        else if (uv->text && uv->text[0]) b->arg0 = cat_strdup(uv->text);
+        else {
+            /* Формат Android-приложения: <userVariable><name>X</name></userVariable> */
+            CatXmlNode *nm = cat_xml_child(uv, "name");
+            if (nm && nm->text) b->arg0 = cat_strdup(nm->text);
+        }
     }
     CatXmlNode *ul = cat_xml_child(host, "userList");
     if (ul && !b->arg0) {

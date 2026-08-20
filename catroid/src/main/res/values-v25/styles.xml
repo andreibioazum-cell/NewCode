@@ -82,6 +82,7 @@
         <item name="icon_arduino">@drawable/ic_arduino_pos</item>
         <item name="icon_event">@drawable/ic_event_pos</item>
         <item name="icon_pen">@drawable/ic_pen_pos</item>
+        <item name="icon_c">@drawable/ic_c_pos</item>
         <item name="icon_chromecast">@drawable/ic_chromecast_pos</item>
         <item name="icon_legonxt">@drawable/ic_legonxt_pos</item>
         <item name="icon_phiro">@drawable/ic_phiro_pos</item>

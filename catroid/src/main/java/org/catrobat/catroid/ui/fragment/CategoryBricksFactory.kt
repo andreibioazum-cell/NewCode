@@ -23,6 +23,8 @@
 package org.catrobat.catroid.ui.fragment
 
 import android.content.Context
+import java.util.ArrayList
+import java.util.Locale
 import org.catrobat.catroid.BuildConfig
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
@@ -37,11 +39,14 @@ import org.catrobat.catroid.content.bricks.AskSpeechBrick
 import org.catrobat.catroid.content.bricks.AssertEqualsBrick
 import org.catrobat.catroid.content.bricks.AssertUserListsBrick
 import org.catrobat.catroid.content.bricks.BackgroundRequestBrick
+import org.catrobat.catroid.content.bricks.BreakBrick
 import org.catrobat.catroid.content.bricks.Brick
 import org.catrobat.catroid.content.bricks.BroadcastBrick
 import org.catrobat.catroid.content.bricks.BroadcastReceiverBrick
 import org.catrobat.catroid.content.bricks.BroadcastWaitBrick
+import org.catrobat.catroid.content.bricks.CallocBrick
 import org.catrobat.catroid.content.bricks.CameraBrick
+import org.catrobat.catroid.content.bricks.CastBrick
 import org.catrobat.catroid.content.bricks.ChangeBrightnessByNBrick
 import org.catrobat.catroid.content.bricks.ChangeColorByNBrick
 import org.catrobat.catroid.content.bricks.ChangeSizeByNBrick
@@ -57,6 +62,7 @@ import org.catrobat.catroid.content.bricks.ClearGraphicEffectBrick
 import org.catrobat.catroid.content.bricks.ClearUserListBrick
 import org.catrobat.catroid.content.bricks.CloneBrick
 import org.catrobat.catroid.content.bricks.ComeToFrontBrick
+import org.catrobat.catroid.content.bricks.ContinueBrick
 import org.catrobat.catroid.content.bricks.CopyLookBrick
 import org.catrobat.catroid.content.bricks.DeleteItemOfUserListBrick
 import org.catrobat.catroid.content.bricks.DeleteLookBrick
@@ -69,10 +75,11 @@ import org.catrobat.catroid.content.bricks.FlashBrick
 import org.catrobat.catroid.content.bricks.ForItemInUserListBrick
 import org.catrobat.catroid.content.bricks.ForVariableFromToBrick
 import org.catrobat.catroid.content.bricks.ForeverBrick
+import org.catrobat.catroid.content.bricks.FreeBrick
 import org.catrobat.catroid.content.bricks.GlideToBrick
 import org.catrobat.catroid.content.bricks.GoNStepsBackBrick
-import org.catrobat.catroid.content.bricks.GoToBrick
 import org.catrobat.catroid.content.bricks.GoThroughBrick
+import org.catrobat.catroid.content.bricks.GoToBrick
 import org.catrobat.catroid.content.bricks.HideBrick
 import org.catrobat.catroid.content.bricks.HideTextBrick
 import org.catrobat.catroid.content.bricks.IfLogicBeginBrick
@@ -80,6 +87,9 @@ import org.catrobat.catroid.content.bricks.IfOnEdgeBounceBrick
 import org.catrobat.catroid.content.bricks.IfThenLogicBeginBrick
 import org.catrobat.catroid.content.bricks.InsertItemIntoUserListBrick
 import org.catrobat.catroid.content.bricks.LookRequestBrick
+import org.catrobat.catroid.content.bricks.MallocBrick
+import org.catrobat.catroid.content.bricks.MemcpyBrick
+import org.catrobat.catroid.content.bricks.MemsetBrick
 import org.catrobat.catroid.content.bricks.MoveNStepsBrick
 import org.catrobat.catroid.content.bricks.NextLookBrick
 import org.catrobat.catroid.content.bricks.NoteBrick
@@ -99,18 +109,21 @@ import org.catrobat.catroid.content.bricks.PlaySoundAtBrick
 import org.catrobat.catroid.content.bricks.PlaySoundBrick
 import org.catrobat.catroid.content.bricks.PointInDirectionBrick
 import org.catrobat.catroid.content.bricks.PointToBrick
+import org.catrobat.catroid.content.bricks.PointerGetBrick
+import org.catrobat.catroid.content.bricks.PointerSetBrick
 import org.catrobat.catroid.content.bricks.PreviousLookBrick
 import org.catrobat.catroid.content.bricks.ReadListFromDeviceBrick
 import org.catrobat.catroid.content.bricks.ReadVariableFromDeviceBrick
 import org.catrobat.catroid.content.bricks.ReadVariableFromFileBrick
+import org.catrobat.catroid.content.bricks.ReallocBrick
 import org.catrobat.catroid.content.bricks.RepeatBrick
 import org.catrobat.catroid.content.bricks.RepeatUntilBrick
 import org.catrobat.catroid.content.bricks.ReplaceItemInUserListBrick
 import org.catrobat.catroid.content.bricks.ReportBrick
 import org.catrobat.catroid.content.bricks.ResetTimerBrick
+import org.catrobat.catroid.content.bricks.ReturnBrick
 import org.catrobat.catroid.content.bricks.SaveLaserBrick
 import org.catrobat.catroid.content.bricks.SavePlotBrick
-import org.catrobat.catroid.content.bricks.SharePlotBrick
 import org.catrobat.catroid.content.bricks.SayBubbleBrick
 import org.catrobat.catroid.content.bricks.SayForBubbleBrick
 import org.catrobat.catroid.content.bricks.SceneStartBrick
@@ -144,6 +157,7 @@ import org.catrobat.catroid.content.bricks.SetVolumeToBrick
 import org.catrobat.catroid.content.bricks.SetXBrick
 import org.catrobat.catroid.content.bricks.SetYBrick
 import org.catrobat.catroid.content.bricks.ShareLaserBrick
+import org.catrobat.catroid.content.bricks.SharePlotBrick
 import org.catrobat.catroid.content.bricks.ShowBrick
 import org.catrobat.catroid.content.bricks.ShowTextBrick
 import org.catrobat.catroid.content.bricks.ShowTextColorSizeAlignmentBrick
@@ -170,6 +184,7 @@ import org.catrobat.catroid.content.bricks.TurnLeftBrick
 import org.catrobat.catroid.content.bricks.TurnLeftSpeedBrick
 import org.catrobat.catroid.content.bricks.TurnRightBrick
 import org.catrobat.catroid.content.bricks.TurnRightSpeedBrick
+import org.catrobat.catroid.content.bricks.TypedefBrick
 import org.catrobat.catroid.content.bricks.UserDefinedBrick
 import org.catrobat.catroid.content.bricks.UserDefinedReceiverBrick
 import org.catrobat.catroid.content.bricks.VibrationBrick
@@ -193,8 +208,6 @@ import org.catrobat.catroid.formulaeditor.Operators
 import org.catrobat.catroid.formulaeditor.Sensors
 import org.catrobat.catroid.ui.controller.RecentBrickListManager
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
-import java.util.ArrayList
-import java.util.Locale
 
 open class CategoryBricksFactory {
 
@@ -235,6 +248,8 @@ open class CategoryBricksFactory {
                 context,
                 isBackgroundSprite
             )
+
+            context.getString(R.string.category_c) -> return setupCBlocksCategoryList(context)
 
             context.getString(R.string.category_plot) -> return setupPlotCategoryList(context)
             context.getString(R.string.category_laser) -> return setupLaserCategoryList(context)
@@ -667,6 +682,29 @@ open class CategoryBricksFactory {
         return deviceBrickList
     }
 
+    private fun setupCBlocksCategoryList(context: Context): List<Brick> {
+        val cBrickList: MutableList<Brick> = ArrayList()
+        cBrickList.add(TypedefBrick(
+            context.getString(R.string.brick_c_typedef_name_default),
+            context.getString(R.string.brick_c_base_type_default)))
+        cBrickList.add(MallocBrick(BrickValues.C_ALLOC_SIZE, null))
+        cBrickList.add(CallocBrick(BrickValues.C_CALLOC_COUNT, BrickValues.C_ALLOC_SIZE, null))
+        cBrickList.add(PointerSetBrick(BrickValues.C_POINTER, BrickValues.C_OFFSET,
+            BrickValues.C_MEMSET_VALUE, context.getString(R.string.brick_c_type_default)))
+        cBrickList.add(PointerGetBrick(BrickValues.C_POINTER, BrickValues.C_OFFSET,
+            context.getString(R.string.brick_c_type_default), null))
+        cBrickList.add(ReallocBrick(BrickValues.C_POINTER, BrickValues.C_ALLOC_SIZE, null))
+        cBrickList.add(FreeBrick(BrickValues.C_POINTER))
+        cBrickList.add(MemcpyBrick(BrickValues.C_POINTER, BrickValues.C_POINTER, BrickValues.C_MEMCPY_SIZE))
+        cBrickList.add(MemsetBrick(BrickValues.C_POINTER, BrickValues.C_MEMSET_VALUE, BrickValues.C_MEMCPY_SIZE))
+        cBrickList.add(CastBrick(BrickValues.C_MEMSET_VALUE,
+            context.getString(R.string.brick_c_type_default), null))
+        cBrickList.add(BreakBrick())
+        cBrickList.add(ContinueBrick())
+        cBrickList.add(ReturnBrick())
+        return cBrickList
+    }
+
     private fun setupPlotCategoryList(context: Context): List<Brick> {
         val plotBrickList: MutableList<Brick> = ArrayList()
         plotBrickList.add(StartPlotBrick())
@@ -787,6 +825,11 @@ open class CategoryBricksFactory {
                 brick,
                 setupAssertionsCategoryList(context)
             ) -> res.getString(R.string.category_assertions)
+
+            searchList(
+                brick,
+                setupCBlocksCategoryList(context)
+            ) -> res.getString(R.string.category_c)
 
             else -> "No Match"
         }

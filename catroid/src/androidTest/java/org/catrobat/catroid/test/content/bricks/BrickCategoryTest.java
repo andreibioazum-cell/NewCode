@@ -43,6 +43,11 @@ import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.BroadcastBrick;
 import org.catrobat.catroid.content.bricks.BroadcastReceiverBrick;
 import org.catrobat.catroid.content.bricks.BroadcastWaitBrick;
+import org.catrobat.catroid.content.bricks.BreakBrick;
+import org.catrobat.catroid.content.bricks.CallocBrick;
+import org.catrobat.catroid.content.bricks.CastBrick;
+import org.catrobat.catroid.content.bricks.ContinueBrick;
+import org.catrobat.catroid.content.bricks.FreeBrick;
 import org.catrobat.catroid.content.bricks.CameraBrick;
 import org.catrobat.catroid.content.bricks.ChangeBrightnessByNBrick;
 import org.catrobat.catroid.content.bricks.ChangeColorByNBrick;
@@ -114,12 +119,17 @@ import org.catrobat.catroid.content.bricks.LegoNxtMotorMoveBrick;
 import org.catrobat.catroid.content.bricks.LegoNxtMotorStopBrick;
 import org.catrobat.catroid.content.bricks.LegoNxtMotorTurnAngleBrick;
 import org.catrobat.catroid.content.bricks.LegoNxtPlayToneBrick;
+import org.catrobat.catroid.content.bricks.MallocBrick;
+import org.catrobat.catroid.content.bricks.MemcpyBrick;
+import org.catrobat.catroid.content.bricks.MemsetBrick;
 import org.catrobat.catroid.content.bricks.LookRequestBrick;
 import org.catrobat.catroid.content.bricks.MoveNStepsBrick;
 import org.catrobat.catroid.content.bricks.NextLookBrick;
 import org.catrobat.catroid.content.bricks.NoteBrick;
 import org.catrobat.catroid.content.bricks.OpenUrlBrick;
 import org.catrobat.catroid.content.bricks.PaintNewLookBrick;
+import org.catrobat.catroid.content.bricks.PointerGetBrick;
+import org.catrobat.catroid.content.bricks.PointerSetBrick;
 import org.catrobat.catroid.content.bricks.ParameterizedBrick;
 import org.catrobat.catroid.content.bricks.ParticleEffectAdditivityBrick;
 import org.catrobat.catroid.content.bricks.PauseForBeatsBrick;
@@ -143,6 +153,7 @@ import org.catrobat.catroid.content.bricks.PreviousLookBrick;
 import org.catrobat.catroid.content.bricks.RaspiIfLogicBeginBrick;
 import org.catrobat.catroid.content.bricks.RaspiPwmBrick;
 import org.catrobat.catroid.content.bricks.RaspiSendDigitalValueBrick;
+import org.catrobat.catroid.content.bricks.ReallocBrick;
 import org.catrobat.catroid.content.bricks.ReadListFromDeviceBrick;
 import org.catrobat.catroid.content.bricks.ReadVariableFromDeviceBrick;
 import org.catrobat.catroid.content.bricks.ReadVariableFromFileBrick;
@@ -214,10 +225,12 @@ import org.catrobat.catroid.content.bricks.ThinkBubbleBrick;
 import org.catrobat.catroid.content.bricks.ThinkForBubbleBrick;
 import org.catrobat.catroid.content.bricks.TouchAndSlideBrick;
 import org.catrobat.catroid.content.bricks.TripleStitchBrick;
+import org.catrobat.catroid.content.bricks.ReturnBrick;
 import org.catrobat.catroid.content.bricks.TurnLeftBrick;
 import org.catrobat.catroid.content.bricks.TurnLeftSpeedBrick;
 import org.catrobat.catroid.content.bricks.TurnRightBrick;
 import org.catrobat.catroid.content.bricks.TurnRightSpeedBrick;
+import org.catrobat.catroid.content.bricks.TypedefBrick;
 import org.catrobat.catroid.content.bricks.VibrationBrick;
 import org.catrobat.catroid.content.bricks.WaitBrick;
 import org.catrobat.catroid.content.bricks.WaitTillIdleBrick;
@@ -268,6 +281,20 @@ public class BrickCategoryTest {
 	@Parameterized.Parameters(name = "{0}")
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] {
+				{"C", Arrays.asList(TypedefBrick.class,
+						MallocBrick.class,
+						CallocBrick.class,
+						PointerSetBrick.class,
+						PointerGetBrick.class,
+						ReallocBrick.class,
+						FreeBrick.class,
+						MemcpyBrick.class,
+						MemsetBrick.class,
+						CastBrick.class,
+						BreakBrick.class,
+						ContinueBrick.class,
+						ReturnBrick.class)},
+
 				{"Motion", Arrays.asList(PlaceAtBrick.class,
 						SetXBrick.class,
 						SetYBrick.class,

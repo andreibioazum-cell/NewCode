@@ -1,5 +1,5 @@
 /*
- * cat_project.h - Внутреннее представление проекта Catrobat.
+ * cat_project.h - Внутреннее представление проекта NewCode/Catrobat.
  *
  * Оставляем ТОЛЬКО базовые сущности: Project -> Scene -> Sprite -> Script -> Brick.
  * Никаких Lego/EV3/NXT/Drone/Phiro/JumpingSumo/Arduino/RaspberryPi/NFC/Cast/Embroidery.

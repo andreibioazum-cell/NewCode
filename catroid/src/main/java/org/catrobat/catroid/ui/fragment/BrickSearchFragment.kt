@@ -318,6 +318,7 @@ class BrickSearchFragment : ListFragment() {
             availableBricks.addAll(categoryBricksFactory.getBricks(requireContext().getString(R.string.category_data), backgroundSprite.equals(sprite), requireContext()))
             availableBricks.addAll(categoryBricksFactory.getBricks(requireContext().getString(R.string.category_device), backgroundSprite.equals(sprite), requireContext()))
             if (!onlyBeginnerBricks()) {
+                availableBricks.addAll(categoryBricksFactory.getBricks(requireContext().getString(R.string.category_c), backgroundSprite.equals(sprite), requireContext()))
                 availableBricks.addAll(categoryBricksFactory.getBricks(requireContext().getString(R.string.category_user_bricks), backgroundSprite.equals(sprite), requireContext()))
             }
             if (SettingsFragment.isTestSharedPreferenceEnabled(activity)) {
