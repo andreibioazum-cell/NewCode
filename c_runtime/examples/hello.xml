@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<program>
+  <header>
+    <programName>Hello Catrobat (C runtime)</programName>
+  </header>
+  <scenes>
+    <scene>
+      <name>Main</name>
+      <objectList>
+        <object>
+          <name>Cat</name>
+          <scriptList>
+            <script type="StartScript">
+              <brickList>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value">
+                      <type>STRING</type>
+                      <value>Hello from Catrobat on C!</value>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="SetVariableBrick">
+                  <userVariable>counter</userVariable>
+                  <formulaList>
+                    <formula category="value">
+                      <type>NUMBER</type>
+                      <value>0</value>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="RepeatBrick">
+                  <formulaList>
+                    <formula category="times">
+                      <type>NUMBER</type>
+                      <value>3</value>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="ChangeVariableBrick">
+                  <userVariable>counter</userVariable>
+                  <formulaList>
+                    <formula category="value">
+                      <type>NUMBER</type>
+                      <value>1</value>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value">
+                      <type>FUNCTION</type>
+                      <value>JOIN</value>
+                      <leftChild>
+                        <type>STRING</type>
+                        <value>counter=</value>
+                      </leftChild>
+                      <rightChild>
+                        <type>USER_VARIABLE</type>
+                        <value>counter</value>
+                      </rightChild>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="LoopEndBrick"/>
+                <brick type="MoveNStepsBrick">
+                  <formulaList>
+                    <formula category="steps">
+                      <type>NUMBER</type>
+                      <value>10</value>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value">
+                      <type>FUNCTION</type>
+                      <value>JOIN</value>
+                      <leftChild>
+                        <type>STRING</type>
+                        <value>x=</value>
+                      </leftChild>
+                      <rightChild>
+                        <type>SENSOR</type>
+                        <value>OBJECT_X</value>
+                      </rightChild>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="BroadcastBrick">
+                  <broadcastMessage>ping</broadcastMessage>
+                </brick>
+                <!-- Расширение (будет проигнорировано): -->
+                <brick type="LegoNxtMotorMoveBrick"/>
+                <brick type="DroneTakeOffLandBrick"/>
+              </brickList>
+            </script>
+            <script type="BroadcastScript">
+              <broadcastMessage>ping</broadcastMessage>
+              <brickList>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value">
+                      <type>STRING</type>
+                      <value>Got broadcast: pong!</value>
+                    </formula>
+                  </formulaList>
+                </brick>
+              </brickList>
+            </script>
+          </scriptList>
+        </object>
+      </objectList>
+    </scene>
+  </scenes>
+</program>
