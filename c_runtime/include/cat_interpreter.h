@@ -1,5 +1,5 @@
 /*
- * cat_interpreter.h - Кооперативный интерпретатор Catrobat-проектов на C.
+ * cat_interpreter.h - Кооперативный интерпретатор проектов NewCode/Catrobat на C (отладочный fallback компилятора).
  *
  * Скрипты — это «потоки» (fibers), которые исполняются по кругу
  * (round-robin). Wait/GlideTo/BroadcastWait ставят поток на паузу

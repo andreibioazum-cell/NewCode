@@ -1,0 +1,994 @@
+/*
+ * cat_compiler.c - Компилятор проектов NewCode (Catrobat XML -> C -> машинный код).
+ *
+ * Схема работы:
+ *   code.xml -> (cat_loader) -> CatProject -> (этот файл) -> prog.c
+ *   prog.c + nc_rt.h -> cc -O2 -> нативный исполняемый файл.
+ *
+ * Свойства сгенерированной программы:
+ *   - весь код проекта становится настоящим C: Repeat -> for, Forever ->
+ *     while(1), If -> if, формулы -> выражения с NcVal-хелперами;
+ *   - break/continue/return компилируются в машинные C-операторы;
+ *   - malloc/calloc/realloc/free/memcpy/memset и разыменование указателей
+ *     работают с реальной памятью процесса (явное управление, без GC);
+ *   - значения (NcVal) и списки (NcList) живут на стеке/в статике —
+ *     сборщика мусора нет в принципе.
+ */
+#include "cat_compiler.h"
+#include "cat_mem.h"
+
+#include "nc_rt_data.h"
+
+#include <ctype.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+
+/* ------------------------------------------------------------------ */
+/* Строковый буфер генератора                                          */
+/* ------------------------------------------------------------------ */
+
+typedef struct {
+    char  *buf;
+    size_t len, cap;
+    int    indent;
+    int    counter; /* счётчик уникальных времённых имён */
+} SB;
+
+static void sb_putc(SB *g, char c) {
+    if (g->len + 2 > g->cap) {
+        g->cap = g->cap ? g->cap * 2 : 4096;
+        g->buf = (char *)cat_realloc(g->buf, g->cap);
+    }
+    g->buf[g->len++] = c;
+    g->buf[g->len] = 0;
+}
+
+static void sb_puts(SB *g, const char *s) {
+    while (*s) sb_putc(g, *s++);
+}
+
+static void sb_printf(SB *g, const char *fmt, ...) {
+    char tmp[1024];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(tmp, sizeof tmp, fmt, ap);
+    va_end(ap);
+    sb_puts(g, tmp);
+}
+
+static void sb_indent(SB *g) {
+    for (int i = 0; i < g->indent; ++i) sb_puts(g, "    ");
+}
+
+static void sb_line(SB *g, const char *fmt, ...) {
+    char tmp[2048];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(tmp, sizeof tmp, fmt, ap);
+    va_end(ap);
+    sb_indent(g);
+    sb_puts(g, tmp);
+    sb_putc(g, '\n');
+}
+
+/* ------------------------------------------------------------------ */
+/* Состояние компилятора                                               */
+/* ------------------------------------------------------------------ */
+
+typedef struct {
+    char *name;
+} NcName;
+
+typedef struct {
+    char *alias;
+    char *base;
+} NcTypedef;
+
+typedef struct {
+    char *msg;
+    int  first_script; /* индекс в списке скриптов-получателей */
+} NcBroadcast;
+
+typedef struct {
+    CatProject *p;
+    SB          out;
+
+    NcName    *vars;
+    size_t     var_count, var_cap;
+
+    NcName    *lists;
+    size_t     list_count, list_cap;
+
+    NcTypedef *tds;
+    size_t     td_count, td_cap;
+
+    CatSprite *sprite;   /* текущий спрайт */
+    int        sprite_i; /* его индекс */
+    int        loop_depth;
+
+    /* таблица broadcast-сообщений */
+    char    **bmsg;
+    size_t    bmsg_count, bmsg_cap;
+} NcGen;
+
+static int nc_name_find(NcName *arr, size_t n, const char *name) {
+    if (!name) return -1;
+    for (size_t i = 0; i < n; ++i)
+        if (strcmp(arr[i].name, name) == 0) return (int)i;
+    return -1;
+}
+
+static int nc_name_add(NcName **arr, size_t *n, size_t *cap, const char *name) {
+    if (!name || !name[0]) return -1;
+    int id = nc_name_find(*arr, *n, name);
+    if (id >= 0) return id;
+    if (*n == *cap) {
+        *cap = *cap ? *cap * 2 : 8;
+        *arr = (NcName *)cat_realloc(*arr, sizeof(NcName) * *cap);
+    }
+    (*arr)[*n].name = cat_strdup(name);
+    return (int)(*n)++;
+}
+
+/* ------------------------------------------------------------------ */
+/* Нормализованный поиск слотов (как в интерпретаторе)                 */
+/* ------------------------------------------------------------------ */
+
+static void norm_name(const char *src, char *dst, size_t cap) {
+    size_t k = 0;
+    for (const char *q = src; *q && k + 1 < cap; ++q)
+        if (isalnum((unsigned char)*q)) dst[k++] = (char)tolower((unsigned char)*q);
+    dst[k] = 0;
+}
+
+static CatFormula *fml(CatBrick *b, ...) {
+    va_list ap;
+    va_start(ap, b);
+    const char *want;
+    while ((want = va_arg(ap, const char *)) != NULL) {
+        for (size_t i = 0; i < b->slot_count; ++i) {
+            if (strcmp(b->slots[i].name, want) == 0) {
+                va_end(ap);
+                return b->slots[i].value;
+            }
+        }
+    }
+    va_end(ap);
+    /* нормализованное сравнение */
+    va_start(ap, b);
+    while ((want = va_arg(ap, const char *)) != NULL) {
+        for (size_t i = 0; i < b->slot_count; ++i) {
+            char a[64], c[64];
+            norm_name(b->slots[i].name, a, sizeof a);
+            norm_name(want, c, sizeof c);
+            if (strcmp(a, c) == 0) {
+                va_end(ap);
+                return b->slots[i].value;
+            }
+        }
+    }
+    va_end(ap);
+    return NULL;
+}
+
+/* ------------------------------------------------------------------ */
+/* Сбор переменных и списков                                           */
+/* ------------------------------------------------------------------ */
+
+static void collect_formula(NcGen *g, CatFormula *f);
+
+static void collect_bricks(NcGen *g, CatBrick **bricks, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        CatBrick *b = bricks[i];
+        if (!b) continue;
+        switch (b->kind) {
+        case CB_SET_VARIABLE: case CB_CHANGE_VARIABLE:
+        case CB_MALLOC: case CB_CALLOC: case CB_REALLOC:
+        case CB_CAST: case CB_POINTER_GET:
+            if (b->arg0) nc_name_add(&g->vars, &g->var_count, &g->var_cap, b->arg0);
+            break;
+        case CB_ADD_TO_LIST: case CB_DELETE_FROM_LIST:
+        case CB_CLEAR_LIST: case CB_INSERT_INTO_LIST: case CB_REPLACE_IN_LIST:
+            if (b->arg0) nc_name_add(&g->lists, &g->list_count, &g->list_cap, b->arg0);
+            break;
+        default: break;
+        }
+        for (size_t s = 0; s < b->slot_count; ++s)
+            collect_formula(g, b->slots[s].value);
+        collect_bricks(g, b->children, b->child_count);
+        collect_bricks(g, b->else_children, b->else_child_count);
+    }
+}
+
+static void collect_formula(NcGen *g, CatFormula *f) {
+    if (!f) return;
+    if (f->kind == CF_VARIABLE && f->literal.type == CAT_VAL_STRING)
+        nc_name_add(&g->vars, &g->var_count, &g->var_cap, f->literal.as.string);
+    if (f->kind == CF_LIST && f->literal.type == CAT_VAL_STRING)
+        nc_name_add(&g->lists, &g->list_count, &g->list_cap, f->literal.as.string);
+    for (size_t i = 0; i < f->argc; ++i) collect_formula(g, f->args[i]);
+}
+
+/* ------------------------------------------------------------------ */
+/* Генерация формул в C-выражения типа NcVal                           */
+/* ------------------------------------------------------------------ */
+
+static const char *binop_fn(const char *op) {
+    if (!op) return "nc_add";
+    if (strcmp(op, "+") == 0 || strcasecmp(op, "PLUS") == 0) return "nc_add";
+    if (strcmp(op, "-") == 0 || strcasecmp(op, "MINUS") == 0) return "nc_sub";
+    if (strcmp(op, "*") == 0 || strcasecmp(op, "MULT") == 0) return "nc_mul";
+    if (strcmp(op, "/") == 0 || strcasecmp(op, "DIVIDE") == 0) return "nc_div";
+    if (strcmp(op, "%") == 0 || strcasecmp(op, "MOD") == 0 || strcasecmp(op, "MODULO") == 0) return "nc_mod";
+    if (strcmp(op, "^") == 0 || strcasecmp(op, "POW") == 0) return "nc_pow";
+    if (strcmp(op, "<") == 0 || strcasecmp(op, "SMALLER_THAN") == 0) return "nc_lt";
+    if (strcmp(op, ">") == 0 || strcasecmp(op, "GREATER_THAN") == 0) return "nc_gt";
+    if (strcmp(op, "=") == 0 || strcmp(op, "==") == 0 || strcasecmp(op, "EQUAL") == 0) return "nc_eq";
+    if (strcmp(op, "!=") == 0 || strcasecmp(op, "NOT_EQUAL") == 0) return "nc_ne";
+    if (strcmp(op, "<=") == 0 || strcasecmp(op, "SMALLER_OR_EQUAL") == 0) return "nc_le";
+    if (strcmp(op, ">=") == 0 || strcasecmp(op, "GREATER_OR_EQUAL") == 0) return "nc_ge";
+    if (strcasecmp(op, "AND") == 0 || strcasecmp(op, "LOGICAL_AND") == 0) return "nc_and";
+    if (strcasecmp(op, "OR") == 0 || strcasecmp(op, "LOGICAL_OR") == 0) return "nc_or";
+    return "nc_add";
+}
+
+static const char *func_fn(const char *fn) {
+    if (!fn) return NULL;
+    if (strcasecmp(fn, "SIN") == 0) return "nc_sin";
+    if (strcasecmp(fn, "COS") == 0) return "nc_cos";
+    if (strcasecmp(fn, "TAN") == 0) return "nc_tan";
+    if (strcasecmp(fn, "SQRT") == 0) return "nc_sqrt";
+    if (strcasecmp(fn, "ABS") == 0) return "nc_abs";
+    if (strcasecmp(fn, "ROUND") == 0) return "nc_round";
+    if (strcasecmp(fn, "FLOOR") == 0) return "nc_floor";
+    if (strcasecmp(fn, "CEIL") == 0) return "nc_ceil";
+    if (strcasecmp(fn, "LN") == 0) return "nc_ln";
+    if (strcasecmp(fn, "LOG") == 0) return "nc_log";
+    if (strcasecmp(fn, "EXP") == 0) return "nc_exp";
+    if (strcasecmp(fn, "MIN") == 0) return "nc_min";
+    if (strcasecmp(fn, "MAX") == 0) return "nc_max";
+    if (strcasecmp(fn, "RAND") == 0 || strcasecmp(fn, "RANDOM") == 0) return "nc_rand";
+    if (strcasecmp(fn, "LENGTH") == 0) return "nc_length";
+    if (strcasecmp(fn, "JOIN") == 0) return "nc_join";
+    if (strcasecmp(fn, "LETTER") == 0) return "nc_letter";
+    return NULL;
+}
+
+static void emit_string_literal(SB *g, const char *s) {
+    sb_puts(g, "nc_str(\"");
+    for (const char *p = s ? s : ""; *p; ++p) {
+        switch (*p) {
+        case '"': sb_puts(g, "\\\""); break;
+        case '\\': sb_puts(g, "\\\\"); break;
+        case '\n': sb_puts(g, "\\n"); break;
+        case '\r': sb_puts(g, "\\r"); break;
+        case '\t': sb_puts(g, "\\t"); break;
+        default:
+            if ((unsigned char)*p < 32) sb_printf(g, "\\x%02x", (unsigned char)*p);
+            else sb_putc(g, *p);
+        }
+    }
+    sb_puts(g, "\")");
+}
+
+static void gen_formula(NcGen *g, CatFormula *f) {
+    if (!f) { sb_puts(&g->out, "nc_num(0)"); return; }
+    SB *o = &g->out;
+    switch (f->kind) {
+    case CF_NUMBER:
+        sb_printf(o, "nc_num(%.17g)", cat_value_to_number(&f->literal));
+        break;
+    case CF_STRING:
+        emit_string_literal(o, f->literal.type == CAT_VAL_STRING ? f->literal.as.string : "");
+        break;
+    case CF_BOOL:
+        sb_puts(o, cat_value_to_bool(&f->literal) ? "nc_bool(1)" : "nc_bool(0)");
+        break;
+    case CF_VARIABLE: {
+        char *n = cat_value_to_cstring(&f->literal);
+        int id = nc_name_find(g->vars, g->var_count, n);
+        cat_free(n);
+        if (id >= 0) sb_printf(o, "v%d", id);
+        else sb_puts(o, "nc_num(0)");
+        break;
+    }
+    case CF_LIST: {
+        char *n = cat_value_to_cstring(&f->literal);
+        int id = nc_name_find(g->lists, g->list_count, n);
+        cat_free(n);
+        if (id >= 0) sb_printf(o, "nc_list_last(&l%d)", id);
+        else sb_puts(o, "nc_str(\"\")");
+        break;
+    }
+    case CF_SENSOR: {
+        char *n = cat_value_to_cstring(&f->literal);
+        const char *field = NULL;
+        if (strcasecmp(n, "OBJECT_X") == 0 || strcasecmp(n, "X_POSITION") == 0) field = "x";
+        else if (strcasecmp(n, "OBJECT_Y") == 0 || strcasecmp(n, "Y_POSITION") == 0) field = "y";
+        else if (strcasecmp(n, "OBJECT_ROTATION") == 0 || strcasecmp(n, "DIRECTION") == 0) field = "direction";
+        else if (strcasecmp(n, "OBJECT_SIZE") == 0 || strcasecmp(n, "SIZE") == 0) field = "size";
+        else if (strcasecmp(n, "OBJECT_TRANSPARENCY") == 0) field = "transparency";
+        else if (strcasecmp(n, "OBJECT_BRIGHTNESS") == 0) field = "brightness";
+        if (field) sb_printf(o, "nc_num(SP->%s)", field);
+        else if (strcasecmp(n, "PI") == 0) sb_puts(o, "nc_num(3.14159265358979323846)");
+        else if (strcasecmp(n, "TRUE") == 0) sb_puts(o, "nc_bool(1)");
+        else if (strcasecmp(n, "FALSE") == 0) sb_puts(o, "nc_bool(0)");
+        else sb_puts(o, "nc_num(0)");
+        cat_free(n);
+        break;
+    }
+    case CF_UNARY_OP: {
+        const char *op = f->op ? f->op : "-";
+        const char *fn;
+        if (strcmp(op, "-") == 0 || strcasecmp(op, "MINUS") == 0) fn = "nc_neg";
+        else fn = "nc_not";
+        sb_printf(o, "%s(", fn);
+        gen_formula(g, f->argc ? f->args[0] : NULL);
+        sb_putc(o, ')');
+        break;
+    }
+    case CF_BINARY_OP: {
+        sb_printf(o, "%s(", binop_fn(f->op));
+        gen_formula(g, f->argc > 0 ? f->args[0] : NULL);
+        sb_puts(o, ", ");
+        gen_formula(g, f->argc > 1 ? f->args[1] : NULL);
+        sb_putc(o, ')');
+        break;
+    }
+    case CF_FUNCTION: {
+        const char *fn = func_fn(f->op);
+        if (!fn) { sb_puts(o, "nc_num(0)"); break; }
+        sb_printf(o, "%s(", fn);
+        for (size_t i = 0; i < f->argc; ++i) {
+            if (i) sb_puts(o, ", ");
+            gen_formula(g, f->args[i]);
+        }
+        sb_putc(o, ')');
+        break;
+    }
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* typedef-и и типы                                                    */
+/* ------------------------------------------------------------------ */
+
+static void td_add(NcGen *g, const char *alias, const char *base) {
+    if (!alias || !alias[0] || !base || !base[0]) return;
+    for (size_t i = 0; i < g->td_count; ++i) {
+        if (strcasecmp(g->tds[i].alias, alias) == 0) {
+            cat_free(g->tds[i].base);
+            g->tds[i].base = cat_strdup(base);
+            return;
+        }
+    }
+    if (g->td_count == g->td_cap) {
+        g->td_cap = g->td_cap ? g->td_cap * 2 : 8;
+        g->tds = (NcTypedef *)cat_realloc(g->tds, sizeof(NcTypedef) * g->td_cap);
+    }
+    g->tds[g->td_count].alias = cat_strdup(alias);
+    g->tds[g->td_count].base = cat_strdup(base);
+    g->td_count++;
+}
+
+static const char *resolve_type(NcGen *g, const char *type) {
+    if (!type || !type[0]) return "double";
+    for (int hop = 0; hop < 8; ++hop) {
+        const char *found = NULL;
+        for (size_t i = 0; i < g->td_count; ++i)
+            if (strcasecmp(g->tds[i].alias, type) == 0) { found = g->tds[i].base; break; }
+        if (!found) break;
+        type = found;
+    }
+    return type;
+}
+
+/* Суффикс функций nc_pset/nc_pget/nc_cast для типа. */
+static const char *type_suffix(const char *type) {
+    if (strcasecmp(type, "double") == 0) return "d";
+    if (strcasecmp(type, "float") == 0) return "f";
+    if (strcasecmp(type, "int") == 0 || strcasecmp(type, "int32") == 0 ||
+        strcasecmp(type, "uint32") == 0) return "i";
+    if (strcasecmp(type, "long") == 0 || strcasecmp(type, "int64") == 0 ||
+        strcasecmp(type, "uint64") == 0) return "l";
+    if (strcasecmp(type, "short") == 0 || strcasecmp(type, "int16") == 0 ||
+        strcasecmp(type, "uint16") == 0) return "s";
+    if (strcasecmp(type, "char") == 0 || strcasecmp(type, "char*") == 0) return "c";
+    if (strcasecmp(type, "byte") == 0 || strcasecmp(type, "int8") == 0 ||
+        strcasecmp(type, "uint8") == 0) return "b";
+    if (strcasecmp(type, "bool") == 0 || strcasecmp(type, "boolean") == 0 ||
+        strcasecmp(type, "_bool") == 0) return "bool";
+    return "d";
+}
+
+/* ------------------------------------------------------------------ */
+/* Генерация брикков                                                   */
+/* ------------------------------------------------------------------ */
+
+static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n);
+
+static void gen_c_expr(NcGen *g, CatFormula *f, const char *def) {
+    if (f) gen_formula(g, f);
+    else sb_puts(&g->out, def);
+}
+
+static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
+    SB *o = &g->out;
+    for (size_t i = 0; i < n; ++i) {
+        CatBrick *b = bricks[i];
+        if (!b) continue;
+        CatSprite *sp = g->sprite;
+        const char *nm = sp ? sp->name : "Object";
+        switch (b->kind) {
+        /* --- переменные --- */
+        case CB_SET_VARIABLE: {
+            sb_indent(o);
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_printf(o, "v%d = ", id);
+                gen_c_expr(g, fml(b, "value", "VARIABLE", NULL), "nc_num(0)");
+                sb_puts(o, ";\n");
+            } else {
+                sb_puts(o, "; /* set: неизвестная переменная */\n");
+            }
+            break;
+        }
+        case CB_CHANGE_VARIABLE: {
+            sb_indent(o);
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_printf(o, "v%d = nc_add(v%d, ", id, id);
+                gen_c_expr(g, fml(b, "value", "VARIABLE_CHANGE", NULL), "nc_num(0)");
+                sb_puts(o, ");\n");
+            } else {
+                sb_puts(o, "; /* change: неизвестная переменная */\n");
+            }
+            break;
+        }
+        /* --- списки --- */
+        case CB_ADD_TO_LIST: {
+            int id = b->arg0 ? nc_name_find(g->lists, g->list_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_indent(o);
+                sb_printf(o, "nc_list_add(&l%d, ", id);
+                gen_c_expr(g, fml(b, "value", "LIST_ADD_ITEM", NULL), "nc_num(0)");
+                sb_puts(o, ");\n");
+            }
+            break;
+        }
+        case CB_DELETE_FROM_LIST: {
+            int id = b->arg0 ? nc_name_find(g->lists, g->list_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_indent(o);
+                sb_printf(o, "nc_list_delete(&l%d, ", id);
+                gen_c_expr(g, fml(b, "value", "LIST_DELETE_ITEM", NULL), "nc_num(1)");
+                sb_puts(o, ");\n");
+            }
+            break;
+        }
+        case CB_CLEAR_LIST:
+            if (b->arg0) {
+                int id = nc_name_find(g->lists, g->list_count, b->arg0);
+                if (id >= 0) sb_line(o, "l%d.count = 0;", id);
+            }
+            break;
+        case CB_INSERT_INTO_LIST: {
+            int id = b->arg0 ? nc_name_find(g->lists, g->list_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_indent(o);
+                sb_printf(o, "nc_list_insert(&l%d, ", id);
+                gen_c_expr(g, fml(b, "index", "INSERT_ITEM_INTO_USERLIST_INDEX", NULL), "nc_num(1)");
+                sb_puts(o, ", ");
+                gen_c_expr(g, fml(b, "value", "INSERT_ITEM_INTO_USERLIST_VALUE", NULL), "nc_num(0)");
+                sb_puts(o, ");\n");
+            }
+            break;
+        }
+        case CB_REPLACE_IN_LIST: {
+            int id = b->arg0 ? nc_name_find(g->lists, g->list_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_indent(o);
+                sb_printf(o, "nc_list_replace(&l%d, ", id);
+                gen_c_expr(g, fml(b, "index", "REPLACE_ITEM_IN_USERLIST_INDEX", NULL), "nc_num(1)");
+                sb_puts(o, ", ");
+                gen_c_expr(g, fml(b, "value", "REPLACE_ITEM_IN_USERLIST_VALUE", NULL), "nc_num(0)");
+                sb_puts(o, ");\n");
+            }
+            break;
+        }
+        /* --- движение --- */
+        case CB_PLACE_AT:
+            sb_indent(o); sb_puts(o, "SP->x = "); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            sb_indent(o); sb_puts(o, "SP->y = "); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_SET_X:
+            sb_indent(o); sb_puts(o, "SP->x = "); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_SET_Y:
+            sb_indent(o); sb_puts(o, "SP->y = "); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_CHANGE_X:
+            sb_indent(o);
+            sb_puts(o, "SP->x = nc_num(nc_add(nc_num(SP->x), ");
+            gen_c_expr(g, fml(b, "x", "X_POSITION_CHANGE", NULL), "nc_num(0)");
+            sb_puts(o, ").n);\n");
+            break;
+        case CB_CHANGE_Y:
+            sb_indent(o);
+            sb_puts(o, "SP->y = nc_num(nc_add(nc_num(SP->y), ");
+            gen_c_expr(g, fml(b, "y", "Y_POSITION_CHANGE", NULL), "nc_num(0)");
+            sb_puts(o, ").n);\n");
+            break;
+        case CB_MOVE_STEPS: {
+            int t = ++g->out.counter;
+            sb_line(o, "{");
+            g->out.indent++;
+            sb_indent(o); sb_printf(o, "double rad_%d = (90.0 - SP->direction) * 3.14159265358979323846 / 180.0;\n", t);
+            sb_indent(o); sb_printf(o, "double s_%d = nc_d(", t);
+            gen_c_expr(g, fml(b, "steps", "STEPS", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            sb_line(o, "SP->x += s_%d * cos(rad_%d);", t, t);
+            sb_line(o, "SP->y += s_%d * sin(rad_%d);", t, t);
+            g->out.indent--;
+            sb_line(o, "}");
+            break;
+        }
+        case CB_TURN_LEFT:
+            sb_indent(o); sb_puts(o, "SP->direction -= nc_d(");
+            gen_c_expr(g, fml(b, "degrees", "TURN_LEFT_DEGREES", "DEGREES", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            break;
+        case CB_TURN_RIGHT:
+            sb_indent(o); sb_puts(o, "SP->direction += nc_d(");
+            gen_c_expr(g, fml(b, "degrees", "TURN_RIGHT_DEGREES", "DEGREES", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            break;
+        case CB_POINT_IN_DIRECTION:
+            sb_indent(o); sb_puts(o, "SP->direction = nc_d(");
+            gen_c_expr(g, fml(b, "degrees", "DEGREES", NULL), "nc_num(90)");
+            sb_puts(o, ");\n");
+            break;
+        case CB_GLIDE_TO:
+            sb_indent(o); sb_puts(o, "nc_glide(&SP->x, &SP->y, nc_d(");
+            gen_c_expr(g, fml(b, "x", "X_DESTINATION", NULL), "nc_num(0)");
+            sb_puts(o, "), nc_d(");
+            gen_c_expr(g, fml(b, "y", "Y_DESTINATION", NULL), "nc_num(0)");
+            sb_puts(o, "), nc_d(");
+            gen_c_expr(g, fml(b, "seconds", "DURATION_IN_SECONDS", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        /* --- внешний вид --- */
+        case CB_SHOW: sb_line(o, "SP->visible = 1;"); break;
+        case CB_HIDE: sb_line(o, "SP->visible = 0;"); break;
+        case CB_SET_SIZE_TO:
+            sb_indent(o); sb_puts(o, "SP->size = nc_d(");
+            gen_c_expr(g, fml(b, "size", "SIZE", NULL), "nc_num(100)");
+            sb_puts(o, ");\n");
+            break;
+        case CB_CHANGE_SIZE_BY:
+            sb_indent(o); sb_puts(o, "SP->size += nc_d(");
+            gen_c_expr(g, fml(b, "size", "SIZE_CHANGE", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            break;
+        case CB_SAY:
+            sb_indent(o); sb_printf(o, "nc_say(\"%s\", ", nm);
+            gen_c_expr(g, fml(b, "text", "STRING", "value", "SAY", NULL), "nc_str(\"\")");
+            sb_puts(o, ");\n");
+            break;
+        case CB_THINK:
+            sb_indent(o); sb_printf(o, "nc_think(\"%s\", ", nm);
+            gen_c_expr(g, fml(b, "text", "STRING", "value", NULL), "nc_str(\"\")");
+            sb_puts(o, ");\n");
+            break;
+        case CB_SAY_FOR:
+            sb_indent(o); sb_printf(o, "nc_say(\"%s\", ", nm);
+            gen_c_expr(g, fml(b, "text", "STRING", "value", NULL), "nc_str(\"\")");
+            sb_puts(o, "); nc_wait(nc_d(");
+            gen_c_expr(g, fml(b, "seconds", "DURATION_IN_SECONDS", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        case CB_THINK_FOR:
+            sb_indent(o); sb_printf(o, "nc_think(\"%s\", ", nm);
+            gen_c_expr(g, fml(b, "text", "STRING", "value", NULL), "nc_str(\"\")");
+            sb_puts(o, "); nc_wait(nc_d(");
+            gen_c_expr(g, fml(b, "seconds", "DURATION_IN_SECONDS", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        case CB_SET_LOOK: case CB_NEXT_LOOK: case CB_PREVIOUS_LOOK:
+            sb_line(o, "; /* look: %s */", b->arg0 ? b->arg0 : "");
+            break;
+        /* --- звук --- */
+        case CB_PLAY_SOUND:
+            sb_indent(o); sb_printf(o, "nc_sound(\"%s\");\n", b->arg0 ? b->arg0 : "");
+            break;
+        case CB_STOP_ALL_SOUNDS:
+            sb_line(o, "; /* stop all sounds */");
+            break;
+        case CB_SET_VOLUME: case CB_CHANGE_VOLUME:
+            sb_line(o, "; /* volume */");
+            break;
+        /* --- управление --- */
+        case CB_WAIT:
+            sb_indent(o); sb_puts(o, "nc_wait(nc_d(");
+            gen_c_expr(g, fml(b, "seconds", "DURATION_IN_SECONDS", "TIME_TO_WAIT_IN_SECONDS", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        case CB_BROADCAST: case CB_BROADCAST_WAIT: {
+            const char *msg = b->arg0 ? b->arg0 : "";
+            int id = -1;
+            for (size_t k = 0; k < g->bmsg_count; ++k)
+                if (strcmp(g->bmsg[k], msg) == 0) { id = (int)k; break; }
+            if (id >= 0) sb_line(o, "bc%d(); /* broadcast \"%s\" */", id, msg);
+            else sb_line(o, "; /* broadcast \"%s\": получателей нет */", msg);
+            break;
+        }
+        case CB_FOREVER:
+            sb_line(o, "for (;;) {");
+            g->out.indent++; g->loop_depth++;
+            gen_bricks(g, b->children, b->child_count);
+            sb_line(o, "nc_tick();");
+            g->out.indent--; g->loop_depth--;
+            sb_line(o, "}");
+            break;
+        case CB_REPEAT: {
+            int t = ++g->out.counter;
+            sb_indent(o); sb_printf(o, "for (int i_%d = 0; i_%d < (int)nc_d(", t, t);
+            gen_c_expr(g, fml(b, "times", "TIMES_TO_REPEAT", NULL), "nc_num(0)");
+            sb_printf(o, "); ++i_%d) {\n", t);
+            g->out.indent++; g->loop_depth++;
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--; g->loop_depth--;
+            sb_line(o, "}");
+            break;
+        }
+        case CB_REPEAT_UNTIL:
+            sb_indent(o); sb_puts(o, "while (!nc_truthy(");
+            gen_c_expr(g, fml(b, "condition", "REPEAT_UNTIL_CONDITION", NULL), "nc_bool(0)");
+            sb_puts(o, ")) {\n");
+            g->out.indent++; g->loop_depth++;
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--; g->loop_depth--;
+            sb_line(o, "}");
+            break;
+        case CB_IF_BEGIN: case CB_IF_THEN_BEGIN:
+            sb_indent(o); sb_puts(o, "if (nc_truthy(");
+            gen_c_expr(g, fml(b, "condition", "IF_CONDITION", NULL), "nc_bool(0)");
+            sb_puts(o, ")) {\n");
+            g->out.indent++;
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--;
+            if (b->else_child_count) {
+                sb_line(o, "} else {");
+                g->out.indent++;
+                gen_bricks(g, b->else_children, b->else_child_count);
+                g->out.indent--;
+            }
+            sb_line(o, "}");
+            break;
+        case CB_STOP_SCRIPT: sb_line(o, "return;"); break;
+        case CB_STOP_ALL: sb_line(o, "exit(0);"); break;
+        case CB_STOP_OTHER: sb_line(o, "; /* stop other scripts */"); break;
+        case CB_NOTE: sb_line(o, "; /* note: %s */", b->arg0 ? b->arg0 : ""); break;
+        case CB_PRINT:
+            sb_indent(o); sb_puts(o, "nc_print(");
+            gen_c_expr(g, fml(b, "value", "VARIABLE", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            break;
+        /* --- служебные концы блоков --- */
+        case CB_LOOP_END: case CB_IF_ELSE: case CB_IF_END: case CB_IF_THEN_END:
+            break;
+        /* --- НИЗКОУРОВНЕВЫЕ C-БЛОКИ: настоящий C, машинный код --- */
+        case CB_MALLOC:
+            sb_indent(o);
+            if (b->arg0 && nc_name_find(g->vars, g->var_count, b->arg0) >= 0) {
+                sb_printf(o, "v%d = nc_malloc((size_t)nc_d(", nc_name_find(g->vars, g->var_count, b->arg0));
+                gen_c_expr(g, fml(b, "csize", "C_SIZE", "size", NULL), "nc_num(0)");
+                sb_puts(o, "));\n");
+            } else {
+                sb_puts(o, "nc_free(nc_num((double)(uintptr_t)malloc((size_t)nc_d(");
+                gen_c_expr(g, fml(b, "csize", "C_SIZE", "size", NULL), "nc_num(0)");
+                sb_puts(o, ")))); /* результат отброшен */\n");
+            }
+            break;
+        case CB_CALLOC: {
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            sb_indent(o);
+            if (id >= 0) sb_printf(o, "v%d = nc_calloc((size_t)nc_d(", id);
+            else sb_puts(o, "nc_free(nc_calloc((size_t)nc_d(");
+            gen_c_expr(g, fml(b, "ccount", "C_COUNT", "count", NULL), "nc_num(0)");
+            sb_puts(o, "), (size_t)nc_d(");
+            gen_c_expr(g, fml(b, "csize", "C_SIZE", "size", NULL), "nc_num(0)");
+            if (id >= 0) sb_puts(o, "));\n");
+            else sb_puts(o, "))); /* результат отброшен */\n");
+            break;
+        }
+        case CB_REALLOC: {
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            sb_indent(o);
+            if (id >= 0) sb_printf(o, "v%d = nc_realloc(", id);
+            else sb_puts(o, "nc_realloc(");
+            gen_c_expr(g, fml(b, "cpointer", "C_POINTER", "pointer", NULL), "nc_num(0)");
+            sb_puts(o, ", (size_t)nc_d(");
+            gen_c_expr(g, fml(b, "csize", "C_SIZE", "size", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        }
+        case CB_FREE:
+            sb_indent(o); sb_puts(o, "nc_free(");
+            gen_c_expr(g, fml(b, "cpointer", "C_POINTER", "pointer", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            break;
+        case CB_MEMCPY:
+            sb_indent(o); sb_puts(o, "nc_memcpy(");
+            gen_c_expr(g, fml(b, "cdestination", "C_DESTINATION", "destination", "dest", NULL), "nc_num(0)");
+            sb_puts(o, ", ");
+            gen_c_expr(g, fml(b, "csource", "C_SOURCE", "source", "src", NULL), "nc_num(0)");
+            sb_puts(o, ", (size_t)nc_d(");
+            gen_c_expr(g, fml(b, "csize", "C_SIZE", "size", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        case CB_MEMSET:
+            sb_indent(o); sb_puts(o, "nc_memset(");
+            gen_c_expr(g, fml(b, "cpointer", "C_POINTER", "pointer", NULL), "nc_num(0)");
+            sb_puts(o, ", (int)nc_d(");
+            gen_c_expr(g, fml(b, "cvalue", "C_VALUE", "value", NULL), "nc_num(0)");
+            sb_puts(o, "), (size_t)nc_d(");
+            gen_c_expr(g, fml(b, "csize", "C_SIZE", "size", NULL), "nc_num(0)");
+            sb_puts(o, "));\n");
+            break;
+        case CB_TYPEDEF: {
+            char *alias = NULL, *base = NULL;
+            CatFormula *af = fml(b, "cname", "C_NAME", "name", NULL);
+            CatFormula *bf = fml(b, "cbasetype", "C_BASE_TYPE", "basetype", "base", NULL);
+            if (af && af->kind == CF_STRING) alias = cat_value_to_cstring(&af->literal);
+            if (bf && bf->kind == CF_STRING) base = cat_value_to_cstring(&bf->literal);
+            if (!alias && b->arg0) alias = cat_strdup(b->arg0);
+            if (!base && b->arg1) base = cat_strdup(b->arg1);
+            if (alias && base) td_add(g, alias, base);
+            sb_line(o, "; /* typedef %s = %s */", alias ? alias : "?", base ? base : "?");
+            cat_free(alias);
+            cat_free(base);
+            break;
+        }
+        case CB_CAST: {
+            char *type = NULL;
+            CatFormula *tf = fml(b, "ctype", "C_TYPE", "type", NULL);
+            if (tf && tf->kind == CF_STRING) type = cat_value_to_cstring(&tf->literal);
+            if (!type && b->arg1) type = cat_strdup(b->arg1);
+            if (!type) type = cat_strdup("double");
+            sb_indent(o);
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_printf(o, "v%d = nc_cast_%s(", id, type_suffix(resolve_type(g, type)));
+                gen_c_expr(g, fml(b, "cvalue", "C_VALUE", "value", NULL), "nc_num(0)");
+                sb_puts(o, ");\n");
+            } else {
+                sb_puts(o, "; /* cast: нет переменной */\n");
+            }
+            cat_free(type);
+            break;
+        }
+        case CB_POINTER_SET: {
+            char *type = NULL;
+            CatFormula *tf = fml(b, "ctype", "C_TYPE", "type", NULL);
+            if (tf && tf->kind == CF_STRING) type = cat_value_to_cstring(&tf->literal);
+            if (!type) type = cat_strdup("double");
+            sb_indent(o);
+            sb_printf(o, "nc_pset_%s(", type_suffix(resolve_type(g, type)));
+            gen_c_expr(g, fml(b, "cpointer", "C_POINTER", "pointer", NULL), "nc_num(0)");
+            sb_puts(o, ", ");
+            gen_c_expr(g, fml(b, "coffset", "C_OFFSET", "offset", NULL), "nc_num(0)");
+            sb_puts(o, ", ");
+            gen_c_expr(g, fml(b, "cvalue", "C_VALUE", "value", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            cat_free(type);
+            break;
+        }
+        case CB_POINTER_GET: {
+            char *type = NULL;
+            CatFormula *tf = fml(b, "ctype", "C_TYPE", "type", NULL);
+            if (tf && tf->kind == CF_STRING) type = cat_value_to_cstring(&tf->literal);
+            if (!type) type = cat_strdup("double");
+            sb_indent(o);
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            if (id >= 0) {
+                sb_printf(o, "v%d = nc_pget_%s(", id, type_suffix(resolve_type(g, type)));
+                gen_c_expr(g, fml(b, "cpointer", "C_POINTER", "pointer", NULL), "nc_num(0)");
+                sb_puts(o, ", ");
+                gen_c_expr(g, fml(b, "coffset", "C_OFFSET", "offset", NULL), "nc_num(0)");
+                sb_puts(o, ");\n");
+            } else {
+                sb_puts(o, "; /* pointer get: нет переменной */\n");
+            }
+            cat_free(type);
+            break;
+        }
+        case CB_RETURN: sb_line(o, "return;"); break;
+        case CB_BREAK:
+            if (g->loop_depth > 0) sb_line(o, "break;");
+            else sb_line(o, "; /* break вне цикла */");
+            break;
+        case CB_CONTINUE:
+            if (g->loop_depth > 0) sb_line(o, "continue;");
+            else sb_line(o, "; /* continue вне цикла */");
+            break;
+        default:
+            sb_line(o, "; /* brick #%d пропущен */", (int)b->kind);
+            break;
+        }
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Генерация всего проекта                                             */
+/* ------------------------------------------------------------------ */
+
+static void gen_script_decl(NcGen *g, int si, int ki) {
+    sb_printf(&g->out, "s%d_%d", si, ki);
+}
+
+char *cat_compile_to_c(CatProject *p) {
+    if (!p) return NULL;
+    NcGen g;
+    memset(&g, 0, sizeof g);
+    g.p = p;
+    g.out.cap = 65536;
+    g.out.buf = (char *)cat_calloc(1, g.out.cap);
+
+    /* 1. Собрать переменные/списки по всем спрайтам. */
+    for (size_t si = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi) {
+            CatSprite *sp = sc->sprites[spi];
+            for (size_t k = 0; k < sp->script_count; ++k) {
+                CatScript *scr = sp->scripts[k];
+                if (scr->head && scr->head->kind == CB_WHEN_BROADCAST && scr->head->arg0) {
+                    /* сообщение */
+                    int found = -1;
+                    for (size_t m = 0; m < g.bmsg_count; ++m)
+                        if (strcmp(g.bmsg[m], scr->head->arg0) == 0) { found = (int)m; break; }
+                    if (found < 0) {
+                        if (g.bmsg_count == g.bmsg_cap) {
+                            g.bmsg_cap = g.bmsg_cap ? g.bmsg_cap * 2 : 8;
+                            g.bmsg = (char **)cat_realloc(g.bmsg, sizeof(char *) * g.bmsg_cap);
+                        }
+                        g.bmsg[g.bmsg_count++] = cat_strdup(scr->head->arg0);
+                    }
+                }
+                collect_bricks(&g, scr->bricks, scr->brick_count);
+            }
+        }
+    }
+
+    SB *o = &g.out;
+    sb_line(o, "/*");
+    sb_line(o, " * Сгенерировано компилятором NewCode из проекта \"%s\".", p->name ? p->name : "");
+    sb_line(o, " * Это настоящая C-программа: она компилируется в машинный код.");
+    sb_line(o, " * Никакого байт-кода и никакого GC: значения на стеке,");
+    sb_line(o, " * память C-блоков управляется явно (malloc/free).");
+    sb_line(o, " */");
+    sb_line(o, "#include \"nc_rt.h\"");
+    sb_line(o, "");
+
+    /* 2. Состояние спрайтов. */
+    sb_line(o, "typedef struct {");
+    sb_line(o, "    double x, y, direction, size, transparency, brightness;");
+    sb_line(o, "    int visible;");
+    sb_line(o, "} Spr;");
+    for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+            CatSprite *sp = sc->sprites[spi];
+            sb_line(o, "static Spr spr%zu; /* спрайт: %s */", idx, sp->name ? sp->name : "?");
+        }
+    }
+    sb_line(o, "");
+
+    /* 3. Переменные и списки. */
+    for (size_t i = 0; i < g.var_count; ++i)
+        sb_line(o, "static NcVal v%zu; /* переменная: %s */", i, g.vars[i].name);
+    for (size_t i = 0; i < g.list_count; ++i)
+        sb_line(o, "static NcList l%zu; /* список: %s */", i, g.lists[i].name);
+    sb_line(o, "");
+
+    /* 4a. Предварительные объявления диспетчеров broadcast. */
+    for (size_t m = 0; m < g.bmsg_count; ++m)
+        sb_line(o, "static void bc%zu(void);", m);
+    if (g.bmsg_count) sb_line(o, "");
+
+    /* 4. Функции скриптов. */
+    for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+            CatSprite *sp = sc->sprites[spi];
+            g.sprite = sp;
+            g.sprite_i = (int)idx;
+            for (size_t k = 0; k < sp->script_count; ++k) {
+                CatScript *scr = sp->scripts[k];
+                if (!scr || !scr->head) continue;
+                const char *kind = "скрипт";
+                if (scr->head->kind == CB_WHEN_STARTED) kind = "WhenStarted";
+                else if (scr->head->kind == CB_WHEN_BROADCAST) kind = "WhenBroadcast";
+                else if (scr->head->kind == CB_WHEN_TAPPED) kind = "WhenTapped";
+                sb_printf(o, "static void ");
+                gen_script_decl(&g, (int)idx, (int)k);
+                sb_printf(o, "(void) { /* %s: %s */\n", kind, sp->name ? sp->name : "?");
+                g.out.indent = 1;
+                g.loop_depth = 0;
+                sb_line(o, "Spr *SP = &spr%zu;", idx);
+                gen_bricks(&g, scr->bricks, scr->brick_count);
+                g.out.indent = 0;
+                sb_line(o, "}");
+                sb_line(o, "");
+            }
+        }
+    }
+
+    /* 5. Диспетчеры broadcast-сообщений. */
+    for (size_t m = 0; m < g.bmsg_count; ++m) {
+        sb_printf(o, "static void bc%zu(void) { /* broadcast \"%s\" */\n", m, g.bmsg[m]);
+        for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+            CatScene *sc = p->scenes[si];
+            for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+                CatSprite *sp = sc->sprites[spi];
+                for (size_t k = 0; k < sp->script_count; ++k) {
+                    CatScript *scr = sp->scripts[k];
+                    if (scr->head && scr->head->kind == CB_WHEN_BROADCAST && scr->head->arg0 &&
+                        strcmp(scr->head->arg0, g.bmsg[m]) == 0) {
+                        sb_printf(o, "    ");
+                        gen_script_decl(&g, (int)idx, (int)k);
+                        sb_printf(o, "();\n");
+                    }
+                }
+            }
+        }
+        sb_line(o, "}");
+        sb_line(o, "");
+    }
+
+    /* 6. main(). */
+    sb_line(o, "int main(void) {");
+    for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+            sb_line(o, "    spr%zu.direction = 90.0; spr%zu.size = 100.0; spr%zu.visible = 1;", idx, idx, idx);
+        }
+    }
+    sb_line(o, "    nc_seed();");
+    for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+            CatSprite *sp = sc->sprites[spi];
+            for (size_t k = 0; k < sp->script_count; ++k) {
+                CatScript *scr = sp->scripts[k];
+                if (scr->head && scr->head->kind == CB_WHEN_STARTED) {
+                    sb_printf(o, "    ");
+                    gen_script_decl(&g, (int)idx, (int)k);
+                    sb_printf(o, "();\n");
+                }
+            }
+        }
+    }
+    sb_line(o, "    return 0;");
+    sb_line(o, "}");
+
+    /* 7. Очистка таблиц. */
+    for (size_t i = 0; i < g.var_count; ++i) cat_free(g.vars[i].name);
+    cat_free(g.vars);
+    for (size_t i = 0; i < g.list_count; ++i) cat_free(g.lists[i].name);
+    cat_free(g.lists);
+    for (size_t i = 0; i < g.td_count; ++i) { cat_free(g.tds[i].alias); cat_free(g.tds[i].base); }
+    cat_free(g.tds);
+    for (size_t i = 0; i < g.bmsg_count; ++i) cat_free(g.bmsg[i]);
+    cat_free(g.bmsg);
+
+    return g.out.buf;
+}
+
+/* Текст мини-рантайма nc_rt.h для записи рядом со сгенерированным кодом. */
+const char *cat_compiler_runtime_header(void) {
+    return NC_RT_DATA;
+}

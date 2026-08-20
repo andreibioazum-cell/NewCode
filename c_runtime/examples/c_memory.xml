@@ -4,7 +4,7 @@
   typedef, malloc, запись/чтение по указателю, calloc, memset, memcpy,
   realloc, free, cast, break, continue, return.
 
-  Запуск: ./catrobat_run examples/c_memory.xml
+  Запуск: ./newcode run examples/c_memory.xml
 -->
 <program>
   <header>

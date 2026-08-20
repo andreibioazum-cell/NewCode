@@ -1,0 +1,6 @@
+# артефакты сборки компилятора NewCode
+newcode
+tests/test_all
+tests/test_c_blocks
+tests/test_compiler
+src/*.o

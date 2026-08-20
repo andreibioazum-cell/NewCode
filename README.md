@@ -1,19 +1,27 @@
-# Catroid (C-runtime fork) #
+# NewCode #
 
-Этот форк переносит **исполнение проектов Catrobat** с Java/Kotlin на
-чистый C. Runtime живёт в каталоге [`c_runtime/`](c_runtime/README.md)
-и собирается любым C11-компилятором (только libm):
+**NewCode** — форк Catroid, в котором исполнение визуальных проектов
+перенесено с Java/Kotlin на **чистый C с компиляцией в машинный код**.
+
+Проект Catrobat (`code.xml`) **компилируется**: сначала в C-исходник,
+затем обычным C-компилятором — в нативный исполняемый файл. Никакого
+байт-кода, никакой виртуальной машины, никакого сборщика мусора:
+значения живут на стеке, память C-блоков управляется явно.
 
 ```bash
-cd c_runtime && make && ./catrobat_run examples/hello.xml
+cd c_runtime && make && ./newcode run examples/c_memory.xml
 ```
+
+Подробности — в [`c_runtime/README.md`](c_runtime/README.md).
 
 Из кодовой базы Android-приложения удалены все блоки-расширения
 (**Lego NXT/EV3, Raspberry Pi, Arduino, Phiro, Parrot Drone,
 JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad**) —
 поддерживаются только основные категории: события, управление,
-движение, внешний вид, звук, переменные/списки, формулы.
-Подробности — в [`c_runtime/README.md`](c_runtime/README.md).
+движение, внешний вид, звук, переменные/списки, формулы и низкоуровневые
+C-блоки. Приложение носит имя **NewCode** (Java-пакеты
+`org.catrobat.catroid` оставлены без изменений ради совместимости
+формата проектов).
 
 ---
 
@@ -21,36 +29,11 @@ JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad**) —
 
 **Catroid** is a visual coding IDE and interpreter for Android for the Catrobat programming language.
 
-**Catrobat** is a visual programming language and a set of creativity tools for smartphones. 
+**Catrobat** is a visual programming language and a set of creativity tools for smartphones.
 Catrobat projects can be created using Catrobat's Android apps available on [Google Play](https://play.google.com/store/apps/developer?id=Catrobat) and iPhone apps available on [Apple's app store](https://apps.apple.com/us/developer/international-catrobat-association-verein-zur-foerderung/id1117935891).
 
 For more information oriented towards developers, check out our [developers page](https://developer.catrobat.org/).
 
 # Issues #
 
-For reporting issues use our [JIRA Bugtracking System](https://catrobat.atlassian.net/jira/). Before that, please browse our currently open issues [here](https://catrobat.atlassian.net/jira/software/c/projects/IDE/issues/IDE-234?filter=allissues&jql=project%20in%20%28%22Catroid%20IDE%22%2C%20%22Catroid%20Stage%22%29%20ORDER%20BY%20created%20DESC).
-
-
-# Contributing #
-
-If you want to contribute, we recommend starting by [forking](https://help.github.com/articles/fork-a-repo/) the repository and exploring the codebase.  Then you can look at our [Issue-Tracker](https://catrobat.atlassian.net/jira/software/c/projects/IDE/issues?filter=allissues&jql=project%20in%20(%22Catroid%20IDE%22%2C%20%22Catroid%20Stage%22)%20ORDER%20BY%20created%20DESC) and start with fixing one ticket. We strictly use [Test-Driven Development](http://c2.com/cgi/wiki?TestDrivenDevelopment) and [Clean Code](http://www.planetgeek.ch/wp-content/uploads/2013/06/Clean-Code-V2.2.pdf), so first read everything you can about these development methods. Code developed in a different style will not be accepted. 
-After you create a pull request, we will review your code and run the required tests on your branch.
-
-Start setting up the working environment by following the instructions: https://github.com/Catrobat/Catroid/wiki/Setup-working-environment
-
-Also make sure to read our guidelines for [creating a pull request](https://github.com/Catrobat/Catroid/wiki/Creating-a-pull-request)
-
-A first training ticket usually consists of writing a new Catrobat language test, see https://catrobat.atlassian.net/browse/CATROID-390 for details.
-
-
-# Resources and links #
-* [Apple Store Download](https://apps.apple.com/us/developer/international-catrobat-association-verein-zur-foerderung/id1117935891)
-* [Google Play Store Download](https://play.google.com/store/apps/developer?id=Catrobat)
-* [Community website with sample programs](https://share.catrob.at/)
-* [Frequently Asked Questions](https://github.com/Catrobat/Catroid/wiki/Frequently-Asked-Questions-(Developers))
-* [Credits](https://developer.catrobat.org/contributors/)
-* [Statistics on OpenHub](https://www.openhub.net/p/catrobat/)
-* [Our Google group](https://groups.google.com/forum/?fromgroups#!forum/catrobat)
-
-# License #
-[License](https://developer.catrobat.org/pages/legal/licenses/) of our project (mainly AGPL v3).
+For reporting issues or improving this project, use the issue tracker of this repository.
