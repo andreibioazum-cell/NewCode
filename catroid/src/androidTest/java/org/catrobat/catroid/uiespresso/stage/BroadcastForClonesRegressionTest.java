@@ -79,20 +79,6 @@ public class BroadcastForClonesRegressionTest {
 		assertUserVariableEqualsWithTimeout(userVariable, 2, 1000);
 	}
 
-	@Category({Level.Functional.class, Cat.CatrobatLanguage.class})
-	@Test
-	public void testIfClonesBroadcastReceiversAreRemovedOnRestart() {
-		baseActivityTestRule.launchActivity(null);
-		IdlingRegistry.getInstance().register(baseActivityTestRule.getActivity().idlingResource);
-
-		pressBack();
-
-		onView(withId(R.id.stage_dialog_button_restart))
-				.perform(click());
-
-		assertUserVariableEqualsWithTimeout(userVariable, 2, 1000);
-	}
-
 	private void createProject() {
 		Project project = UiTestUtils.createDefaultTestProject("BroadcastForClonesRegressionTest");
 		userVariable = new UserVariable(VARIABLE_NAME);

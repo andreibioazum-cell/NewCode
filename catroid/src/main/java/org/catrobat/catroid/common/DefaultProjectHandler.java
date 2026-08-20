@@ -1,6 +1,6 @@
 /*
  * Catroid: An on-device visual programming system for Android devices
- * Copyright (C) 2010-2025 The Catrobat Team
+ * Copyright (C) 2010-2026 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,10 +24,6 @@ package org.catrobat.catroid.common;
 
 import android.content.Context;
 
-import org.catrobat.catroid.BuildConfig;
-import org.catrobat.catroid.common.defaultprojectcreators.ChromeCastProjectCreator;
-import org.catrobat.catroid.common.defaultprojectcreators.DefaultExampleProject;
-import org.catrobat.catroid.common.defaultprojectcreators.ProjectCreator;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.io.XstreamSerializer;
 
@@ -35,14 +31,7 @@ import java.io.IOException;
 
 public final class DefaultProjectHandler {
 
-	public enum ProjectCreatorType {
-		PROJECT_CREATOR_DEFAULT,
-		PROJECT_CREATOR_CAST
-	}
-
 	private static DefaultProjectHandler instance = null;
-
-	private ProjectCreator defaultProjectCreator;
 
 	public static DefaultProjectHandler getInstance() {
 		if (instance == null) {
@@ -52,16 +41,6 @@ public final class DefaultProjectHandler {
 	}
 
 	private DefaultProjectHandler() {
-		setDefaultProjectCreator(ProjectCreatorType.PROJECT_CREATOR_DEFAULT);
-	}
-
-	public static Project createAndSaveDefaultProject(Context context) throws IOException {
-		String name = context.getString(getInstance().defaultProjectCreator.getDefaultProjectNameID());
-		return createAndSaveDefaultProject(name, context, false);
-	}
-
-	public static Project createAndSaveDefaultProject(String name, Context context, boolean landscapeMode) throws IOException {
-		return getInstance().defaultProjectCreator.createDefaultProject(name, context, landscapeMode);
 	}
 
 	public static Project createAndSaveEmptyProject(String name, Context context, boolean landscapeMode, boolean isCastEnabled) throws IOException {
@@ -75,18 +54,5 @@ public final class DefaultProjectHandler {
 
 		XstreamSerializer.getInstance().saveProject(project);
 		return project;
-	}
-
-	public void setDefaultProjectCreator(ProjectCreatorType type) {
-		switch (type) {
-			case PROJECT_CREATOR_DEFAULT:
-				defaultProjectCreator = new DefaultExampleProject();
-				break;
-			case PROJECT_CREATOR_CAST:
-				if (BuildConfig.FEATURE_CAST_ENABLED) {
-					defaultProjectCreator = new ChromeCastProjectCreator();
-				}
-				break;
-		}
 	}
 }

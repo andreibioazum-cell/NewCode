@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">Будь ласка, зачекайте</string>
     <string formatted="false" name="search_hint">Пошук</string>
     <string formatted="false" name="backpack_add">Додати до рюкзака</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">Проєкт, який Ви завантажили слухає ваш голос
      у фоновому режимі, а також відправляє дані в інтернет. Це може бути корисним й обов\'язковим 
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">Від’єднатися</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">Продовжити проєкт</string>
-    <string formatted="false" name="main_menu_new">Новий проєкт</string>
-    <string formatted="false" name="main_menu_programs">Проєкти на пристрої</string>
-    <string formatted="false" name="main_menu_help">Довідка</string>
-    <string formatted="false" name="main_menu_web">Спільнота Catrobat</string>
-    <string formatted="false" name="main_menu_upload">Вивантажити проєкт</string>
-    <string formatted="false" name="main_menu_play">Грати в проєкт</string>
-    <string formatted="false" name="main_menu_rate_app">Оцініть нас!</string>
-    <string formatted="false" name="main_menu_terms_of_use">Умови використання та послуги</string>
-    <string formatted="false" name="main_menu_privacy_policy">Політика конфіденційності</string>
-    <string formatted="false" name="main_menu_about">Про застосунок</string>
-    <string formatted="false" name="main_menu_login">Увійти в обліковий запис</string>
-    <string formatted="false" name="main_menu_logout">Вийти з облікового запису</string>
     <string formatted="false" name="main_menu_scratch_converter">Конвертор Scratch</string>
     <string formatted="false" name="main_menu_play_store_not_installed">App store не знайдено</string>
     <!--  -->
@@ -347,8 +333,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">Щоб користуватися нашим застосунком, необхідно прийняти наші умови використання та послуги.
-        Однак, якщо вам не зручно це робити, ви можете скористатися нашими безплатними вебсервісами</string>
     <string formatted="false" name="wtf_error">Сталася неочікувана помилка: не вдалося відновити зразок проєкту.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">Помилка під час копіювання проєкту</string>
@@ -698,7 +682,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Створити проєкт</string>
-    <string formatted="false" name="new_project_dialog_example_project">Приклад проєкту</string>
     <string name="new_project_dialog_portrait">Вертикальний</string>
     <string name="new_project_dialog_landscape">Горизонтальний</string>
     <string name="new_project_dialog_cast">Трансляція</string>
@@ -738,27 +721,10 @@
     <string formatted="false" name="rating_dialog_rate_never">Ніколи</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">Умови використання та послуги</string>
-    <string formatted="false" name="dialog_terms_of_use_info">Для того, щоб
-        Вам було дозволено користуватися додатками та іншими послугами, що пропонуються проєктом Catrobat, Ви
-        повинні погодитися з нашими умовами користування та послуг. Ви повинні суворо дотримуватися цих умов під час використання наших додатків
-        та інших послуг. Будь ласка, перегляньте посилання нижче для їх точного формулювання.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">умови використання та послуги</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">Ласкаво просимо!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">Щоб користуватися застосунком, прийміть наші</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">Про застосунок</string>
-    <string formatted="false" name="dialog_about_license_info">Цей застосунок пропонує кодування
-         середовище та інтерпретатор для мови візуального програмування Catrobat.\n
-         Вихідний код цього застосунку в основному ліцензовано GNU AGPL v3.
-         Додаткову інформацію про ліцензію дивіться за посиланням нижче.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">Ліцензія вихідного коду</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">Про Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Версія мови Catrobat</string>
-    <string formatted="false" name="dialog_about_version">версія:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">Немає мережі</string>
@@ -879,14 +845,6 @@
     <string formatted="false" name="nfc_facedetection_support">Одночасне використання NFC та виявлення обличчя може призвести до проблем зі швидкодією.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">Назад</string>
-    <string formatted="false" name="stage_dialog_resume">Продовжити</string>
-    <string formatted="false" name="stage_dialog_restart">Перезапустити</string>
-    <string formatted="false" name="stage_dialog_axes_on">Показати вісі</string>
-    <string formatted="false" name="stage_dialog_axes_off">Сховати вісі</string>
-    <string formatted="false" name="stage_dialog_maximize">Розгорнути/\nрозтянути</string>
-    <string formatted="false" name="stage_dialog_screenshot">Зображення</string>
-    <string formatted="false" name="stage_dialog_embroidery">Вишивка</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">Нове повідомлення</string>
@@ -1307,21 +1265,9 @@
     <string formatted="false" name="default_script_group_name">Група скриптів</string>
     <string formatted="false" name="default_broadcast_message_name">Повідомлення</string>
     <string formatted="false" name="default_list_name">Список</string>
-    <string formatted="false" name="default_project_background_name">Тло</string>
-    <string formatted="false" name="default_project_cloud_name">Хмари</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">Хмари1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Хмари2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">Тварина</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">Крила верх</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">Крила вниз</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Спів1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Спів2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Голка</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Зовнішній цикл</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Внутрішній цикл</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">Тло</string>
     <string formatted="false" name="default_cast_project_cloud_name">Хмари</string>
@@ -1369,7 +1315,6 @@
     <string formatted="false" name="channel_description"> Канал сповіщень %1$s</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">Зображення проєкту збережено</string>
     <string formatted="false" name="notification_download_project_cancel">Скасувати завантаження проєкту</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">Скасовано завантаження/конвертування проєкту</string>
     <string formatted="false" name="notification_upload_title_pending">"Вивантаження"</string>
@@ -1396,18 +1341,14 @@
     <string formatted="false" name="error_new_project">Під час створення нового проєкту сталася помилка.</string>
     <string formatted="false" name="error_rename_scene">Під час перейменування сцени сталася помилка.</string>
     <string formatted="false" name="error_load_project">Під час завантаження проєкту сталася помилка.</string>
-    <string formatted="false" name="error_screenshot_failed">Під час збереження зображення сталася помилка.</string>
     <string formatted="false" name="error_internet_connection">Сталася невідома помилка. Перевірте підключення до Інтернету.</string>
     <string formatted="false" name="error_project_compatibility">Проєкт несумісний з цією версією застосунку.</string>
     <string formatted="false" name="error_outdated_version">Ця версія застосунку застаріла. Оновити зараз?</string>
     <string formatted="false" name="error_upload_project_with_default_name">Ви не можете вивантажити проєкт з назвою «%s».
          Будь ласка, перейменуйте проєкт.</string>
-    <string formatted="false" name="error_upload_default_project">Ви не можете вивантажити незмінений приклад проєкту. Будь ласка
-         змініть щось і спробуйте ще раз.</string>
     <string formatted="false" name="error_adding_brick">Під час додавання цього блоку сталася помилка.</string>
     <string formatted="false" name="error_copying_brick">Під час копіювання цього блоку сталася помилка.</string>
     <string formatted="false" name="error_rename_incompatible_project">Перейменування несумісного проєкту неможливе.</string>
-    <string formatted="false" name="error_embroidery_file_export">Під час надання доступу до файлу вишивки сталася помилка.</string>
     <string formatted="false" name="error_embroidery_file_write">Під час запису файлу вишивки сталася помилка.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Вишивка відсутня.</string>
     <string formatted="false" name="error_plot_file_write">Щось пішло не так під час запису файлу
@@ -2165,8 +2106,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">Гц</string>
-    <string formatted="false" name="no_internet_connection">Немає підключення до Інтернету. Переконайтеся, що Wi-Fi або мобільні
-    дані ввімкнено.</string>
     <string formatted="false" name="edit">Редагувати</string>
     <string formatted="false" name="data_value">Значення</string>
     <string formatted="false" name="category_recently_used">Недавно використані</string>

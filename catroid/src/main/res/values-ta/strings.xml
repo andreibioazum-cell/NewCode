@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">தயவுசெய்து காத்திருக்கவும்</string>
     <string formatted="false" name="search_hint">தேடு…</string>
     <string formatted="false" name="backpack_add">பின்சுமைப்பையில் சேர்</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">The project you have downloaded listens to your voice
         in the background and also sends data to the internet. This may be harmless, and necessary
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">துண்டி</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">திட்டப்பணியைத் தொடர்க</string>
-    <string formatted="false" name="main_menu_new">புதிய</string>
-    <string formatted="false" name="main_menu_programs">சாதனத்தில் உள்ள திட்டங்கள்</string>
-    <string formatted="false" name="main_menu_help">உதவி</string>
-    <string formatted="false" name="main_menu_web">கற்றோபாட்டுச் சமூகம்</string>
-    <string formatted="false" name="main_menu_upload">திட்டப்பணி ஏற்றுக</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">எங்களை மதிப்பிடுக!</string>
-    <string formatted="false" name="main_menu_terms_of_use">பயன்பாட்டு மற்றும் சேவை விதிமுறைகள்</string>
-    <string formatted="false" name="main_menu_privacy_policy">சுய செயலிட கொள்கை</string>
-    <string formatted="false" name="main_menu_about">இச் செயலி பற்றி</string>
-    <string formatted="false" name="main_menu_login">உள்நுழை</string>
-    <string formatted="false" name="main_menu_logout">வெளியேறு</string>
     <string formatted="false" name="main_menu_scratch_converter">Scratch மாற்றி</string>
     <string formatted="false" name="main_menu_play_store_not_installed">செயலிக் கடை அகப்படவில்லை</string>
     <!--  -->
@@ -324,8 +310,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">To use our app, it is necessary to accept our Terms of Use and Service.
-        However, if you don\’t feel comfortable to do so, you can use our free web-services on</string>
     <string formatted="false" name="wtf_error">எதிர்பாராத பிழை ஏற்பட்டது: மாதிரி திட்டத்தை என்னால் மீட்டெடுக்க முடியவில்லை.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">திட்டத்தை நகலெடுக்கும் போது பிழை ஏற்பட்டது</string>
@@ -612,7 +596,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">Example project</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">படுக்கைவாட்டம்</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -652,27 +635,10 @@
     <string formatted="false" name="rating_dialog_rate_never">ஒருபோதுமில்லை</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">பயன்பாட்டு விதிகள் மற்றும் சேவைகள்</string>
-    <string formatted="false" name="dialog_terms_of_use_info">பொருட்டு
-        கேட்ரோபாட் திட்டத்தால் வழங்கப்படும் பயன்பாடுகள் மற்றும் பிற சேவைகளைப் பயன்படுத்த அனுமதிக்கப்படுவீர்கள்
-        எங்கள் பயன்பாட்டு விதிமுறைகள் மற்றும் சேவை விதிமுறைகளுக்கு உடன்பட வேண்டும். எங்கள் பயன்பாடுகளைப் பயன்படுத்தும் போது நீங்கள் இந்த விதிமுறைகளை கண்டிப்பாக பின்பற்ற வேண்டும்
-        மற்றும் பிற சேவைகள். அவற்றின் துல்லியமான வடிவமைப்பிற்கு கீழே உள்ள இணைப்பைக் காண்க. \n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">பயன்பாட்டு விதிகள் மற்றும் சேவைகள்</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">வருக!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">To use this app, please accept our</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">இந்த பயன்பாட்டை பற்றி</string>
-    <string formatted="false" name="dialog_about_license_info">இந்த பயன்பாடு குறியீட்டு முறையை வழங்குகிறது
-        காட்சி நிரலாக்க மொழிக்கான சூழல் மற்றும் மொழிபெயர்ப்பாளர் கேட்ரோபாட். \ n
-        இந்த பயன்பாட்டின் மூல குறியீடு முக்கியமாக குனு ஏஜிபிஎல் வி 3 உரிமத்தின் கீழ் உரிமம் பெற்றது.
-        உரிமம் குறித்த கூடுதல் விவரங்களுக்கு கீழே உள்ள இணைப்பைக் காண்க</string>
-    <string formatted="false" name="dialog_about_license_link_text">மூல குறியீடு உரிமம்</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">கேட்ரோபாட் பற்றி</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Catrobat language version</string>
-    <string formatted="false" name="dialog_about_version">version:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">நெட்வொர்க் இல்லை</string>
@@ -794,14 +760,6 @@
         பிரச்சினைகள்.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">பின்</string>
-    <string formatted="false" name="stage_dialog_resume">தற்குறிப்பு</string>
-    <string formatted="false" name="stage_dialog_restart">மறுதொடக்கம்</string>
-    <string formatted="false" name="stage_dialog_axes_on">அச்சுகள்</string>
-    <string formatted="false" name="stage_dialog_axes_off">அச்சுகள்</string>
-    <string formatted="false" name="stage_dialog_maximize">அதிகப்படுத்து / \ nstretch</string>
-    <string formatted="false" name="stage_dialog_screenshot">முன்னோட்டம்</string>
-    <string formatted="false" name="stage_dialog_embroidery">எம்பிராய்டரி</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">புதிய தகவல்</string>
@@ -1208,21 +1166,9 @@
     <string formatted="false" name="default_script_group_name">Script group</string>
     <string formatted="false" name="default_broadcast_message_name">செய்தி</string>
     <string formatted="false" name="default_list_name">List</string>
-    <string formatted="false" name="default_project_background_name">பின்னணி</string>
-    <string formatted="false" name="default_project_cloud_name">மேகங்கள்</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">மேகங்கள்</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Clouds2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">விலங்கு</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">சிறகுகள் மேலே</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">சிறகுகள் கீழே</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">ட்வீட்1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">ட்வீட்2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Needle</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Outer Loop</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Inner Loop</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">பின்னணி</string>
     <string formatted="false" name="default_cast_project_cloud_name">மேகங்கள்</string>
@@ -1270,7 +1216,6 @@
     <string formatted="false" name="channel_description">%1$s அறிவிப்பு சேனல்</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">மாதிரிக்காட்சி படம் சேமிக்கப்பட்டது</string>
     <string formatted="false" name="notification_download_project_cancel">திட்ட பதிவிறக்கத்தை ரத்துசெய்</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">பதிவிறக்குதல் / மாற்றியமைத்தல் திட்டம் ரத்து செய்யப்பட்டது</string>
     <string formatted="false" name="notification_upload_title_pending">"பதிவேற்றுகிறது"</string>
@@ -1296,16 +1241,13 @@
     <string formatted="false" name="error_new_project">புதிய திட்டத்தை உருவாக்கும் போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string formatted="false" name="error_rename_scene">காட்சியின் மறுபெயரிடும்போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string formatted="false" name="error_load_project">திட்டத்தை ஏற்றும்போது ஏதோ தவறு ஏற்பட்டது.</string>
-    <string formatted="false" name="error_screenshot_failed">மாதிரிக்காட்சி படத்தைச் சேமிக்கும்போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string formatted="false" name="error_internet_connection">அறியப்படாத பிழை ஏற்பட்டது. உங்கள் இணைய இணைப்பைச் சரிபார்க்கவும்.</string>
     <string formatted="false" name="error_project_compatibility">பயன்பாட்டின் இந்த பதிப்போடு திட்டம் பொருந்தாது.</string>
     <string formatted="false" name="error_outdated_version">இந்த பயன்பாட்டு பதிப்பு காலாவதியானது. இப்பொழுது மேம்படுத்து?</string>
     <string formatted="false" name="error_upload_project_with_default_name">\"%s\" என்ற பெயரில் ஒரு திட்டத்தை நீங்கள் பதிவேற்ற முடியாது. தயவுசெய்து திட்டத்தின் மறுபெயரிடுக.</string>
-    <string formatted="false" name="error_upload_default_project">மாற்றப்படாத எடுத்துக்காட்டு திட்டத்தை நீங்கள் பதிவேற்ற முடியாது. ஏதாவது ஒன்றை மாற்றி மீண்டும் முயற்சிக்கவும்.</string>
     <string formatted="false" name="error_adding_brick">இந்த செங்கலைச் சேர்க்கும்போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string formatted="false" name="error_copying_brick">இந்த செங்கலை நகலெடுக்கும் போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string formatted="false" name="error_rename_incompatible_project">பொருந்தாத திட்டத்தை மறுபெயரிடுவது சாத்தியமில்லை.</string>
-    <string formatted="false" name="error_embroidery_file_export">எம்பிராய்டரி கோப்பைப் பகிரும்போது ஏதோ தவறு ஏற்பட்டது.</string>
     <string formatted="false" name="error_embroidery_file_write">Something went wrong while writing the embroidery file.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Embroidery is missing.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2042,8 +1984,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">சதவீதம்</string>
     <string formatted="false" name="hertz_symbol">(ஹெர்ட்ஸ்) அதிர்வெண்</string>
-    <string formatted="false" name="no_internet_connection">No internet connection. Make sure Wi-Fi or mobile
-    data is turned on.</string>
     <string formatted="false" name="edit">திருத்து</string>
     <string formatted="false" name="data_value">Value</string>
     <string formatted="false" name="category_recently_used">Recently used</string>

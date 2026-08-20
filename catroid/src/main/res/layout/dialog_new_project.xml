@@ -98,15 +98,6 @@
                     android:visibility="gone" />
             </RadioGroup>
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/example_project_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/material_design_spacing_x_large"
-                android:paddingBottom="@dimen/material_design_spacing_x_large"
-                android:paddingStart="@dimen/dialog_content_area_padding_input"
-                android:paddingEnd="@dimen/dialog_content_area_padding_input"
-                android:text="@string/new_project_dialog_example_project" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

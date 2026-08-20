@@ -40,9 +40,8 @@ public final class FlavoredConstants {
 
 	public static final String CATROBAT_HELP_URL = "https://catrobat.org/docs/";
 
-	public static final String CATEGORY_URL = BASE_URL_HTTPS + "#home-projects__";
 
-	public static final String POCKET_CODE_EXTERNAL_STORAGE_FOLDER_NAME = "Pocket Code Beta";
+	public static final String POCKET_CODE_EXTERNAL_STORAGE_FOLDER_NAME = "NewCode Beta";
 
 	public static final String FLAVOR_NAME = "pocketcode";
 
@@ -58,7 +57,6 @@ public final class FlavoredConstants {
 	public static final String CATROBAT_CONTENT_LOOKS_URL = CATROBAT_BASE_URL +  "figures-download/";
 	public static final String CATROBAT_CONTENT_SOUNDS_URL = CATROBAT_BASE_URL + "sounds-download/";
 	public static final String CATROBAT_CONTENT_BACKGROUNDS_URL = CATROBAT_BASE_URL + "backgrounds-download/";
-	public static final String PRIVACY_POLICY_URL = "https://developer.catrobat.org/pages/legal/policies/privacy/";
 
 	private FlavoredConstants() {
 		throw new AssertionError("No.");

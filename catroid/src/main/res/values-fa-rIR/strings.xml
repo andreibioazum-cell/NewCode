@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">لطفا صبر کن</string>
     <string formatted="false" name="search_hint">جستجو</string>
     <string formatted="false" name="backpack_add">به کوله پشتی اضافه کنید</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">پروژه ای که دانلود کرده اید، به صدای شما در پس زمینه         گوش می دهد و همچنین داده ها را به اینترنت می فرستد. این ممکن است بی ضرر باشد، و برای رفتار         مورد نظر آن ضروری است. با این حال، لطفا مطمئن شوید که آنچه شما می گویید در حالی که         پروژه در حال اجرا است امن است. در صورت شک، لطفا پروژه دانلود شده را حذف کنید.
         شما همچنین ممکن است پروژه را در صفحه خود در پلت فرم انجمن Catrobat گزارش دهید در صورتی که         مطمئن هستید که مضر است.</string>
@@ -82,19 +81,6 @@
     <string formatted="false" name="disconnect">قطع ارتباط</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">ادامه پروژه</string>
-    <string formatted="false" name="main_menu_new">پروژه جدید</string>
-    <string formatted="false" name="main_menu_programs">برنامه ها</string>
-    <string formatted="false" name="main_menu_help">راهنما</string>
-    <string formatted="false" name="main_menu_web">جامعه Catrobat</string>
-    <string formatted="false" name="main_menu_upload">آپلود کردن برنامه</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">امتیاز بده!</string>
-    <string formatted="false" name="main_menu_terms_of_use">شرایط استفاده و خدمات</string>
-    <string formatted="false" name="main_menu_privacy_policy">حریم خصوصی</string>
-    <string formatted="false" name="main_menu_about">درباره این برنامه</string>
-    <string formatted="false" name="main_menu_login">ورود به سیستم</string>
-    <string formatted="false" name="main_menu_logout">خروج</string>
     <string formatted="false" name="main_menu_scratch_converter">مبدل Scratch</string>
     <string formatted="false" name="main_menu_play_store_not_installed">فروشگاه App یافت نشد</string>
     <!--  -->
@@ -318,7 +304,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">برای استفاده از برنامه ما ، لازم است شرایط استفاده و خدمات ما را بپذیرید.         اما، اگر برای انجام این کار احساس راحتی نمی کنید ، می توانید از خدمات وب رایگان ما استفاده کنید</string>
     <string formatted="false" name="wtf_error">یک خطای غیرمنتظره رخ داد: من نتوانستم پروژه نمونه را بازیابی کنم.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">هنگام کپی پروژه خطایی روی داد</string>
@@ -605,7 +590,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">نمونه پروژه‌</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">منظره</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -645,27 +629,10 @@
     <string formatted="false" name="rating_dialog_rate_never">هیچ وقت</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">شرایط استفاده و خدمات</string>
-    <string formatted="false" name="dialog_terms_of_use_info">برای اینکه 
-        بتوانید از برنامه ها و سایر خدمات ارائه شده توسط پروژه Catrobat استفاده کنید،
-        باید با شرایط استفاده و خدمات ما موافقت کنید. هنگام استفاده از برنامه ها 
-        و سایر خدمات ما ، باید این شرایط را به شدت رعایت کنید. لطفاً برای فرمول بندی دقیق آنها به پیوند زیر مراجعه کنید.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">شرایط استفاده و خدمات</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">خوش آمدید!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">برای استفاده از این برنامه ، لطفاً برنامه ما را بپذیرید</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">درباره این برنامه</string>
-    <string formatted="false" name="dialog_about_license_info">این برنامه 
-        محیط برنامه نویسی و مترجم زبان برنامه نویسی بصری Catrobat را ارائه می دهد.\n
-        کد منبع این برنامه عمدتا تحت مجوز GNU AGPL v3 دارای مجوز است.
-        برای اطلاعات بیشتر در مورد مجوز به پیوند زیر مراجعه کنید.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">مجوز کد منبع</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">درباره \"کت ربات\"</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">نسخه زبان Catrobat</string>
-    <string formatted="false" name="dialog_about_version">نسخه:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">فاقد شبکه</string>
@@ -786,14 +753,6 @@
         مشکلات عملکردی شود.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">برگشت</string>
-    <string formatted="false" name="stage_dialog_resume">ادامه</string>
-    <string formatted="false" name="stage_dialog_restart">شروع مجدد</string>
-    <string formatted="false" name="stage_dialog_axes_on">محورها روشن است</string>
-    <string formatted="false" name="stage_dialog_axes_off">محورها خاموش</string>
-    <string formatted="false" name="stage_dialog_maximize">بیشینه کردنn\/کشیدن</string>
-    <string formatted="false" name="stage_dialog_screenshot">پیش نمایش</string>
-    <string formatted="false" name="stage_dialog_embroidery">گلدوزی</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">پیام جدید</string>
@@ -1199,21 +1158,9 @@
     <string formatted="false" name="default_script_group_name">گروه اسکریپت</string>
     <string formatted="false" name="default_broadcast_message_name">پیام</string>
     <string formatted="false" name="default_list_name">لیست</string>
-    <string formatted="false" name="default_project_background_name">پس زمینه</string>
-    <string formatted="false" name="default_project_cloud_name">ابرها</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">ابرها 1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">ابرها 2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">حیوان</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">بال بالا</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">بال ها رو به پایین</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">توییت 1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">توییت 2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">سوزن</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">حلقه بیرونی</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">حلقه داخلی</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">پس زمینه</string>
     <string formatted="false" name="default_cast_project_cloud_name">ابرها</string>
@@ -1261,7 +1208,6 @@
     <string formatted="false" name="channel_description">%1$s کانال اعلان</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">پیش نمایش تصویر ذخیره شد</string>
     <string formatted="false" name="notification_download_project_cancel">لغو بارگیری پروژه</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">پروژه بارگیری/تبدیل مجدد لغو شد</string>
     <string formatted="false" name="notification_upload_title_pending">"در حال بارگزاري"</string>
@@ -1291,18 +1237,14 @@
     <string formatted="false" name="error_new_project">خطایی هنگام ساختن برنامه ی جدید رخ داده است.</string>
     <string formatted="false" name="error_rename_scene">هنگام تغییر نام صحنه ، مشکلی پیش آمد.</string>
     <string formatted="false" name="error_load_project">خطایی هنگام بارگیری برنامه رخ داده است.</string>
-    <string formatted="false" name="error_screenshot_failed">هنگام ذخیره تصویر پیش نمایش ، مشکلی پیش آمد.</string>
     <string formatted="false" name="error_internet_connection">یک خطای نامعلوم رخ داده. برسی کن که به اینترنت وصلی یا نه.</string>
     <string formatted="false" name="error_project_compatibility">پروژه با این نسخه از برنامه سازگار نیست.</string>
     <string formatted="false" name="error_outdated_version">این نسخه برنامه قدیمی است. اکنون به روز شود؟</string>
     <string formatted="false" name="error_upload_project_with_default_name">نمی توانید پروژه ای با نام \"%s\" بارگذاری کنید.
         لطفا نام پروژه را تغییر دهید.</string>
-    <string formatted="false" name="error_upload_default_project">شما نمی توانید یک پروژه نمونه اصلاح نشده را بارگذاری کنید. 
-        لطفاً چیزی را تغییر دهید و دوباره امتحان کنید.</string>
     <string formatted="false" name="error_adding_brick">هنگام اضافه کردن این آجر خطایی رخ داده است</string>
     <string formatted="false" name="error_copying_brick">هنگام کپی کردن این آجر خطایی رخ داده است</string>
     <string formatted="false" name="error_rename_incompatible_project">تغییر نام پروژه ناسازگار امکان پذیر نیست.</string>
-    <string formatted="false" name="error_embroidery_file_export">هنگام اشتراک فایل گلدوزی مشکلی پیش آمد.</string>
     <string formatted="false" name="error_embroidery_file_write">هنگام نوشتن فایل گلدوزی مشکلی پیش آمد.</string>
     <string formatted="false" name="error_embroidery_data_not_found">گلدوزی گم شده است.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2037,7 +1979,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">هرتز</string>
-    <string formatted="false" name="no_internet_connection">اتصال به اینترنت وجود ندارد. مطمئن شوید که Wi-Fi یا داده تلفن     همراه روشن است.</string>
     <string formatted="false" name="edit">ويرايش</string>
     <string formatted="false" name="data_value">ارزش</string>
     <string formatted="false" name="category_recently_used">اخیرا مورد استفاده قرار گرفته</string>

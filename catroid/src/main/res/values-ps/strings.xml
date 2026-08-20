@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">هیله کوم لږ صبر وکړه</string>
     <string formatted="false" name="search_hint">لټون</string>
     <string formatted="false" name="backpack_add">په کڅوړه کې اضافه کړئ</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">هغه پروژه چې تاسو ډاونلوډ کړې ستاسو غږ په شالید 
         کې اوري او انټرنیټ ته ډیټا هم لیږي. دا کیدای شي بې ضرر وي، او د
@@ -88,19 +87,6 @@
     <string formatted="false" name="disconnect">منحل کول</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">پروژې ته دوام ورکړئ</string>
-    <string formatted="false" name="main_menu_new">نوے</string>
-    <string formatted="false" name="main_menu_programs">په وسیله کې پروژې</string>
-    <string formatted="false" name="main_menu_help">مرسته</string>
-    <string formatted="false" name="main_menu_web">د کاټروبیټ ټولنه</string>
-    <string formatted="false" name="main_menu_upload">پروژه پورته کړئ</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">موږ ته درجه ورکړئ!</string>
-    <string formatted="false" name="main_menu_terms_of_use">د کارولو او خدماتو شرایط</string>
-    <string formatted="false" name="main_menu_privacy_policy">د پټتیا تګلاره</string>
-    <string formatted="false" name="main_menu_about">د دې اپلیکیشن په اړه</string>
-    <string formatted="false" name="main_menu_login">د ننه کیدل</string>
-    <string formatted="false" name="main_menu_logout">وتون</string>
     <string formatted="false" name="main_menu_scratch_converter">سکریچ کنورټر</string>
     <string formatted="false" name="main_menu_play_store_not_installed">د اپلیکیشن پلورنځی ونه موندل شو</string>
     <!--  -->
@@ -330,8 +316,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">زموږ د اپلیکیشن کارولو لپاره ، دا اړینه ده چې زموږ د کارولو شرایط ومني.
-        په هرصورت، که تاسو د دې کولو لپاره آرام نه احساس کوئ، تاسو کولی شئ زموږ وړیا ویب خدمتونه وکاروئ</string>
     <string formatted="false" name="wtf_error">یوه ناڅاپه تېروتنه رامنځته شوه: زه نشم کولی د نمونې پروژه بحال کړم</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">د پروژې د کاپي کولو په وخت کې یوه تېروتنه رامنځته شوه</string>
@@ -618,7 +602,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">د پروژې بېلګه</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">منظره</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -658,27 +641,10 @@
     <string formatted="false" name="rating_dialog_rate_never">هیڅکله نه</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">د کارولو او خدماتو شرایط</string>
-    <string formatted="false" name="dialog_terms_of_use_info">د دې لپاره چې 
-        د کاټروباټ پروژې لخوا وړاندیز شوي ایپسونو او نورو خدماتو کارولو ته اجازه ورکړل شي، تاسو 
-        باید زموږ د کارولو او خدماتو شرایطو سره موافق یاست. تاسو باید دا شرایط په کلکه تعقیب کړئ کله چې زموږ ایپسونه 
-        او نور خدمات وکاروئ. مهرباني وکړئ د دوی دقیق جوړښت لپاره لاندې لینک وګورئ.</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">د کارولو او خدماتو شرایط</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">ښه راغلاست!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">د دې اپلیکیشن کارولو لپاره، مهرباني وکړئ زموږ ومنئ</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">د دې اپلیکیشن په اړه</string>
-    <string formatted="false" name="dialog_about_license_info">دا اپلیکیشن 
-        د بصری پروګرامینګ ژبې Catrobat لپاره د کوډ کولو چاپیریال او ترجمان وړاندې کوي.\n
-        د دې اپلیکیشن سرچینې کوډ په عمده ډول د GNU AGPL v3 جواز لاندې جواز لري.
-        د لایسنس په اړه د نورو جزیاتو لپاره لاندې لینک وګورئ.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">د سرچينې کوډ د جواز</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">د Catrobat په اړه</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">د Catrobat ژبې نسخه</string>
-    <string formatted="false" name="dialog_about_version">نسخه:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">No network</string>
@@ -799,14 +765,6 @@
     <string formatted="false" name="nfc_facedetection_support">د NFC کارول او په ورته وخت کې د مخ کشف کول ممکن د فعالیت مسلو لامل شي.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">بیرته</string>
-    <string formatted="false" name="stage_dialog_resume">بیا پیل کول</string>
-    <string formatted="false" name="stage_dialog_restart">بیا روښانه کول</string>
-    <string formatted="false" name="stage_dialog_axes_on">پر محور</string>
-    <string formatted="false" name="stage_dialog_axes_off">محور بند</string>
-    <string formatted="false" name="stage_dialog_maximize">زیاتول/\nوچتول</string>
-    <string formatted="false" name="stage_dialog_screenshot">مخکتنه</string>
-    <string formatted="false" name="stage_dialog_embroidery">ګنډل</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">نوی پیغام</string>
@@ -1212,21 +1170,9 @@
     <string formatted="false" name="default_script_group_name">د سکریپټ ګروپ</string>
     <string formatted="false" name="default_broadcast_message_name">پیغام</string>
     <string formatted="false" name="default_list_name">لیست</string>
-    <string formatted="false" name="default_project_background_name">شاليد</string>
-    <string formatted="false" name="default_project_cloud_name">ورېځې</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">ورېځې ۱</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">ورېځې ٢</string>
-    <string formatted="false" name="default_project_sprites_animal_name">څاروی</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">وزرونه پورته کوي</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">وزرونه ښکته</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">ټویټ ۱</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">ټویټ ۲</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">ستنه</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">بهرنی لوپ</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">داخلي لوپ</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">شاليد</string>
     <string formatted="false" name="default_cast_project_cloud_name">ورېځې</string>
@@ -1274,7 +1220,6 @@
     <string formatted="false" name="channel_description">%1$s د خبرتیا چینل</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">د مخکتنې انځور خوندي شو</string>
     <string formatted="false" name="notification_download_project_cancel">د پروژې ډاونلوډ لغوه کړئ</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">د پروژی ډاونلوډ کول / بیا رغول لغوه شوي</string>
     <string formatted="false" name="notification_upload_title_pending">"پورته کول"</string>
@@ -1304,18 +1249,14 @@
     <string formatted="false" name="error_new_project">د نوې پروژې د جوړولو پر مهال یو څه غلط شول.</string>
     <string formatted="false" name="error_rename_scene">د صحنې د نوم بدلولو په وخت کې یو څه غلط شو.</string>
     <string formatted="false" name="error_load_project">د پروژې د پورته کولو په وخت کې یو څه غلط شو.</string>
-    <string formatted="false" name="error_screenshot_failed">د مخکتنې عکس خوندي کولو پرمهال یو څه غلط شو.</string>
     <string formatted="false" name="error_internet_connection">یوه نامعلومه تېروتنه رامنځته شوه. خپل انټرنیټ پیوستون چیک کړئ.</string>
     <string formatted="false" name="error_project_compatibility">پروژه د ایپ د دې نسخې سره مطابقت نلري.</string>
     <string formatted="false" name="error_outdated_version">د دې اپلیکیشن نسخه پخوانۍ ده. اوس تازه کړئ؟</string>
     <string formatted="false" name="error_upload_project_with_default_name">تاسو نشئ کولی د \"%s\" نوم سره پروژه اپلوډ کړئ. 
         مهرباني وکړئ د پروژې نوم بدل کړئ.</string>
-    <string formatted="false" name="error_upload_default_project">تاسو نشئ کولی د نه بدلیدونکي مثال پروژه اپلوډ کړئ. مهرباني 
-        وکړئ یو څه بدل کړئ او بیا هڅه وکړئ.</string>
     <string formatted="false" name="error_adding_brick">د دې خښتې د اضافه کولو په وخت کې یو څه غلط شو.</string>
     <string formatted="false" name="error_copying_brick">د دې خښتې د کاپي کولو پرمهال یو څه غلط شو.</string>
     <string formatted="false" name="error_rename_incompatible_project">د نامناسب پروژې نوم بدلول ممکن ندي.</string>
-    <string formatted="false" name="error_embroidery_file_export">د ګنډلو فایل شریکولو پرمهال یو څه غلط شو.</string>
     <string formatted="false" name="error_embroidery_file_write">د ګنډلو فایل لیکلو پرمهال یو څه غلط شو.</string>
     <string formatted="false" name="error_embroidery_data_not_found">ګنډل ورک دي.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2053,8 +1994,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">㎐</string>
-    <string formatted="false" name="no_internet_connection">No internet connection. Make sure Wi-Fi or mobile
-    data is turned on.</string>
     <string formatted="false" name="edit">سمون</string>
     <string formatted="false" name="data_value">Value</string>
     <string formatted="false" name="category_recently_used">په دې وروستیو کې کارول کیږي</string>

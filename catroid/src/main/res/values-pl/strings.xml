@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">Proszę czekać</string>
     <string formatted="false" name="search_hint">Szukaj</string>
     <string formatted="false" name="backpack_add">Dodaj do plecaka</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">Projekt, który pobrałeś nasłuchuje twój głos
         w tle, a także wysyła dane do Internetu. Może to być nieszkodliwe i konieczne
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">Rozłącz</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">Kontynuuj projekt</string>
-    <string formatted="false" name="main_menu_new">Nowy projekt</string>
-    <string formatted="false" name="main_menu_programs">Projekty na urządzeniu</string>
-    <string formatted="false" name="main_menu_help">Pomoc</string>
-    <string formatted="false" name="main_menu_web">Społeczność Catrobat</string>
-    <string formatted="false" name="main_menu_upload">Wyślij projekt</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">Oceń nas!</string>
-    <string formatted="false" name="main_menu_terms_of_use">Warunki użytkowania i korzystania z usługi</string>
-    <string formatted="false" name="main_menu_privacy_policy">Polityka prywatności</string>
-    <string formatted="false" name="main_menu_about">O aplikacji</string>
-    <string formatted="false" name="main_menu_login">Zaloguj się</string>
-    <string formatted="false" name="main_menu_logout">Wyloguj się</string>
     <string formatted="false" name="main_menu_scratch_converter">Konwerter projektów Scratch</string>
     <string formatted="false" name="main_menu_play_store_not_installed">Nie znaleziono Google Play</string>
     <!--  -->
@@ -243,7 +229,7 @@
     <string formatted="false" name="error_request_timeout">Upss! Nasz serwer aktualnie nie odpowiada, spróbuj ponownie później.</string>
     <string formatted="false" name="error_scratch_program_conversion_failed">Upss! Nie można przekonwertować programu Scratch, spróbuj ponownie później!</string>
     <string formatted="false" name="error_specific_scratch_program_conversion_failed_x">Upss! Nie można przekonwertować %1$s, spróbuj ponownie później!</string>
-    <string formatted="false" name="error_scratch_converter_outdated_app_version">Twoja wersja Pocket Code jest nieaktualna. Nasz konwerter Scratcha działa tylko w najnowszej wersji. Proszę zaktualizować go przez Google Play</string>
+    <string formatted="false" name="error_scratch_converter_outdated_app_version">Twoja wersja NewCode jest nieaktualna. Nasz konwerter Scratcha działa tylko w najnowszej wersji. Proszę zaktualizować go przez Google Play</string>
     <string formatted="false" name="error_cannot_open_not_existing_scratch_program">Nie można otworzyć tego programu Scratch. Wydaje się, że anulowano konwersję/pobieranie programu Scratch lub w międzyczasie zmieniłeś nazwę/usunąłeś program!</string>
     <string formatted="false" name="error_cannot_open_currently_downloading_scratch_program">Nie można otworzyć programu w tej chwili. Proszę poczekać, aż zostanie on pobrany.</string>
     <string formatted="false" name="error_cannot_open_not_yet_downloaded_scratch_program">Nie możesz jeszcze otworzyć programu. Najpierw pobierz go, a następnie otwórz.</string>
@@ -329,8 +315,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">Aby używać naszych aplikacji konieczne jest zaakceptowanie naszej polityki prywatności.
-Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych usług internetowych na</string>
     <string formatted="false" name="wtf_error">Wystąpił nieoczekiwany błąd: NIE można przywrócić domyślnego projektu.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">Wystąpił błąd podczas kopiowania projektu</string>
@@ -679,7 +663,6 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Utwórz projekt</string>
-    <string formatted="false" name="new_project_dialog_example_project">Przykładowy projekt</string>
     <string name="new_project_dialog_portrait">Pionowo</string>
     <string name="new_project_dialog_landscape">Poziomo</string>
     <string name="new_project_dialog_cast">Rzuć</string>
@@ -719,21 +702,10 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <string formatted="false" name="rating_dialog_rate_never">Nigdy</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">Warunki użytkowania i korzystania z usługi</string>
-    <string formatted="false" name="dialog_terms_of_use_info">Aby móc korzystać z aplikacji i innych plików wykonywalnych oferowanych przez projekt Catrobat, musisz wyrazić zgodę na nasze Warunki korzystania i usługi. Trzeba ściśle przestrzegać tych warunków podczas korzystania z naszych aplikacji i innych plików wykonywalnych. Proszę zobaczyć poniższy link, aby uzyskać precyzyjne sformułowania.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">Warunki użytkowania i korzystania z usługi</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">Witaj!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">Aby korzystać z tej aplikacji, proszę zaakceptuj naszą</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">O aplikacji</string>
-    <string formatted="false" name="dialog_about_license_info">Ta aplikacja oferuje środowisko programistyczne i interpreter dla wizualnego programowania Catrobat.\n Kod źródłowy tej aplikacji jest głównie licencjonowany na licencji GNU AGPL v3. Aby uzyskać więcej informacji na temat licencji, zobacz poniższy link.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">Licencja kodu źródłowego</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">O Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Wersja językowa Catrobat</string>
-    <string formatted="false" name="dialog_about_version">wersja:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">Brak sieci</string>
@@ -851,14 +823,6 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <string formatted="false" name="nfc_facedetection_support">Jednoczesne używanie NFC i wykrywania twarzy może prowadzić do problemów z wydajnością!</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">Wstecz</string>
-    <string formatted="false" name="stage_dialog_resume">Wznów</string>
-    <string formatted="false" name="stage_dialog_restart">Uruchom ponownie</string>
-    <string formatted="false" name="stage_dialog_axes_on">Pokaż osie</string>
-    <string formatted="false" name="stage_dialog_axes_off">Ukryj osie</string>
-    <string formatted="false" name="stage_dialog_maximize">Maksymalizuj/\nRozciągnij</string>
-    <string formatted="false" name="stage_dialog_screenshot">Podgląd</string>
-    <string formatted="false" name="stage_dialog_embroidery">Haft</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">Nowy komunikat</string>
@@ -1279,21 +1243,9 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <string formatted="false" name="default_script_group_name">Grupa skryptów</string>
     <string formatted="false" name="default_broadcast_message_name">Wiadomość</string>
     <string formatted="false" name="default_list_name">Lista</string>
-    <string formatted="false" name="default_project_background_name">Tło</string>
-    <string formatted="false" name="default_project_cloud_name">Chmury</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">Chmura1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Chmura2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">Zwierzę</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">Skrzydła do góry</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">Skrzydła na dole</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Tweet1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Tweet2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Igła</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Zewnętrzna pętla</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Pętla wewnętrzna</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">Tło</string>
     <string formatted="false" name="default_cast_project_cloud_name">Chmury</string>
@@ -1341,7 +1293,6 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <string formatted="false" name="channel_description">%1$s kanał powiadomień</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">Podgląd zapisanego obrazu</string>
     <string formatted="false" name="notification_download_project_cancel">Anulowane pobieranie programu</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">Anulowano pobieranie/ponowną konwersję programu</string>
     <string formatted="false" name="notification_upload_title_pending">"Wysyłanie "</string>
@@ -1368,16 +1319,13 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <string formatted="false" name="error_new_project">Podczas tworzenia nowego programu wystąpił błąd.</string>
     <string formatted="false" name="error_rename_scene">Wystąpił błąd podczas zmiany nazwy sceny.</string>
     <string formatted="false" name="error_load_project">Coś poszło nie tak podczas ładowania projektu.</string>
-    <string formatted="false" name="error_screenshot_failed">Coś poszło nie tak podczas zapisywania podglądu obrazu.</string>
     <string formatted="false" name="error_internet_connection">Wystąpił nieznany błąd. Sprawdź połączenie z Internetem.</string>
     <string formatted="false" name="error_project_compatibility">Projekt nie jest zgodny z tą wersją aplikacji.</string>
     <string formatted="false" name="error_outdated_version">Ta wersja aplikacji jest przestarzała. Zaktualizować teraz?</string>
     <string formatted="false" name="error_upload_project_with_default_name">Nie możesz przesłać projektu o nazwie „%s”. Zmień nazwę projektu.</string>
-    <string formatted="false" name="error_upload_default_project">Nie możesz przesłać niezmodyfikowanego przykładowego projektu. Zmień coś i spróbuj ponownie.</string>
     <string formatted="false" name="error_adding_brick">Podczas dodawania tego bloku wystąpił błąd</string>
     <string formatted="false" name="error_copying_brick">Podczas kopiowania tego bloku wystąpił błąd</string>
     <string formatted="false" name="error_rename_incompatible_project">Zmiana nazwy projektu niezgodnego z tą wersją nie jest możliwa.</string>
-    <string formatted="false" name="error_embroidery_file_export">Coś poszło nie tak podczas udostępniania pliku haftu.</string>
     <string formatted="false" name="error_embroidery_file_write">Coś poszło nie tak podczas zapisywania pliku haftu.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Brak haftu.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2110,8 +2058,6 @@ Jeśli jednak nie chcesz tego robić, możesz skorzystać z naszych bezpłatnych
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">Hz</string>
-    <string formatted="false" name="no_internet_connection">Brak połączenia z Internetem. Upewnij się, że Wi-Fi lub
-    dane  komórkowe są włączone.</string>
     <string formatted="false" name="edit">Edytuj</string>
     <string formatted="false" name="data_value">Wartość</string>
     <string formatted="false" name="category_recently_used">Ostatnio używane</string>

@@ -105,7 +105,7 @@ class ReuploadProjectDialogTest {
         val intent = Intent()
         intent.putExtra(PROJECT_DIR, currentProject.directory)
         activityTestRule.launchActivity(intent)
-        Espresso.onView(ViewMatchers.withText(R.string.main_menu_upload))
+        Espresso.onView(ViewMatchers.withText(R.string.upload_project_dialog_title))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
@@ -126,7 +126,7 @@ class ReuploadProjectDialogTest {
         val intent = Intent()
         intent.putExtra(PROJECT_DIR, currentProject.directory)
         activityTestRule.launchActivity(intent)
-        Espresso.onView(ViewMatchers.withText(R.string.main_menu_upload))
+        Espresso.onView(ViewMatchers.withText(R.string.upload_project_dialog_title))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }

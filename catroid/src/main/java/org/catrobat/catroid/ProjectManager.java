@@ -525,7 +525,8 @@ public final class ProjectManager {
 	@Deprecated
 	public boolean initializeDefaultProject(Context context) {
 		try {
-			project = DefaultProjectHandler.createAndSaveDefaultProject(context);
+			project = DefaultProjectHandler.createAndSaveEmptyProject(
+					context.getString(R.string.default_project_name), context, false, false);
 			currentSprite = null;
 			currentlyEditedScene = project.getDefaultScene();
 			currentlyPlayingScene = currentlyEditedScene;
@@ -547,23 +548,6 @@ public final class ProjectManager {
 	@Deprecated
 	public void createNewEmptyProject(String name, Context context, boolean landscapeMode, boolean castEnabled) throws IOException {
 		project = DefaultProjectHandler.createAndSaveEmptyProject(name, context, landscapeMode, castEnabled);
-		currentSprite = null;
-		currentlyEditedScene = project.getDefaultScene();
-		currentlyPlayingScene = currentlyEditedScene;
-	}
-
-	@SuppressWarnings("unused")
-	public void createNewExampleProject(String name, DefaultProjectHandler.ProjectCreatorType projectCreatorType, boolean landscapeMode) throws IOException {
-		createNewExampleProject(name, applicationContext, projectCreatorType, landscapeMode);
-	}
-
-	/**
-	 * @deprecated use {@link #createNewExampleProject(String, DefaultProjectHandler.ProjectCreatorType, boolean)} ()} without Context instead.
-	 */
-	@Deprecated
-	public void createNewExampleProject(String name, Context context, DefaultProjectHandler.ProjectCreatorType projectCreatorType, boolean landscapeMode) throws IOException {
-		DefaultProjectHandler.getInstance().setDefaultProjectCreator(projectCreatorType);
-		project = DefaultProjectHandler.createAndSaveDefaultProject(name, context, landscapeMode);
 		currentSprite = null;
 		currentlyEditedScene = project.getDefaultScene();
 		currentlyPlayingScene = currentlyEditedScene;

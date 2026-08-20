@@ -31,7 +31,7 @@ import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.testsuites.annotations.Cat;
 import org.catrobat.catroid.testsuites.annotations.Level;
-import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment;
 import org.catrobat.catroid.uiespresso.util.UiTestUtils;
 import org.catrobat.catroid.uiespresso.util.rules.BaseActivityTestRule;
@@ -77,8 +77,8 @@ public class DisableHintDialogTest {
 	int bufferedPreferenceSetting;
 
 	@Rule
-	public BaseActivityTestRule<MainMenuActivity> baseActivityTestRule = new
-			BaseActivityTestRule<>(MainMenuActivity.class, false, false);
+	public BaseActivityTestRule<ProjectListActivity> baseActivityTestRule = new
+			BaseActivityTestRule<>(ProjectListActivity.class, false, false);
 
 	@Before
 	public void setUp() throws Exception {

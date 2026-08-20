@@ -95,7 +95,6 @@ class FaceDetectionResourceTest {
         Assert.assertTrue(faceDetectionOn())
 
         Espresso.pressBack()
-        Espresso.onView(ViewMatchers.withId(R.id.stage_dialog_button_back)).perform(ViewActions.click())
         formula.root = FormulaElement(FormulaElement.ElementType.NUMBER, "42", null)
         Espresso.onView(ViewMatchers.withId(R.id.button_play)).perform(ViewActions.click())
 

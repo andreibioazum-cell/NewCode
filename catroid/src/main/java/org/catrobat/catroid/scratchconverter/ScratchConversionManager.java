@@ -37,7 +37,7 @@ import com.google.common.base.Preconditions;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.scratchconverter.protocol.Job;
-import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.dialogs.ScratchReconvertDialog;
 import org.catrobat.catroid.ui.scratchconverter.BaseInfoViewListener;
 import org.catrobat.catroid.ui.scratchconverter.JobViewListener;
@@ -143,7 +143,7 @@ public class ScratchConversionManager implements ConversionManager {
 
 	private void closeAllActivities() {
 		if (!shutdown) {
-			Intent intent = new Intent(currentActivity.getApplicationContext(), MainMenuActivity.class);
+			Intent intent = new Intent(currentActivity.getApplicationContext(), ProjectListActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			currentActivity.startActivity(intent);
 		}

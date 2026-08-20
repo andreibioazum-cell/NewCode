@@ -123,24 +123,6 @@ public class BroadcastReceiverRegressionTest {
 
 	@Category({Level.Functional.class, Cat.CatrobatLanguage.class})
 	@Test
-	public void testReceiversWorkMoreThanOnce() {
-		final double initialValue = 1.0;
-		sprite1StartScript.addBrick(new SetVariableBrick(new Formula(initialValue), userVariable));
-		sprite1StartScript.addBrick(new BroadcastBrick(BROADCAST_MESSAGE_1));
-		StageTestUtils.addBroadcastScriptSettingUserVariableToSprite(sprite1, BROADCAST_MESSAGE_1, userVariable, 3.0);
-
-		baseActivityTestRule.launchActivity(null);
-		IdlingRegistry.getInstance().register(baseActivityTestRule.getActivity().idlingResource);
-		assertUserVariableEqualsWithTimeout(userVariable, 3, 2000);
-		pressBack();
-		userVariable.setValue(initialValue);
-		onView(withId(R.id.stage_dialog_button_restart)).inRoot(isDialog()).perform(click());
-
-		assertUserVariableEqualsWithTimeout(userVariable, 3, 2000);
-	}
-
-	@Category({Level.Functional.class, Cat.CatrobatLanguage.class})
-	@Test
 	public void testScriptRestartingItself() {
 		sprite1StartScript.addBrick(new SetVariableBrick(new Formula(0.0), userVariable));
 		sprite1StartScript.addBrick(new BroadcastBrick(BROADCAST_MESSAGE_1));

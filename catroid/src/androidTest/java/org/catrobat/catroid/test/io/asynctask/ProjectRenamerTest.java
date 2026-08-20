@@ -54,8 +54,8 @@ public class ProjectRenamerTest {
 	@Before
 	public void setUp() throws IOException {
 		TestUtils.deleteProjects(projectName, renamedProjectName);
-		defaultProject = DefaultProjectHandler.createAndSaveDefaultProject(projectName,
-				ApplicationProvider.getApplicationContext(), false);
+		defaultProject = DefaultProjectHandler.createAndSaveEmptyProject(projectName,
+				ApplicationProvider.getApplicationContext(), false, false);
 	}
 
 	@After

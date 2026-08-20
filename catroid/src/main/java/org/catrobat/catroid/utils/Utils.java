@@ -46,13 +46,10 @@ import com.huawei.hms.mlsdk.asr.MLAsrConstants;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DefaultProjectHandler;
 import org.catrobat.catroid.common.ScratchProgramData;
 import org.catrobat.catroid.content.Project;
 import org.catrobat.catroid.content.XmlHeader;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
-import org.catrobat.catroid.io.StorageOperations;
-import org.catrobat.catroid.io.XstreamSerializer;
 import org.catrobat.catroid.transfers.GoogleLoginHandler;
 import org.catrobat.catroid.ui.WebViewActivity;
 import org.catrobat.catroid.web.WebConnectionException;
@@ -404,56 +401,6 @@ public final class Utils {
 				.edit()
 				.putString(PREF_PROJECTNAME_KEY, projectName)
 				.apply();
-	}
-
-	public static boolean isDefaultProject(Project projectToCheck, Context context) {
-		try {
-			String uniqueProjectName = "project_" + System.currentTimeMillis();
-
-			while (FileMetaDataExtractor.getProjectNames(DEFAULT_ROOT_DIRECTORY).contains(uniqueProjectName)) {
-				uniqueProjectName = "project_" + System.currentTimeMillis();
-			}
-
-			Project defaultProject = DefaultProjectHandler.createAndSaveDefaultProject(uniqueProjectName, context, false);
-
-			String defaultProjectXml = XstreamSerializer.getInstance().getXmlAsStringFromProject(defaultProject);
-
-			StorageOperations.deleteDir(defaultProject.getDirectory());
-
-			StringFinder stringFinder = new StringFinder();
-
-			String defaultProjectSpriteList = stringFinder.findBetween(defaultProjectXml,
-					"<scenes>", "</scenes>");
-
-			if (defaultProjectSpriteList == null) {
-				return false;
-			}
-
-			saveProjectSerial(projectToCheck, context);
-
-			String projectToCheckXML = XstreamSerializer.getInstance().getXmlAsStringFromProject(projectToCheck);
-
-			String projectToCheckSpriteList = stringFinder.findBetween(projectToCheckXML,
-					"<scenes>", "</scenes");
-
-			if (projectToCheckSpriteList == null) {
-				return false;
-			}
-
-			String scriptIdRegex = "((?s)<scriptId>.*?</scriptId>)";
-			String brickIdRegex = "(?s)<brickId>.*?</brickId>";
-			String scriptIdReplacement = "<scriptId></scriptId>";
-			String brickIdIdReplacement = "<bricktId></brickId>";
-			projectToCheckSpriteList = projectToCheckSpriteList.replaceAll(scriptIdRegex, scriptIdReplacement);
-			projectToCheckSpriteList = projectToCheckSpriteList.replaceAll(brickIdRegex, brickIdIdReplacement);
-			defaultProjectSpriteList = defaultProjectSpriteList.replaceAll(scriptIdRegex, scriptIdReplacement);
-			defaultProjectSpriteList = defaultProjectSpriteList.replaceAll(brickIdRegex, brickIdIdReplacement);
-
-			return defaultProjectSpriteList.contentEquals(projectToCheckSpriteList);
-		} catch (IllegalArgumentException | IOException illegalArgumentException) {
-			Log.e(TAG, Log.getStackTraceString(illegalArgumentException));
-		}
-		return true;
 	}
 
 	public static int convertDoubleToPluralInteger(double value) {

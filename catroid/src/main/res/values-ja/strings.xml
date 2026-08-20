@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">しばらくお待ちください</string>
     <string formatted="false" name="search_hint">検索…</string>
     <string formatted="false" name="backpack_add">バックパックに追加</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">あなたがダウンロードしたプロジェクトは、バックグラウンドであなたの声を聴き
         バックグラウンドであなたの声を聞き、またデータをインターネットに送信します。これは無害かもしれませんし
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">切断</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">プロジェクトを続ける</string>
-    <string formatted="false" name="main_menu_new">新規プロジェクト</string>
-    <string formatted="false" name="main_menu_programs">プログラム</string>
-    <string formatted="false" name="main_menu_help">ヘルプ</string>
-    <string formatted="false" name="main_menu_web">Catrobat コミュニティ</string>
-    <string formatted="false" name="main_menu_upload">プログラムをアップロード</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">アプリを評価して！</string>
-    <string formatted="false" name="main_menu_terms_of_use">利用とサービスの規約</string>
-    <string formatted="false" name="main_menu_privacy_policy">プライバシーポリシー</string>
-    <string formatted="false" name="main_menu_about">このアプリについて</string>
-    <string formatted="false" name="main_menu_login">ログイン</string>
-    <string formatted="false" name="main_menu_logout">ログアウト</string>
     <string formatted="false" name="main_menu_scratch_converter">スクラッチ コンバーター</string>
     <string formatted="false" name="main_menu_play_store_not_installed">App store が見つかりません</string>
     <!--  -->
@@ -320,8 +306,6 @@
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">アプリをご利用いただくには、利用規約とサービスに同意する必要があります。
-        ただし、快適でない場合は、無料のウェブサービスをご利用いただけます</string>
     <string formatted="false" name="wtf_error">予期しないエラーが発生しました: サンプルプロジェクトを復元できませんでした。</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">プロジェクトのコピー中にエラーが発生しました</string>
@@ -578,7 +562,6 @@
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">プロジェクトの例</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">ランドスケープ (横長モード)</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -618,27 +601,10 @@
     <string formatted="false" name="rating_dialog_rate_never">しない</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">利用とサービスの規約</string>
-    <string formatted="false" name="dialog_terms_of_use_info">以下の条件を満たすために
-        Catrobatプロジェクトが提供するアプリやその他のサービスをご利用いただくためには
-        利用規約とサービスに同意する必要があります。アプリやその他のサービスを利用する際には、これらの規約に厳密に従う必要があります。
-        遵守していただく必要があります。具体的には以下のリンクを参照してください。</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">利用とサービスの規約</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">ようこそ！</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">このアプリを使用するには、次のことを承認してください</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">このアプリについて</string>
-    <string formatted="false" name="dialog_about_license_info">このアプリは、ビジュアルプログラミング言語「Catrobat」のコーディング環境とインタープリターを提供します。
-        ビジュアルプログラミング言語「Catrobat」のコーディング環境とインタプリタを提供します。
-        このアプリのソースコードは、主にGNU AGPL v3ライセンスで提供されています。
-        ライセンスの詳細については、以下のリンクを参照してください。</string>
-    <string formatted="false" name="dialog_about_license_link_text">ソースコード ライセンス</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">キャトロバットについて</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">キャットロバットの言語バージョン</string>
-    <string formatted="false" name="dialog_about_version">バージョン:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">ネットワーク接続がありません</string>
@@ -759,14 +725,6 @@
 。</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">戻る</string>
-    <string formatted="false" name="stage_dialog_resume">続ける</string>
-    <string formatted="false" name="stage_dialog_restart">再スタート</string>
-    <string formatted="false" name="stage_dialog_axes_on">軸オン</string>
-    <string formatted="false" name="stage_dialog_axes_off">軸オフ</string>
-    <string formatted="false" name="stage_dialog_maximize">最大化/\n拡大解釈</string>
-    <string formatted="false" name="stage_dialog_screenshot">プレビュー</string>
-    <string formatted="false" name="stage_dialog_embroidery">刺繍（刺繍）</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">新しいメッセージ</string>
@@ -1165,21 +1123,9 @@
     <string formatted="false" name="default_script_group_name">スクリプト グループ</string>
     <string formatted="false" name="default_broadcast_message_name">メッセージ</string>
     <string formatted="false" name="default_list_name">リスト</string>
-    <string formatted="false" name="default_project_background_name">背景</string>
-    <string formatted="false" name="default_project_cloud_name">雲</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">雲1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">雲2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">アニマル</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">ウィングアップ</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">翼を下げて</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">さえずり1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">さえずり2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">ニードル語</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">外側ループ</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">内側ループ</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">背景</string>
     <string formatted="false" name="default_cast_project_cloud_name">雲</string>
@@ -1227,7 +1173,6 @@
     <string formatted="false" name="channel_description">%1$s 通知チャンネル</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">プレビュー画像を保存しました</string>
     <string formatted="false" name="notification_download_project_cancel">プロジェクトのダウンロードをキャンセル</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">プログラムのダウンロード/再変換をキャンセルしました</string>
     <string formatted="false" name="notification_upload_title_pending">"アップロード中 "</string>
@@ -1257,18 +1202,14 @@
     <string formatted="false" name="error_new_project">新しいプログラムを作成中にエラーが発生しました</string>
     <string formatted="false" name="error_rename_scene">シーンの名前を変更中にエラーが発生しました。</string>
     <string formatted="false" name="error_load_project">プログラムの読み込み中にエラーが発生しました</string>
-    <string formatted="false" name="error_screenshot_failed">プレビュー画像の保存中にエラーが発生しました。</string>
     <string formatted="false" name="error_internet_connection">不明なエラーが発生しました。インターネット接続を確認してください</string>
     <string formatted="false" name="error_project_compatibility">プロジェクトは、このバージョンのアプリと互換性がありません。</string>
     <string formatted="false" name="error_outdated_version">このアプリのバージョンが古すぎます。今すぐ更新しますか?</string>
     <string formatted="false" name="error_upload_project_with_default_name">You cannot upload a project with the name \"%s\".
         Please rename the project.</string>
-    <string formatted="false" name="error_upload_default_project">変更されていないサンプルプロジェクトをアップロードすることはできません。
-        何かを変更して再度お試し下さい。</string>
     <string formatted="false" name="error_adding_brick">このブロックを追加中にエラーが発生しました</string>
     <string formatted="false" name="error_copying_brick">このブロックをコピー中にエラーが発生しました</string>
     <string formatted="false" name="error_rename_incompatible_project">互換性のないプロジェクトの名前を変更することはできません。</string>
-    <string formatted="false" name="error_embroidery_file_export">刺繍ファイルの共有中に問題が発生しました。</string>
     <string formatted="false" name="error_embroidery_file_write">刺繍ファイルの作成中に問題が発生しました。</string>
     <string formatted="false" name="error_embroidery_data_not_found">刺繍がありません。</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2007,8 +1948,6 @@
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">Hzの</string>
-    <string formatted="false" name="no_internet_connection">インターネットに接続されていません。Wi-Fiまたはモバイル
-    データがオンになっていることを確認してください。</string>
     <string formatted="false" name="edit">編集</string>
     <string formatted="false" name="data_value">値</string>
     <string formatted="false" name="category_recently_used">最近使用したもの</string>

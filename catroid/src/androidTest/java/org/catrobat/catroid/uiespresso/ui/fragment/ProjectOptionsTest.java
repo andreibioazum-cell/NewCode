@@ -170,7 +170,7 @@ public class ProjectOptionsTest {
 				.check(matches(isDisplayed()));
 		assertEquals(NEW_PROJECT_NAME, project.getName());
 
-		onView(withText(R.string.default_project_background_name))
+		onView(withText(R.string.background))
 				.perform(click());
 
 		onView(withId(tab_layout)).perform(selectTabAtPosition(1));
@@ -186,7 +186,7 @@ public class ProjectOptionsTest {
 		intended(expectedPaintNewLookIntent);
 
 		onRecyclerView().atPosition(0).onChildView(R.id.title_view)
-				.check(matches(withText(R.string.default_project_background_name)));
+				.check(matches(withText(R.string.background)));
 	}
 
 	private Matcher<Intent> createLookFromPaintroid() throws IOException {

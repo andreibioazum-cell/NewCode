@@ -43,14 +43,13 @@ import android.util.Log;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
 import org.catrobat.catroid.transfers.project.ProjectUploadService;
-import org.catrobat.catroid.ui.MainMenuActivity;
+import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.utils.ToastUtil;
 
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 import kotlin.jvm.Synchronized;
 
-import static org.catrobat.catroid.common.Constants.EXTRA_PROJECT_NAME;
 import static org.catrobat.catroid.common.Constants.MAX_PERCENT;
 
 public final class StatusBarNotificationManager {
@@ -76,7 +75,7 @@ public final class StatusBarNotificationManager {
 			return null;
 		}
 
-		Intent uploadIntent = new Intent(context, MainMenuActivity.class);
+		Intent uploadIntent = new Intent(context, ProjectListActivity.class);
 		uploadIntent.setAction(Intent.ACTION_MAIN);
 		uploadIntent = uploadIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
@@ -228,9 +227,8 @@ public final class StatusBarNotificationManager {
 				break;
 
 			default:
-				Intent openIntent = new Intent(context, MainMenuActivity.class);
-				openIntent.setAction(Intent.ACTION_MAIN).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-						.putExtra(EXTRA_PROJECT_NAME, bundle.getString("projectName"));
+				Intent openIntent = new Intent(context, ProjectListActivity.class);
+				openIntent.setAction(Intent.ACTION_MAIN).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
 				PendingIntent pendingIntent = PendingIntent.getActivity(
 						context,

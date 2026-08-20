@@ -40,7 +40,7 @@ import org.catrobat.catroid.common.SharedPreferenceKeys.AGREED_TO_PRIVACY_POLICY
 import org.catrobat.catroid.content.bricks.ChangeSizeByNBrick
 import org.catrobat.catroid.testsuites.annotations.Cat.AppUi
 import org.catrobat.catroid.testsuites.annotations.Level.Smoke
-import org.catrobat.catroid.ui.MainMenuActivity
+import org.catrobat.catroid.ui.ProjectListActivity
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment.setLanguageSharedPreference
 import org.catrobat.catroid.uiespresso.content.brick.utils.BrickDataInteractionWrapper.onBrickAtPosition
@@ -69,8 +69,8 @@ class FormulaEditorTouchesActorOrObjectTest {
     val spriteName = "testSprite"
 
     @get:Rule
-    var baseActivityTestRule: BaseActivityTestRule<MainMenuActivity> = BaseActivityTestRule(
-        MainMenuActivity::class.java, false, false
+    var baseActivityTestRule: BaseActivityTestRule<ProjectListActivity> = BaseActivityTestRule(
+        ProjectListActivity::class.java, false, false
     )
 
     @Before
@@ -109,7 +109,6 @@ class FormulaEditorTouchesActorOrObjectTest {
     @Category(AppUi::class, Smoke::class)
     @Test
     fun checkFormulaAfterLanguageChange() {
-        onView(withText(applicationContext.getString(R.string.main_menu_programs))).perform(click())
         onView(withText(projectName)).perform(click())
         onView(withText(spriteName)).perform(click())
         onBrickAtPosition(brickPosition).onChildView(
@@ -130,7 +129,6 @@ class FormulaEditorTouchesActorOrObjectTest {
         onView(withText(R.string.settings)).perform(click())
         onView(withText(R.string.preference_title_language)).perform(click())
         onData(Matchers.hasToString(germanLocale.getDisplayName(germanLocale))).perform(click())
-        onView(withText(applicationContext.getString(R.string.main_menu_programs))).perform(click())
         onView(withText(projectName)).perform(click())
         onView(withText(spriteName)).perform(click())
         onBrickAtPosition(brickPosition).onChildView(

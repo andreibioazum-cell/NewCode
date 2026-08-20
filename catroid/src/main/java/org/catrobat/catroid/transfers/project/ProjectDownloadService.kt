@@ -35,13 +35,12 @@ import org.catrobat.catroid.R
 import org.catrobat.catroid.common.Constants
 import org.catrobat.catroid.common.Constants.CACHE_DIRECTORY
 import org.catrobat.catroid.common.Constants.CATROBAT_EXTENSION
-import org.catrobat.catroid.common.Constants.EXTRA_PROJECT_NAME
 import org.catrobat.catroid.common.Constants.MAX_PERCENT
 import org.catrobat.catroid.common.Constants.TMP_DIRECTORY_NAME
 import org.catrobat.catroid.common.FlavoredConstants
 import org.catrobat.catroid.io.XstreamSerializer
 import org.catrobat.catroid.io.ZipArchiver
-import org.catrobat.catroid.ui.MainMenuActivity
+import org.catrobat.catroid.ui.ProjectListActivity
 import org.catrobat.catroid.utils.FileMetaDataExtractor
 import org.catrobat.catroid.utils.ToastUtil
 import org.catrobat.catroid.utils.notifications.NotificationData
@@ -143,10 +142,9 @@ class ProjectDownloadService : IntentService("ProjectDownloadService") {
             XstreamSerializer.renameProject(File(projectDir, Constants.CODE_XML_FILE_NAME), projectName)
             ProjectManager.getInstance().addNewDownloadedProject(projectName)
 
-            val downloadIntent = Intent(context, MainMenuActivity::class.java)
+            val downloadIntent = Intent(context, ProjectListActivity::class.java)
             downloadIntent.setAction(Intent.ACTION_MAIN)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .putExtra(EXTRA_PROJECT_NAME, projectName)
 
             val pendingIntent: PendingIntent = PendingIntent.getActivity(
                 context,

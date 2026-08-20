@@ -467,10 +467,6 @@ open class ProjectUploadActivity : BaseActivity(),
         get() = binding.inputProjectNotesAndCredits.editText?.text.toString().trim { it <= ' ' }
 
     fun showUploadDialog() {
-        if (MainMenuActivity.surveyCampaign != null) {
-            MainMenuActivity.surveyCampaign?.uploadFlag = true
-        }
-
         uploadProgressDialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.upload_project_dialog_title))
             .setView(R.layout.dialog_upload_project_progress)
@@ -481,8 +477,6 @@ open class ProjectUploadActivity : BaseActivity(),
             .setNegativeButton(R.string.done) { _, _ ->
                 loadBackup()
                 projectManager.resetChangedFlag(project)
-                MainMenuActivity.surveyCampaign?.showSurvey(this)
-
                 finish()
             }
             .setCancelable(false)

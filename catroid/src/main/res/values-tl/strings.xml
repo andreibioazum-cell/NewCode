@@ -58,7 +58,6 @@
     <string formatted="false" name="please_wait">Pakiusap maghintay</string>
     <string formatted="false" name="search_hint">Maghanap</string>
     <string formatted="false" name="backpack_add">Idagdag sa backpack</string>
-    <string formatted="false" name="share_website_text">share.catrob.at</string>
     <!-- Security warning dialog -->
     <string formatted="false" name="security_warning_dialog_msg">Ang na-download mong project ay nakikinig sa boses mo
         sa background at nagpapadala ng data sa internet. Maaaring hindi naman ito nakakapanakit,at kailangan
@@ -87,19 +86,6 @@
     <string formatted="false" name="disconnect">Na-Disconnect</string>
     <!--  -->
     <!-- Main Menu -->
-    <string formatted="false" name="main_menu_continue">Ipagpatuloy ang proyekto</string>
-    <string formatted="false" name="main_menu_new">Bagong proyekto</string>
-    <string formatted="false" name="main_menu_programs">Proyekto sa device</string>
-    <string formatted="false" name="main_menu_help">Tulong</string>
-    <string formatted="false" name="main_menu_web">Catrobat community</string>
-    <string formatted="false" name="main_menu_upload">I-upload ang proyekto</string>
-    <string formatted="false" name="main_menu_play">Play project</string>
-    <string formatted="false" name="main_menu_rate_app">I-Rate kami!</string>
-    <string formatted="false" name="main_menu_terms_of_use">Terms ng Paggamit at Serbisyo</string>
-    <string formatted="false" name="main_menu_privacy_policy">Patakaran sa Privacy</string>
-    <string formatted="false" name="main_menu_about">Tungkol sa app na ito</string>
-    <string formatted="false" name="main_menu_login">Mag-Login</string>
-    <string formatted="false" name="main_menu_logout">Mag-Logout</string>
     <string formatted="false" name="main_menu_scratch_converter">Scratch converter</string>
     <string formatted="false" name="main_menu_play_store_not_installed">Hindi mahanap ang App sa store</string>
     <!--  -->
@@ -333,8 +319,6 @@ Pakiusap sumubok na lamang ng iba.</string>
     <!--  -->
     <!-- ERRORS -->
     <!-- Terms of Use and Service Error -->
-    <string formatted="false" name="declined_terms_of_use_and_service_alert">Upang magamit ang aming app, Naaangkop lamang na tanggapin ang aming Terms of Use and Service.
-   Ngunit,kung hindi ka komportable na gawin ito,maaari mong gamiting ang aming libreng web-services.</string>
     <string formatted="false" name="wtf_error">Isang di-inaasahang error and nangyari; Hindi ko mare-restore ang sample na proyekto.</string>
     <!-- Project Handling Errors -->
     <string formatted="false" name="error_copy_project">Isang error ang nangyari habang kinokopya ang proyekto</string>
@@ -622,7 +606,6 @@ Pakiusap sumubok na lamang ng iba.</string>
     <!--  -->
     <!-- NewProjectDialog -->
     <string name="new_project_title">Create project</string>
-    <string formatted="false" name="new_project_dialog_example_project">Halimbawang proyekto</string>
     <string name="new_project_dialog_portrait">Portrait</string>
     <string name="new_project_dialog_landscape">Landscape</string>
     <string name="new_project_dialog_cast">Cast</string>
@@ -662,27 +645,10 @@ Pakiusap sumubok na lamang ng iba.</string>
     <string formatted="false" name="rating_dialog_rate_never">Hindi kailanman</string>
     <!--  -->
     <!-- Terms of Use Dialog -->
-    <string formatted="false" name="dialog_terms_of_use_title">Terms ng Paggamit at Serbisyo</string>
-    <string formatted="false" name="dialog_terms_of_use_info">Upang
-        mapayagan ang paggamit ng app at iba pang serbisyo ng Catrobat project, ikaw
-        ay marapat na sumang-ayon sa aming Terms of Use and Service. Kailangan mo itong sundin ng maiigi habang ginagamit ang aming app
-        at iba pang serbisyo. Pakiusap tignan ang link na nasa ibaba para sa mas eksaktong paliwanang.\n</string>
-    <string formatted="false" name="dialog_terms_of_use_link_text">Terms ng Paggamit at Serbisyo</string>
     <!--  -->
     <!-- Privacy Policy -->
-    <string formatted="false" name="disclaimer_privacy_police_header_headline">Maligayang pagdating!</string>
-    <string formatted="false" name="disclaimer_privacy_policy_header">Upang magamit ang app, pakiusap tanggapin ang aming</string>
     <!-- -->
     <!-- About Dialog -->
-    <string formatted="false" name="dialog_about_title">Tungkol sa App</string>
-    <string formatted="false" name="dialog_about_license_info">Ang app na ito ay nag-o-offer ng coding
-        environment at interpreter para sa visual programming language na Catrobat.\n
-        Ang source code ng app na ito ay lisensiyado sa ilalim ng GNU AGPL v3 license.
-        Para sa marami pang detalye tungkol sa lisensya, tignan ang link na nasa ibaba.\n</string>
-    <string formatted="false" name="dialog_about_license_link_text">Lisensya ng source code</string>
-    <string formatted="false" name="dialog_about_catrobat_link_text">Tungkol sa Catrobat</string>
-    <string formatted="false" name="dialog_about_catrobat_language_version">Catrobat language version</string>
-    <string formatted="false" name="dialog_about_version">bersiyon:</string>
     <!--  -->
     <!-- NetworkAlertDialog -->
     <string formatted="false" name="error_no_network_title">Walang network</string>
@@ -801,14 +767,6 @@ Pakiusap sumubok na lamang ng iba.</string>
     <string formatted="false" name="nfc_facedetection_support">Ang paggamit ng NFC at face detection ng magkasabay ay maaaring magdulot ng performance issues.</string>
     <!--  -->
     <!-- Stage menu dialog -->
-    <string formatted="false" name="stage_dialog_back">Bumalik</string>
-    <string formatted="false" name="stage_dialog_resume">Ipagpatuloy</string>
-    <string formatted="false" name="stage_dialog_restart">I-Restart</string>
-    <string formatted="false" name="stage_dialog_axes_on">Axes on</string>
-    <string formatted="false" name="stage_dialog_axes_off">Axes off</string>
-    <string formatted="false" name="stage_dialog_maximize">I-maximize ang/\nstretch</string>
-    <string formatted="false" name="stage_dialog_screenshot">Preview</string>
-    <string formatted="false" name="stage_dialog_embroidery">Pagbuburda</string>
     <!--  -->
     <!-- Broadcast spinner -->
     <string formatted="false" name="dialog_new_broadcast_message_title">Bagong mensahe</string>
@@ -1215,21 +1173,9 @@ Pakiusap sumubok na lamang ng iba.</string>
     <string formatted="false" name="default_script_group_name">Script group</string>
     <string formatted="false" name="default_broadcast_message_name">Message</string>
     <string formatted="false" name="default_list_name">List</string>
-    <string formatted="false" name="default_project_background_name">Background</string>
-    <string formatted="false" name="default_project_cloud_name">Clouds</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_1">Clouds1</string>
-    <string formatted="false" name="default_project_cloud_sprite_name_2">Clouds2</string>
-    <string formatted="false" name="default_project_sprites_animal_name">Animal</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_up">Wings up</string>
-    <string formatted="false" name="default_project_sprites_animal_wings_down">Wings down</string>
-    <string formatted="false" name="default_project_sprites_tweet_1">Tweet1</string>
-    <string formatted="false" name="default_project_sprites_tweet_2">Tweet2</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_needle_name">Needle</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_outer_loop">Outer Loop</string>
     <!--suppress UnusedResources -->
-    <string formatted="false" name="default_project_inner_loop">Inner Loop</string>
     <!-- Default ChromeCast Values -->
     <string formatted="false" name="default_cast_project_background_name">Background</string>
     <string formatted="false" name="default_cast_project_cloud_name">Clouds</string>
@@ -1277,7 +1223,6 @@ Pakiusap sumubok na lamang ng iba.</string>
     <string formatted="false" name="channel_description">%1$s notification channel</string>
     <!--  -->
     <!-- Notifications -->
-    <string formatted="false" name="notification_screenshot_ok">Preview image saved</string>
     <string formatted="false" name="notification_download_project_cancel">Cancel project download</string>
     <string formatted="false" name="notification_reconvert_download_program_cancel">Canceled downloading/reconverting project</string>
     <string formatted="false" name="notification_upload_title_pending">"Uploading"</string>
@@ -1307,18 +1252,14 @@ needs read and write access to it. You can always change permissions through you
     <string formatted="false" name="error_new_project">Something went wrong while creating a new project.</string>
     <string formatted="false" name="error_rename_scene">Something went wrong while renaming the scene.</string>
     <string formatted="false" name="error_load_project">Something went wrong while loading the project.</string>
-    <string formatted="false" name="error_screenshot_failed">Something went wrong while saving the preview image.</string>
     <string formatted="false" name="error_internet_connection">An unknown error occurred. Check your Internet connection.</string>
     <string formatted="false" name="error_project_compatibility">The project is not compatible with this version of the app.</string>
     <string formatted="false" name="error_outdated_version">This app version is outdated. Update now?</string>
     <string formatted="false" name="error_upload_project_with_default_name">You cannot upload a project with the name \"%s\".
         Please rename the project.</string>
-    <string formatted="false" name="error_upload_default_project">You cannot upload an unmodified example project. Please
-        change something and try again.</string>
     <string formatted="false" name="error_adding_brick">Something went wrong while adding this brick.</string>
     <string formatted="false" name="error_copying_brick">Something went wrong while copying this brick.</string>
     <string formatted="false" name="error_rename_incompatible_project">Renaming an incompatible project is not possible.</string>
-    <string formatted="false" name="error_embroidery_file_export">Something went wrong while sharing the embroidery file.</string>
     <string formatted="false" name="error_embroidery_file_write">Something went wrong while writing the embroidery file.</string>
     <string formatted="false" name="error_embroidery_data_not_found">Embroidery is missing.</string>
     <string formatted="false" name="error_plot_file_write">Something went wrong while writing the
@@ -2076,8 +2017,6 @@ needs read and write access to it. You can always change permissions through you
     <!-- Symbols -->
     <string formatted="false" name="percent_symbol">%</string>
     <string formatted="false" name="hertz_symbol">㎐</string>
-    <string formatted="false" name="no_internet_connection">No internet connection. Make sure Wi-Fi or mobile
-    data is turned on.</string>
     <string formatted="false" name="edit">Edit</string>
     <string formatted="false" name="data_value">Value</string>
     <string formatted="false" name="category_recently_used">Recently used</string>
