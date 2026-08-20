@@ -23,6 +23,7 @@
 
 package org.catrobat.catroid.content.actions;
 
+import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.formulaeditor.UserList;
 import org.catrobat.catroid.formulaeditor.UserVariable;
 
@@ -34,6 +35,7 @@ public class ForItemInUserListAction extends LoopAction {
 	private UserVariable currentItemVariable;
 	private boolean isCurrentLoopInitialized = false;
 	private int index = 0;
+	private Script script;
 
 	@Override
 	public boolean delegate(float delta) {
@@ -53,11 +55,18 @@ public class ForItemInUserListAction extends LoopAction {
 		setCurrentItemVariable(list.get(index));
 		setCurrentTime(getCurrentTime() + delta);
 
-		if (action != null && action.act(delta) && !isLoopDelayNeeded()) {
-			index++;
+		if (action != null) {
+			boolean bodyDone = action.act(delta);
+			if (LoopController.consumeBreak(script)) {
+				return true;
+			}
+			if (LoopController.consumeContinue(script)
+					|| bodyDone && !isLoopDelayNeeded()) {
+				index++;
 
-			isCurrentLoopInitialized = false;
-			action.restart();
+				isCurrentLoopInitialized = false;
+				action.restart();
+			}
 		}
 		return false;
 	}
@@ -75,6 +84,10 @@ public class ForItemInUserListAction extends LoopAction {
 
 	public void setCurrentItemVariable(UserVariable variable) {
 		this.currentItemVariable = variable;
+	}
+
+	public void setScript(Script script) {
+		this.script = script;
 	}
 
 	private void setCurrentItemVariable(Object listItem) {

@@ -16,6 +16,7 @@
 | Данные         | SetVariable, ChangeVariable, AddToList, DeleteFromList, ClearList, InsertIntoList, ReplaceInList |
 | Формулы        | +, −, ×, ÷, %, ^, сравнения, AND/OR/NOT, sin/cos/tan/sqrt/abs/round/floor/ceil/ln/log/exp/min/max/random/length/join/letter, USER_VARIABLE, USER_LIST, SENSOR |
 | Отладка/CLI    | PrintBrick (наше расширение — печатает значение в stdout)             |
+| C-блоки        | Malloc, Calloc, Realloc, Free, Memcpy, Memset, Typedef, Cast, PointerSet, PointerGet, Return, Break, Continue (см. «C-блоки и типы») |
 
 **Расширения удалены и/или молча игнорируются** при загрузке XML:
 Lego NXT/EV3, Raspberry Pi, Arduino, Phiro, Parrot Drone, JumpingSumo,
@@ -63,9 +64,40 @@ examples/
 В палитру рантайма добавлены низкоуровневые C-блоки: `malloc`, `calloc`,
 `realloc`, `free`, `memcpy`, `memset`, указатель set/get, `cast`, `typedef`,
 а также `return`, `break` и `continue`. Блоки представлены типизированными
-`CatBrickKind` и используют только безопасные обёртки `cat_mem_*`.
+`CatBrickKind` и выполняются интерпретатором (реализация — `cat_interpreter.c`).
 Настройки памяти доступны через `cat_mem_set_limit`, `cat_mem_limit` и
 `cat_mem_reset_stats`; это позволяет ограничить проект и проверять утечки.
+
+Семантика (идентичная реализована в Android-приложении, см. вкладку «C»):
+
+* **Куча — безопасная песочница.** Указатель — это обычное число-адрес
+  (от `0x1000`), которое хранится в переменной Catrobat и может
+  использоваться в формулах. Общий лимит кучи — 16 МиБ; при неудаче
+  выделение возвращает `0` (NULL). Реальная память процесса не затрагивается.
+* `malloc(size) → var` — выделить `size` байт (без обнуления);
+  `calloc(count, size) → var` — обнулённый блок; `realloc(ptr, size) → var` —
+  новый адрес с сохранением содержимого (старый блок освобождается);
+  `free(ptr)` — освободить (для `ptr = 0` или чужого адреса — no-op).
+* `memcpy(dst, src, size)` / `memset(ptr, byte, size)` — побайтовое
+  копирование/заполнение с обрезкой по границам блоков.
+* `typedef имя = базовый_тип` — реестр псевдонимов; имена типов везде
+  разрешаются по цепочке (например, `typedef meters = double` разрешает
+  «записать 9.81 как meters»).
+* Поддерживаемые типы и размеры: `byte/char/bool` — 1, `short` — 2,
+  `int/float` — 4, `long/double` — 8 байт (little-endian). `char` при
+  чтении/приведении даёт однобуквенную строку (`(char)66 → "B"`).
+* `pointer set(ptr, offset, value, type)` / `pointer get(ptr, offset, type) → var` —
+  типизированная запись/чтение по адресу `ptr + offset`.
+* `cast(value, type) → var` — приведение значения к типу
+  (`int` усекает дробную часть, `bool` → 0/1, `float` — через 32-битный float).
+* `return` — завершить текущий скрипт; `break` — выйти из самого
+  внутреннего цикла (включая вложенные `if`); `continue` — перейти к
+  следующей итерации внутреннего цикла.
+
+Имена категорий формул в XML принимаются в обоих стилях: как имена
+BrickField Android-приложения (`C_SIZE`, `C_POINTER`, …) и как простые
+слова (`size`, `pointer`, …). Пример проекта — `examples/c_memory.xml`,
+тесты — `tests/test_c_blocks.c`.
 
 ### Управление памятью
 

@@ -890,6 +890,7 @@
     <string formatted="false" name="category_event">Event</string>
     <string formatted="false" name="category_user_bricks">Your bricks</string>
     <string formatted="false" name="category_data">Data</string>
+    <string formatted="false" name="category_c">C</string>
     <string formatted="false" name="category_device">Device</string>
     <string formatted="false" name="category_lego_nxt">Lego NXT</string>
     <string formatted="false" name="category_lego_ev3">Lego EV3</string>
@@ -1218,6 +1219,36 @@
     <string formatted="false" name="brick_think_bubble_default_value">Hmmmm!</string>
     <string formatted="false" name="brick_say_bubble_default_value">Hello!</string>
     <string formatted="false" name="brick_broadcast_default_value">"new message"</string>
+
+    <!-- C bricks -->
+    <string formatted="false" name="brick_c_allocate">Allocate</string>
+    <string formatted="false" name="brick_c_allocate_zeroed">Allocate zeroed</string>
+    <string formatted="false" name="brick_c_bytes">bytes</string>
+    <string formatted="false" name="brick_c_pointer_into">and store pointer in</string>
+    <string formatted="false" name="brick_c_items_of">items of</string>
+    <string formatted="false" name="brick_c_resize">Resize pointer</string>
+    <string formatted="false" name="brick_c_to">to</string>
+    <string formatted="false" name="brick_c_free">Free memory at pointer</string>
+    <string formatted="false" name="brick_c_memcpy">Copy</string>
+    <string formatted="false" name="brick_c_bytes_from">bytes from pointer</string>
+    <string formatted="false" name="brick_c_memset">Fill</string>
+    <string formatted="false" name="brick_c_bytes_at">bytes at pointer</string>
+    <string formatted="false" name="brick_c_with">with byte value</string>
+    <string formatted="false" name="brick_c_typedef">Typedef</string>
+    <string formatted="false" name="brick_c_equals">=</string>
+    <string formatted="false" name="brick_c_cast">Cast</string>
+    <string formatted="false" name="brick_c_to_type">to type</string>
+    <string formatted="false" name="brick_c_write_at">Write value at pointer</string>
+    <string formatted="false" name="brick_c_plus">+</string>
+    <string formatted="false" name="brick_c_value_label">value</string>
+    <string formatted="false" name="brick_c_as_type">as type</string>
+    <string formatted="false" name="brick_c_read_at">Read at pointer</string>
+    <string formatted="false" name="brick_c_return">Return (stop this script)</string>
+    <string formatted="false" name="brick_c_break">Break loop</string>
+    <string formatted="false" name="brick_c_continue">Continue loop</string>
+    <string formatted="false" name="brick_c_type_default">double</string>
+    <string formatted="false" name="brick_c_typedef_name_default">my_int</string>
+    <string formatted="false" name="brick_c_base_type_default">int</string>
     <string formatted="false" name="brick_add_item_to_userlist_add">Add</string>
     <string formatted="false" name="brick_add_item_to_userlist">to list</string>
     <string formatted="false" name="brick_clear_userlist">Delete all items from list</string>

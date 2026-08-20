@@ -100,6 +100,32 @@ public class BricksHelpUrlTest {
 				"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/SetBackgroundBrick");
 		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.PhiroPlayToneBrick",
 				"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/PhiroPlayToneBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.MallocBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/MallocBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.CallocBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/CallocBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.ReallocBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/ReallocBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.FreeBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/FreeBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.MemcpyBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/MemcpyBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.MemsetBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/MemsetBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.TypedefBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/TypedefBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.CastBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/CastBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.PointerSetBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/PointerSetBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.PointerGetBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/PointerGetBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.ReturnBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/ReturnBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.BreakBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/BreakBrick");
+		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.ContinueBrick",
+			"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/ContinueBrick");
 		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.SetPhysicsObjectTypeBrick",
 				"https://wiki.catrobat.org/bin/view/Documentation/BrickDocumentation/SetPhysicsObjectTypeBrick");
 		brickToHelpUrlMapping.put("org.catrobat.catroid.content.bricks.JumpingSumoTurnBrick",

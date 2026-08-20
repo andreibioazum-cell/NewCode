@@ -63,6 +63,7 @@ class BrickCategoryListBuilder(private val activity: FragmentActivity) {
         categories.add(inflater.inflate(R.layout.brick_category_device, null))
 
         if (!onlyBeginnerBricks()) {
+            categories.add(inflater.inflate(R.layout.brick_category_c, null))
             categories.add(inflater.inflate(R.layout.brick_category_userbrick, null))
         }
         if (SettingsFragment.isTestSharedPreferenceEnabled(activity)) {

@@ -85,6 +85,15 @@ public class Project implements Serializable {
 
 	private transient BroadcastMessageContainer broadcastMessageContainer = new BroadcastMessageContainer();
 
+	private transient org.catrobat.catroid.cmemory.CMemory cMemory;
+
+	public org.catrobat.catroid.cmemory.CMemory getCMemory() {
+		if (cMemory == null) {
+			cMemory = new org.catrobat.catroid.cmemory.CMemory();
+		}
+		return cMemory;
+	}
+
 	public Project() {
 	}
 

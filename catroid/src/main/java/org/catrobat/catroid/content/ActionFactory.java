@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 import org.catrobat.catroid.ProjectManager;
+import org.catrobat.catroid.cmemory.CMemory;
 import org.catrobat.catroid.common.BrickValues;
 import org.catrobat.catroid.common.LookData;
 import org.catrobat.catroid.common.ParameterizedData;
@@ -54,7 +55,11 @@ import org.catrobat.catroid.content.actions.ClearBackgroundAction;
 import org.catrobat.catroid.content.actions.ClearGraphicEffectAction;
 import org.catrobat.catroid.content.actions.ClearUserListAction;
 import org.catrobat.catroid.content.actions.CloneAction;
+import org.catrobat.catroid.content.actions.BreakLoopAction;
+import org.catrobat.catroid.content.actions.CallocAction;
+import org.catrobat.catroid.content.actions.CastAction;
 import org.catrobat.catroid.content.actions.ComeToFrontAction;
+import org.catrobat.catroid.content.actions.ContinueLoopAction;
 import org.catrobat.catroid.content.actions.CopyLookAction;
 import org.catrobat.catroid.content.actions.DeleteItemOfUserListAction;
 import org.catrobat.catroid.content.actions.DeleteLookAction;
@@ -97,10 +102,17 @@ import org.catrobat.catroid.content.actions.RepeatParameterizedAction;
 import org.catrobat.catroid.content.actions.RepeatUntilAction;
 import org.catrobat.catroid.content.actions.ReplaceItemInUserListAction;
 import org.catrobat.catroid.content.actions.ReportAction;
+import org.catrobat.catroid.content.actions.MallocAction;
+import org.catrobat.catroid.content.actions.MemcpyAction;
+import org.catrobat.catroid.content.actions.MemsetAction;
+import org.catrobat.catroid.content.actions.PointerGetAction;
+import org.catrobat.catroid.content.actions.PointerSetAction;
+import org.catrobat.catroid.content.actions.ReallocAction;
 import org.catrobat.catroid.content.actions.ResetTimerAction;
 import org.catrobat.catroid.content.actions.SaveLaserAction;
 import org.catrobat.catroid.content.actions.SavePlotAction;
 import org.catrobat.catroid.content.actions.SceneStartAction;
+import org.catrobat.catroid.content.actions.FreeMemoryAction;
 import org.catrobat.catroid.content.actions.SceneTransitionAction;
 import org.catrobat.catroid.content.actions.ScriptSequenceAction;
 import org.catrobat.catroid.content.actions.SetBrightnessAction;
@@ -125,6 +137,7 @@ import org.catrobat.catroid.content.actions.SetVisibleAction;
 import org.catrobat.catroid.content.actions.SetVolumeToAction;
 import org.catrobat.catroid.content.actions.SetXAction;
 import org.catrobat.catroid.content.actions.SetYAction;
+import org.catrobat.catroid.content.actions.TypedefAction;
 import org.catrobat.catroid.content.actions.ShareLaserAction;
 import org.catrobat.catroid.content.actions.SharePlotAction;
 import org.catrobat.catroid.content.actions.ShowTextAction;
@@ -958,11 +971,17 @@ public class ActionFactory extends Actions {
 
 	public Action createForItemInUserListAction(UserList userList,
 			UserVariable userVariable, Action repeatedAction, boolean isLoopDelay) {
+		return createForItemInUserListAction(userList, userVariable, repeatedAction, isLoopDelay, null);
+	}
+
+	public Action createForItemInUserListAction(UserList userList,
+			UserVariable userVariable, Action repeatedAction, boolean isLoopDelay, Script script) {
 		ForItemInUserListAction action = Actions.action(ForItemInUserListAction.class);
 		action.setAction(repeatedAction);
 		action.setUserList(userList);
 		action.setCurrentItemVariable(userVariable);
 		action.setLoopDelay(isLoopDelay);
+		action.setScript(script);
 		return action;
 	}
 
@@ -1174,6 +1193,142 @@ public class ActionFactory extends Actions {
 	public Action createSetBackCameraAction() {
 		ChooseCameraAction action = action(ChooseCameraAction.class);
 		action.setBackCamera();
+		return action;
+	}
+
+
+	private CMemory cMemoryOf(Project project) {
+		return project != null ? project.getCMemory() : new CMemory();
+	}
+
+	public Action createMallocAction(Sprite sprite, SequenceAction sequence, Formula size,
+			UserVariable userVariable) {
+		MallocAction action = Actions.action(MallocAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setSize(size);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createCallocAction(Sprite sprite, SequenceAction sequence, Formula count, Formula size,
+			UserVariable userVariable) {
+		CallocAction action = Actions.action(CallocAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setCount(count);
+		action.setSize(size);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createReallocAction(Sprite sprite, SequenceAction sequence, Formula pointer, Formula size,
+			UserVariable userVariable) {
+		ReallocAction action = Actions.action(ReallocAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setPointer(pointer);
+		action.setSize(size);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createFreeAction(Sprite sprite, SequenceAction sequence, Formula pointer) {
+		FreeMemoryAction action = Actions.action(FreeMemoryAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setPointer(pointer);
+		return action;
+	}
+
+	public Action createMemcpyAction(Sprite sprite, SequenceAction sequence, Formula destination,
+			Formula source, Formula size) {
+		MemcpyAction action = Actions.action(MemcpyAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setDestination(destination);
+		action.setSource(source);
+		action.setSize(size);
+		return action;
+	}
+
+	public Action createMemsetAction(Sprite sprite, SequenceAction sequence, Formula pointer,
+			Formula value, Formula size) {
+		MemsetAction action = Actions.action(MemsetAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setPointer(pointer);
+		action.setValue(value);
+		action.setSize(size);
+		return action;
+	}
+
+	public Action createTypedefAction(Sprite sprite, SequenceAction sequence, Formula name,
+			Formula baseType) {
+		TypedefAction action = Actions.action(TypedefAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setName(name);
+		action.setBaseType(baseType);
+		return action;
+	}
+
+	public Action createCastAction(Sprite sprite, SequenceAction sequence, Formula value,
+			Formula type, UserVariable userVariable) {
+		CastAction action = Actions.action(CastAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setValue(value);
+		action.setType(type);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createPointerSetAction(Sprite sprite, SequenceAction sequence, Formula pointer,
+			Formula offset, Formula value, Formula type) {
+		PointerSetAction action = Actions.action(PointerSetAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setPointer(pointer);
+		action.setOffset(offset);
+		action.setValue(value);
+		action.setType(type);
+		return action;
+	}
+
+	public Action createPointerGetAction(Sprite sprite, SequenceAction sequence, Formula pointer,
+			Formula offset, Formula type, UserVariable userVariable) {
+		PointerGetAction action = Actions.action(PointerGetAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setPointer(pointer);
+		action.setOffset(offset);
+		action.setType(type);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createBreakLoopAction(Sprite sprite, SequenceAction sequence) {
+		BreakLoopAction action = Actions.action(BreakLoopAction.class);
+		action.setScript(sequence instanceof ScriptSequenceAction
+				? ((ScriptSequenceAction) sequence).getScript() : null);
+		return action;
+	}
+
+	public Action createContinueLoopAction(Sprite sprite, SequenceAction sequence) {
+		ContinueLoopAction action = Actions.action(ContinueLoopAction.class);
+		action.setScript(sequence instanceof ScriptSequenceAction
+				? ((ScriptSequenceAction) sequence).getScript() : null);
 		return action;
 	}
 

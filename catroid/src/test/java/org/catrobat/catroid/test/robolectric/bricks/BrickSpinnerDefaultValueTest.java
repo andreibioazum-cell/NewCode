@@ -44,6 +44,11 @@ import org.catrobat.catroid.content.bricks.AskSpeechBrick;
 import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.BroadcastBrick;
 import org.catrobat.catroid.content.bricks.BroadcastReceiverBrick;
+import org.catrobat.catroid.content.bricks.CallocBrick;
+import org.catrobat.catroid.content.bricks.CastBrick;
+import org.catrobat.catroid.content.bricks.MallocBrick;
+import org.catrobat.catroid.content.bricks.PointerGetBrick;
+import org.catrobat.catroid.content.bricks.ReallocBrick;
 import org.catrobat.catroid.content.bricks.ChangeVariableBrick;
 import org.catrobat.catroid.content.bricks.CloneBrick;
 import org.catrobat.catroid.content.bricks.DeleteItemOfUserListBrick;
@@ -113,6 +118,11 @@ public class BrickSpinnerDefaultValueTest {
 				{"SetBackgroundBrick - R.id.brick_set_look_spinner", "Looks", SetBackgroundBrick.class, R.id.brick_set_background_spinner, "new…"},
 				{"SetBackgroundAndWaitBrick - R.id.brick_set_look_spinner", "Looks", SetBackgroundAndWaitBrick.class, R.id.brick_set_background_spinner, "new…"},
 				{"SetVariableBrick - R.id.set_variable_spinner", "Data", SetVariableBrick.class, R.id.set_variable_spinner, "new…"},
+				{"MallocBrick - R.id.brick_c_malloc_spinner", "C", MallocBrick.class, R.id.brick_c_malloc_spinner, "new…"},
+				{"CallocBrick - R.id.brick_c_calloc_spinner", "C", CallocBrick.class, R.id.brick_c_calloc_spinner, "new…"},
+				{"ReallocBrick - R.id.brick_c_realloc_spinner", "C", ReallocBrick.class, R.id.brick_c_realloc_spinner, "new…"},
+				{"CastBrick - R.id.brick_c_cast_spinner", "C", CastBrick.class, R.id.brick_c_cast_spinner, "new…"},
+				{"PointerGetBrick - R.id.brick_c_pointer_get_spinner", "C", PointerGetBrick.class, R.id.brick_c_pointer_get_spinner, "new…"},
 				{"ChangeVariableBrick - R.id.change_variable_spinner", "Data", ChangeVariableBrick.class, R.id.change_variable_spinner, "new…"},
 				{"ShowTextBrick - R.id.show_variable_spinner", "Data", ShowTextBrick.class, R.id.show_variable_spinner, "new…"},
 				{"HideTextBrick - R.id.hide_variable_spinner", "Data", HideTextBrick.class, R.id.hide_variable_spinner, "new…"},

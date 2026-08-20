@@ -53,6 +53,7 @@
         <attr name="icon_arduino" format="reference"/>
         <attr name="icon_event" format="reference"/>
         <attr name="icon_pen" format="reference"/>
+        <attr name="icon_c" format="reference"/>
         <attr name="icon_chromecast" format="reference"/>
         <attr name="icon_legonxt" format="reference"/>
         <attr name="icon_phiro" format="reference"/>

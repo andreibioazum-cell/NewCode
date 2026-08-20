@@ -26,6 +26,7 @@ package org.catrobat.catroid.content.actions;
 import android.util.Log;
 
 import org.catrobat.catroid.content.Scope;
+import org.catrobat.catroid.content.Script;
 import org.catrobat.catroid.formulaeditor.Formula;
 import org.catrobat.catroid.formulaeditor.InterpretationException;
 import org.catrobat.catroid.formulaeditor.UserVariable;
@@ -56,17 +57,30 @@ public class ForVariableFromToAction extends LoopAction {
 
 		setCurrentTime(getCurrentTime() + delta);
 
-		if (action != null && action.act(delta) && !isLoopDelayNeeded()) {
-			if (!(controlVariable.getValue() instanceof Double)
-					|| (step > 0 && (double) controlVariable.getValue() >= toValue)
-					|| (step < 0 && (double) controlVariable.getValue() <= toValue)) {
+		if (action != null) {
+			boolean bodyDone = action.act(delta);
+			Script script = loopScript();
+			if (LoopController.consumeBreak(script)) {
 				return true;
 			}
-			changeControlVariable(step);
-			isCurrentLoopInitialized = false;
-			action.restart();
+			if (LoopController.consumeContinue(script)
+					|| bodyDone && !isLoopDelayNeeded()) {
+				if (!(controlVariable.getValue() instanceof Double)
+						|| (step > 0 && (double) controlVariable.getValue() >= toValue)
+						|| (step < 0 && (double) controlVariable.getValue() <= toValue)) {
+					return true;
+				}
+				changeControlVariable(step);
+				isCurrentLoopInitialized = false;
+				action.restart();
+			}
 		}
 		return false;
+	}
+
+	private Script loopScript() {
+		return scope != null && scope.getSequence() instanceof ScriptSequenceAction
+				? ((ScriptSequenceAction) scope.getSequence()).getScript() : null;
 	}
 
 	@Override

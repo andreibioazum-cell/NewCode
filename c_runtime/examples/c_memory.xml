@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  examples/c_memory.xml — демонстрация низкоуровневых C-блоков:
+  typedef, malloc, запись/чтение по указателю, calloc, memset, memcpy,
+  realloc, free, cast, break, continue, return.
+
+  Запуск: ./catrobat_run examples/c_memory.xml
+-->
+<program>
+  <header>
+    <programName>C Blocks Demo</programName>
+  </header>
+  <scenes>
+    <scene>
+      <name>Scene</name>
+      <objectList>
+        <object>
+          <name>Memory</name>
+          <scriptList>
+            <script type="StartScript">
+              <brickList>
+
+                <brick type="SetVariableBrick">
+                  <userVariable>sum</userVariable>
+                  <formulaList>
+                    <formula category="value"><type>NUMBER</type><value>0</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- typedef meters = double -->
+                <brick type="TypedefBrick">
+                  <formulaList>
+                    <formula category="C_NAME"><type>STRING</type><value>meters</value></formula>
+                    <formula category="C_BASE_TYPE"><type>STRING</type><value>double</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- ptr = malloc(32) -->
+                <brick type="MallocBrick">
+                  <userVariable>ptr</userVariable>
+                  <formulaList>
+                    <formula category="C_SIZE"><type>NUMBER</type><value>32</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- *ptr = 9.81 (как double через typedef) -->
+                <brick type="PointerSetBrick">
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>ptr</value></formula>
+                    <formula category="C_OFFSET"><type>NUMBER</type><value>0</value></formula>
+                    <formula category="C_VALUE"><type>NUMBER</type><value>9.81</value></formula>
+                    <formula category="C_TYPE"><type>STRING</type><value>meters</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- *(ptr + 8) = 42 (как int) -->
+                <brick type="PointerSetBrick">
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>ptr</value></formula>
+                    <formula category="C_OFFSET"><type>NUMBER</type><value>8</value></formula>
+                    <formula category="C_VALUE"><type>NUMBER</type><value>42</value></formula>
+                    <formula category="C_TYPE"><type>STRING</type><value>int</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- g = *(double*)ptr -->
+                <brick type="PointerGetBrick">
+                  <userVariable>g</userVariable>
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>ptr</value></formula>
+                    <formula category="C_OFFSET"><type>NUMBER</type><value>0</value></formula>
+                    <formula category="C_TYPE"><type>STRING</type><value>meters</value></formula>
+                  </formulaList>
+                </brick>
+
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>USER_VARIABLE</type><value>g</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- buf = calloc(4 x 8), обнулён -->
+                <brick type="CallocBrick">
+                  <userVariable>buf</userVariable>
+                  <formulaList>
+                    <formula category="C_COUNT"><type>NUMBER</type><value>4</value></formula>
+                    <formula category="C_SIZE"><type>NUMBER</type><value>8</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- memcpy(buf, ptr, 8) -->
+                <brick type="MemcpyBrick">
+                  <formulaList>
+                    <formula category="C_DESTINATION"><type>USER_VARIABLE</type><value>buf</value></formula>
+                    <formula category="C_SOURCE"><type>USER_VARIABLE</type><value>ptr</value></formula>
+                    <formula category="C_SIZE"><type>NUMBER</type><value>8</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- memset(buf + 8, 255, 4) -->
+                <brick type="MemsetBrick">
+                  <formulaList>
+                    <formula category="C_POINTER"><type>OPERATOR</type><value>PLUS</value>
+                      <leftChild><type>USER_VARIABLE</type><value>buf</value></leftChild>
+                      <rightChild><type>NUMBER</type><value>8</value></rightChild>
+                    </formula>
+                    <formula category="C_VALUE"><type>NUMBER</type><value>255</value></formula>
+                    <formula category="C_SIZE"><type>NUMBER</type><value>4</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- copied = *(double*)buf -->
+                <brick type="PointerGetBrick">
+                  <userVariable>copied</userVariable>
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>buf</value></formula>
+                    <formula category="C_OFFSET"><type>NUMBER</type><value>0</value></formula>
+                    <formula category="C_TYPE"><type>STRING</type><value>double</value></formula>
+                  </formulaList>
+                </brick>
+
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>USER_VARIABLE</type><value>copied</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- big = realloc(ptr, 64); старые данные сохраняются -->
+                <brick type="ReallocBrick">
+                  <userVariable>big</userVariable>
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>ptr</value></formula>
+                    <formula category="C_SIZE"><type>NUMBER</type><value>64</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- answer = *(int*)(big + 8) -->
+                <brick type="PointerGetBrick">
+                  <userVariable>answer</userVariable>
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>big</value></formula>
+                    <formula category="C_OFFSET"><type>NUMBER</type><value>8</value></formula>
+                    <formula category="C_TYPE"><type>STRING</type><value>int</value></formula>
+                  </formulaList>
+                </brick>
+
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>USER_VARIABLE</type><value>answer</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- letter = (char)66 -> "B" -->
+                <brick type="CastBrick">
+                  <userVariable>letter</userVariable>
+                  <formulaList>
+                    <formula category="C_VALUE"><type>NUMBER</type><value>66</value></formula>
+                    <formula category="C_TYPE"><type>STRING</type><value>char</value></formula>
+                  </formulaList>
+                </brick>
+
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>USER_VARIABLE</type><value>letter</value></formula>
+                  </formulaList>
+                </brick>
+
+                <brick type="FreeBrick">
+                  <formulaList>
+                    <formula category="C_POINTER"><type>USER_VARIABLE</type><value>big</value></formula>
+                  </formulaList>
+                </brick>
+
+                <!-- Цикл с break: sum дойдёт только до 4 -->
+                <brick type="RepeatBrick">
+                  <formulaList>
+                    <formula category="times"><type>NUMBER</type><value>10</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="ChangeVariableBrick">
+                  <userVariable>sum</userVariable>
+                  <formulaList>
+                    <formula category="value"><type>NUMBER</type><value>1</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="IfThenLogicBeginBrick">
+                  <formulaList>
+                    <formula category="condition"><type>OPERATOR</type><value>EQUAL</value>
+                      <leftChild><type>USER_VARIABLE</type><value>sum</value></leftChild>
+                      <rightChild><type>NUMBER</type><value>4</value></rightChild>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="BreakBrick"/>
+                <brick type="IfThenLogicEndBrick"/>
+                <brick type="LoopEndBrick"/>
+
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>USER_VARIABLE</type><value>sum</value></formula>
+                  </formulaList>
+                </brick>
+
+                <brick type="ReturnBrick"/>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>STRING</type><value>never printed</value></formula>
+                  </formulaList>
+                </brick>
+
+              </brickList>
+            </script>
+          </scriptList>
+        </object>
+      </objectList>
+    </scene>
+  </scenes>
+</program>

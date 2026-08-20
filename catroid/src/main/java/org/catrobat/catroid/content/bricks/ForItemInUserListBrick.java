@@ -160,7 +160,8 @@ public class ForItemInUserListBrick extends UserDataBrick implements CompositeBr
 		}
 
 		Action action = sprite.getActionFactory()
-				.createForItemInUserListAction(userList, userVariable, repeatSequence, isLoopDelay);
+				.createForItemInUserListAction(userList, userVariable, repeatSequence, isLoopDelay,
+						sequence.getScript());
 
 		sequence.addAction(action);
 	}

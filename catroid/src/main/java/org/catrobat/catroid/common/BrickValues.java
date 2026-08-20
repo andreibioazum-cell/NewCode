@@ -53,6 +53,13 @@ public final class BrickValues {
 	public static final Vector2 PHYSIC_VELOCITY = new Vector2();
 	public static final double PHYSIC_TURN_DEGREES = TURN_DEGREES;
 
+	public static final double C_ALLOC_SIZE = 8;
+	public static final double C_CALLOC_COUNT = 4;
+	public static final double C_POINTER = 0;
+	public static final double C_MEMCPY_SIZE = 8;
+	public static final double C_MEMSET_VALUE = 0;
+	public static final double C_OFFSET = 0;
+
 	//constants Looks
 	public static final double SET_SIZE_TO = 60;
 	public static final double RELATIVE_SIZE_IN_PERCENT = 120.0f;

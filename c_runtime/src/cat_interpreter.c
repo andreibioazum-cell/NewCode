@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <ctype.h>
+#include <stdint.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -131,6 +133,213 @@ static CatValue eval_function(struct CatEngine *e, CatSprite *sp, const char *fn
     return r;
 }
 
+/* ---------- C-блоки: симулируемая «куча» и указатели ---------- */
+/*
+ * Указатели — это обычные числовые адреса (записываются в переменные
+ * Catrobat и могут использоваться в формулах). Куча — безопасная песочница:
+ * реальная память процесса не затрагивается, все обращения проверяются.
+ */
+#define C_ADDR_BASE     4096.0             /* первый адрес */
+#define C_HEAP_MAX_BYTES (16u * 1024u * 1024u) /* лимит всей кучи */
+#define C_TYPEDEF_MAX_HOPS 8
+
+typedef struct {
+    unsigned char *data;
+    size_t         size;
+    double         addr;
+    bool           used;
+} CAlloc;
+
+typedef struct {
+    CAlloc *allocs;
+    size_t  count;
+    size_t  cap;
+    double  next_addr;
+    size_t  total_bytes;
+} CHeap;
+
+typedef struct {
+    char *alias;
+    char *base;
+} CTypedef;
+
+static void c_heap_init(CHeap *h) {
+    h->allocs = NULL; h->count = 0; h->cap = 0;
+    h->next_addr = C_ADDR_BASE; h->total_bytes = 0;
+}
+
+static void c_heap_clear(CHeap *h) {
+    for (size_t i = 0; i < h->count; ++i) {
+        cat_free(h->allocs[i].data);
+        h->allocs[i].data = NULL;
+        h->allocs[i].used = false;
+    }
+    cat_free(h->allocs);
+    c_heap_init(h);
+}
+
+/* Выделить блок; возвращает адрес или 0 (NULL) при неудаче. */
+static double c_heap_alloc(CHeap *h, size_t size, bool zero) {
+    if (size == 0 || h->total_bytes + size > C_HEAP_MAX_BYTES) return 0;
+    /* Переиспользуем слот освобождённого блока. */
+    CAlloc *slot = NULL;
+    for (size_t i = 0; i < h->count; ++i) {
+        if (!h->allocs[i].used) { slot = &h->allocs[i]; break; }
+    }
+    if (!slot) {
+        if (h->count == h->cap) {
+            h->cap = h->cap ? h->cap * 2 : 8;
+            h->allocs = (CAlloc *)cat_realloc(h->allocs, sizeof(CAlloc) * h->cap);
+        }
+        slot = &h->allocs[h->count++];
+        slot->data = NULL; slot->size = 0; slot->addr = 0; slot->used = false;
+    }
+    unsigned char *data = (unsigned char *)cat_realloc(slot->data, size);
+    if (!data) return 0;
+    if (zero) memset(data, 0, size);
+    slot->data = data;
+    slot->size = size;
+    slot->used = true;
+    h->total_bytes += size;
+    if (!slot->addr) { /* новому слоту выдаём свежий адрес */
+        slot->addr = h->next_addr;
+        h->next_addr += (double)((size + 15u) & ~(size_t)15u);
+    }
+    return slot->addr;
+}
+
+/* Найти активный блок, содержащий адрес. */
+static CAlloc *c_heap_find(CHeap *h, double addr) {
+    for (size_t i = 0; i < h->count; ++i) {
+        CAlloc *a = &h->allocs[i];
+        if (a->used && addr >= a->addr && addr < a->addr + (double)a->size)
+            return a;
+    }
+    return NULL;
+}
+
+static void c_heap_free(CHeap *h, double addr) {
+    CAlloc *a = c_heap_find(h, addr);
+    if (!a) return;
+    cat_free(a->data);
+    a->data = NULL; a->used = false; a->size = 0; a->addr = 0;
+}
+
+/* --- typedef-реестр --- */
+static void c_typedefs_clear(CTypedef *items, size_t count) {
+    for (size_t i = 0; i < count; ++i) { cat_free(items[i].alias); cat_free(items[i].base); }
+    cat_free(items);
+}
+
+/* Размер значения типа в байтах (как в C на типичной платформе). */
+static size_t c_type_size(const char *type) {
+    if (!type) return 8;
+    if (strcasecmp(type, "char") == 0 || strcasecmp(type, "byte") == 0 ||
+        strcasecmp(type, "bool") == 0 || strcasecmp(type, "boolean") == 0 ||
+        strcasecmp(type, "_bool") == 0 || strcasecmp(type, "uint8") == 0 ||
+        strcasecmp(type, "int8") == 0 || strcasecmp(type, "char*") == 0) return 1;
+    if (strcasecmp(type, "short") == 0 || strcasecmp(type, "int16") == 0 ||
+        strcasecmp(type, "uint16") == 0) return 2;
+    if (strcasecmp(type, "int") == 0 || strcasecmp(type, "int32") == 0 ||
+        strcasecmp(type, "uint32") == 0 || strcasecmp(type, "float") == 0) return 4;
+    return 8; /* long, double, int64, uint64, указатели и прочее */
+}
+
+static uint64_t c_load_le(const unsigned char *p, size_t n) {
+    uint64_t v = 0;
+    for (size_t i = 0; i < n; ++i) v |= (uint64_t)p[i] << (8u * i);
+    return v;
+}
+
+static void c_store_le(unsigned char *p, size_t n, uint64_t v) {
+    for (size_t i = 0; i < n; ++i) p[i] = (unsigned char)((v >> (8u * i)) & 0xFFu);
+}
+
+/* Кодирование значения (число или строка) в байты указанного типа. */
+static void c_encode(unsigned char *dst, size_t n, const char *type, const CatValue *v) {
+    if (strcasecmp(type, "double") == 0) {
+        double d = cat_value_to_number(v);
+        uint64_t bits = 0;
+        memcpy(&bits, &d, sizeof(double));
+        c_store_le(dst, 8 < n ? 8 : n, bits);
+    } else if (strcasecmp(type, "float") == 0) {
+        float f = (float)cat_value_to_number(v);
+        uint32_t bits = 0;
+        memcpy(&bits, &f, sizeof(float));
+        c_store_le(dst, 4 < n ? 4 : n, bits);
+    } else if (strcasecmp(type, "char") == 0 || strcasecmp(type, "char*") == 0) {
+        if (v->type == CAT_VAL_STRING && v->as.string && v->as.string[0]) dst[0] = (unsigned char)v->as.string[0];
+        else dst[0] = (unsigned char)cat_value_to_number(v);
+    } else if (strcasecmp(type, "bool") == 0 || strcasecmp(type, "boolean") == 0 ||
+               strcasecmp(type, "_bool") == 0) {
+        dst[0] = cat_value_to_bool(v) ? 1 : 0;
+    } else { /* целые со знаком */
+        long long x = (long long)cat_value_to_number(v);
+        c_store_le(dst, n, (uint64_t)x);
+    }
+}
+
+/* Декодирование значения из байтов по типу. */
+static CatValue c_decode(const unsigned char *src, size_t n, const char *type) {
+    if (strcasecmp(type, "double") == 0) {
+        uint64_t bits = c_load_le(src, 8 < n ? 8 : n);
+        double d = 0;
+        memcpy(&d, &bits, sizeof(double));
+        return cat_value_number(d);
+    }
+    if (strcasecmp(type, "float") == 0) {
+        uint32_t bits = (uint32_t)c_load_le(src, 4 < n ? 4 : n);
+        float f = 0;
+        memcpy(&f, &bits, sizeof(float));
+        return cat_value_number((double)f);
+    }
+    if (strcasecmp(type, "char") == 0 || strcasecmp(type, "char*") == 0) {
+        char buf[2] = { (char)src[0], 0 };
+        return cat_value_string(buf);
+    }
+    if (strcasecmp(type, "bool") == 0 || strcasecmp(type, "boolean") == 0 ||
+        strcasecmp(type, "_bool") == 0) {
+        return cat_value_bool(src[0] != 0);
+    }
+    /* целые со знаком со знакорасширением */
+    uint64_t raw = c_load_le(src, n);
+    long long x;
+    if (n == 1) x = (long long)(int8_t)(uint8_t)raw;
+    else if (n == 2) x = (long long)(int16_t)(uint16_t)raw;
+    else if (n == 4) x = (long long)(int32_t)(uint32_t)raw;
+    else x = (long long)raw;
+    return cat_value_number((double)x);
+}
+
+/* Приведение значения к типу (cast): аналогично c_decode по семантике. */
+static CatValue c_cast_value(const char *type, const CatValue *v) {
+    if (!type) type = "double";
+    if (strcasecmp(type, "char") == 0 || strcasecmp(type, "char*") == 0) {
+        char buf[2] = { 0, 0 };
+        if (v->type == CAT_VAL_STRING && v->as.string && v->as.string[0]) buf[0] = v->as.string[0];
+        else buf[0] = (char)cat_value_to_number(v);
+        return cat_value_string(buf);
+    }
+    if (strcasecmp(type, "bool") == 0 || strcasecmp(type, "boolean") == 0 ||
+        strcasecmp(type, "_bool") == 0) {
+        return cat_value_bool(cat_value_to_bool(v));
+    }
+    if (strcasecmp(type, "int") == 0 || strcasecmp(type, "int32") == 0 ||
+        strcasecmp(type, "uint32") == 0 || strcasecmp(type, "long") == 0 ||
+        strcasecmp(type, "int64") == 0 || strcasecmp(type, "uint64") == 0 ||
+        strcasecmp(type, "short") == 0 || strcasecmp(type, "int16") == 0 ||
+        strcasecmp(type, "uint16") == 0 || strcasecmp(type, "byte") == 0 ||
+        strcasecmp(type, "int8") == 0 || strcasecmp(type, "uint8") == 0) {
+        double d = cat_value_to_number(v);
+        return cat_value_number(d >= 0 ? floor(d) : ceil(d));
+    }
+    if (strcasecmp(type, "float") == 0) {
+        float f = (float)cat_value_to_number(v);
+        return cat_value_number((double)f);
+    }
+    return cat_value_number(cat_value_to_number(v));
+}
+
 /* ---------- Планировщик ---------- */
 
 typedef struct Frame {
@@ -161,6 +370,11 @@ struct CatEngine {
     size_t      fiber_count;
     size_t      fiber_cap;
     double      elapsed;
+    /* Состояние C-блоков: куча и typedef-реестр. */
+    CHeap       heap;
+    CTypedef   *typedefs;
+    size_t      typedef_count;
+    size_t      typedef_cap;
 };
 
 static void push_frame(Fiber *f, CatBrick **bs, size_t n, int loop, long left, CatFormula *cond) {
@@ -189,7 +403,44 @@ static void spawn(CatEngine *e, CatSprite *sp, CatScript *sc) {
 CatEngine *cat_engine_new(CatProject *project) {
     CatEngine *e = (CatEngine *)cat_calloc(1, sizeof(CatEngine));
     e->project = project;
+    c_heap_init(&e->heap);
     return e;
+}
+
+/* Разрешение имени типа по цепочке typedef'ов. */
+static const char *c_resolve_type(CatEngine *e, const char *type) {
+    if (!type || !type[0]) return "double";
+    for (int hop = 0; hop < C_TYPEDEF_MAX_HOPS; ++hop) {
+        const char *found = NULL;
+        for (size_t i = 0; i < e->typedef_count; ++i) {
+            if (strcasecmp(e->typedefs[i].alias, type) == 0) {
+                found = e->typedefs[i].base;
+                break;
+            }
+        }
+        if (!found) break;
+        type = found;
+    }
+    return type;
+}
+
+/* Зарегистрировать typedef: alias -> base. */
+static void c_typedef_add(CatEngine *e, const char *alias, const char *base) {
+    if (!alias || !alias[0] || !base || !base[0]) return;
+    for (size_t i = 0; i < e->typedef_count; ++i) {
+        if (strcasecmp(e->typedefs[i].alias, alias) == 0) {
+            cat_free(e->typedefs[i].base);
+            e->typedefs[i].base = cat_strdup(base);
+            return;
+        }
+    }
+    if (e->typedef_count == e->typedef_cap) {
+        e->typedef_cap = e->typedef_cap ? e->typedef_cap * 2 : 8;
+        e->typedefs = (CTypedef *)cat_realloc(e->typedefs, sizeof(CTypedef) * e->typedef_cap);
+    }
+    e->typedefs[e->typedef_count].alias = cat_strdup(alias);
+    e->typedefs[e->typedef_count].base = cat_strdup(base);
+    e->typedef_count++;
 }
 
 static void fiber_free(Fiber *f) {
@@ -203,6 +454,8 @@ void cat_engine_free(CatEngine *e) {
     if (!e) return;
     for (size_t i = 0; i < e->fiber_count; ++i) fiber_free(e->fibers[i]);
     cat_free(e->fibers);
+    c_heap_clear(&e->heap);
+    c_typedefs_clear(e->typedefs, e->typedef_count);
     cat_free(e);
 }
 
@@ -250,6 +503,57 @@ static CatValue slot_or(CatEngine *e, CatSprite *sp, CatBrick *b, const char *na
     if (!f) return cat_value_number(def);
     return eval_formula_internal(e, sp, f);
 }
+
+/* --- Слоты C-блоков ---
+ * Android пишет категории формул как имена BrickField ("C_SIZE"), ручной XML —
+ * как простые слова ("size"). Ищем без учёта регистра/подчёркиваний. */
+static CatFormula *c_slot(CatBrick *b, const char *const *names, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        CatFormula *f = cat_brick_slot(b, names[i]);
+        if (f) return f;
+    }
+    for (size_t i = 0; i < b->slot_count; ++i) {
+        const char *p = b->slots[i].name;
+        size_t k = 0;
+        for (const char *q = p; *q; ++q)
+            if (isalnum((unsigned char)*q)) ++k;
+        char *norm = (char *)cat_malloc(k + 1);
+        k = 0;
+        for (const char *q = p; *q; ++q)
+            if (isalnum((unsigned char)*q)) norm[k++] = (char)tolower((unsigned char)*q);
+        norm[k] = 0;
+        CatFormula *found = NULL;
+        for (size_t j = 0; j < n; ++j) {
+            if (strcmp(norm, names[j]) == 0) { found = b->slots[i].value; break; }
+        }
+        cat_free(norm);
+        if (found) return found;
+    }
+    return NULL;
+}
+
+/* Вычислить слот C-блока как число. */
+static double c_slot_num(CatEngine *e, CatSprite *sp, CatBrick *b,
+                         const char *const *names, size_t n, double def) {
+    CatFormula *f = c_slot(b, names, n);
+    if (!f) return def;
+    CatValue v = eval_formula_internal(e, sp, f);
+    double d = cat_value_to_number(&v);
+    cat_value_free(&v);
+    return d;
+}
+
+/* Вычислить слот C-блока как строку (тип, имя typedef'а). */
+static char *c_slot_str(CatEngine *e, CatSprite *sp, CatBrick *b,
+                        const char *const *names, size_t n) {
+    CatFormula *f = c_slot(b, names, n);
+    if (!f) return NULL;
+    CatValue v = eval_formula_internal(e, sp, f);
+    char *s = cat_value_to_cstring(&v);
+    cat_value_free(&v);
+    return s;
+}
+
 
 /* Выполняет один брикк из текущего кадра. Возвращает: 0 продолжить,
    1 приостановить (yield). */
@@ -373,6 +677,168 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_NOTE: return 0;
     /* Пустые/игнорируемые */
     case CB_LOOP_END: case CB_IF_ELSE: case CB_IF_END: case CB_IF_THEN_END:
+        return 0;
+
+    /* ---------- Низкоуровневые C-блоки ---------- */
+    case CB_MALLOC: {
+        static const char *sz[] = { "csize", "size" };
+        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        double addr = c_heap_alloc(&e->heap, n, false);
+        if (b->arg0) cat_sprite_set_var(sp, b->arg0, cat_value_number(addr));
+        return 0;
+    }
+    case CB_CALLOC: {
+        static const char *cnt[] = { "ccount", "count" };
+        static const char *sz[]  = { "csize", "size" };
+        size_t c = (size_t)c_slot_num(e, sp, b, cnt, 2, 0);
+        size_t s = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        double addr = (c != 0 && s != 0 && c <= C_HEAP_MAX_BYTES && s <= C_HEAP_MAX_BYTES)
+                          ? c_heap_alloc(&e->heap, c * s, true) : 0;
+        if (b->arg0) cat_sprite_set_var(sp, b->arg0, cat_value_number(addr));
+        return 0;
+    }
+    case CB_REALLOC: {
+        static const char *ptr[] = { "cpointer", "pointer" };
+        static const char *sz[]  = { "csize", "size" };
+        double old = c_slot_num(e, sp, b, ptr, 2, 0);
+        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        double addr = 0;
+        if (n > 0) {
+            CAlloc *a = c_heap_find(&e->heap, old);
+            size_t keep = a ? (a->size < n ? a->size : n) : 0;
+            addr = c_heap_alloc(&e->heap, n, true);
+            if (addr) {
+                CAlloc *na = c_heap_find(&e->heap, addr);
+                if (a && keep) memcpy(na->data, a->data, keep);
+                if (old) c_heap_free(&e->heap, old);
+            }
+        } else if (old) {
+            c_heap_free(&e->heap, old);
+        }
+        if (b->arg0) cat_sprite_set_var(sp, b->arg0, cat_value_number(addr));
+        return 0;
+    }
+    case CB_FREE: {
+        static const char *ptr[] = { "cpointer", "pointer" };
+        double addr = c_slot_num(e, sp, b, ptr, 2, 0);
+        c_heap_free(&e->heap, addr);
+        return 0;
+    }
+    case CB_MEMCPY: {
+        static const char *dst[] = { "cdestination", "destination", "dest" };
+        static const char *src[] = { "csource", "source", "src" };
+        static const char *sz[]  = { "csize", "size" };
+        double d = c_slot_num(e, sp, b, dst, 3, 0);
+        double s = c_slot_num(e, sp, b, src, 3, 0);
+        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        CAlloc *da = c_heap_find(&e->heap, d);
+        CAlloc *sa = c_heap_find(&e->heap, s);
+        if (!da || !sa || n == 0) return 0;
+        size_t doff = (size_t)(d - da->addr), soff = (size_t)(s - sa->addr);
+        if (doff + n > da->size) n = da->size - doff;
+        if (soff + n > sa->size) n = sa->size - soff;
+        if (n > 0) memmove(da->data + doff, sa->data + soff, n);
+        return 0;
+    }
+    case CB_MEMSET: {
+        static const char *ptr[] = { "cpointer", "pointer" };
+        static const char *val[] = { "cvalue", "value" };
+        static const char *sz[]  = { "csize", "size" };
+        double p = c_slot_num(e, sp, b, ptr, 2, 0);
+        int v = (int)c_slot_num(e, sp, b, val, 2, 0);
+        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        CAlloc *a = c_heap_find(&e->heap, p);
+        if (!a || n == 0) return 0;
+        size_t off = (size_t)(p - a->addr);
+        if (off + n > a->size) n = a->size - off;
+        memset(a->data + off, (unsigned char)v, n);
+        return 0;
+    }
+    case CB_TYPEDEF: {
+        static const char *nm[] = { "cname", "name" };
+        static const char *bs[] = { "cbasetype", "basetype", "base" };
+        char *alias = c_slot_str(e, sp, b, nm, 2);
+        char *base = c_slot_str(e, sp, b, bs, 3);
+        if (!alias && b->arg0) alias = cat_strdup(b->arg0);
+        if (!base && b->arg1) base = cat_strdup(b->arg1);
+        if (alias && base) c_typedef_add(e, alias, base);
+        cat_free(alias);
+        cat_free(base);
+        return 0;
+    }
+    case CB_CAST: {
+        static const char *val[] = { "cvalue", "value" };
+        static const char *ty[]  = { "ctype", "type" };
+        CatFormula *vf = c_slot(b, val, 2);
+        char *type = c_slot_str(e, sp, b, ty, 2);
+        if (!type && b->arg1) type = cat_strdup(b->arg1);
+        if (!type) type = cat_strdup("double");
+        CatValue in = vf ? eval_formula_internal(e, sp, vf) : cat_value_number(0);
+        CatValue out = c_cast_value(c_resolve_type(e, type), &in);
+        cat_value_free(&in);
+        cat_free(type);
+        if (b->arg0) cat_sprite_set_var(sp, b->arg0, out);
+        else cat_value_free(&out);
+        return 0;
+    }
+    case CB_POINTER_SET: {
+        static const char *ptr[] = { "cpointer", "pointer" };
+        static const char *off[] = { "coffset", "offset" };
+        static const char *val[] = { "cvalue", "value" };
+        static const char *ty[]  = { "ctype", "type" };
+        double p = c_slot_num(e, sp, b, ptr, 2, 0) + c_slot_num(e, sp, b, off, 2, 0);
+        CatFormula *vf = c_slot(b, val, 2);
+        char *type = c_slot_str(e, sp, b, ty, 2);
+        if (!type) type = cat_strdup("double");
+        CAlloc *a = c_heap_find(&e->heap, p);
+        if (a) {
+            size_t n = c_type_size(c_resolve_type(e, type));
+            size_t offaddr = (size_t)(p - a->addr);
+            if (offaddr + n > a->size) n = a->size - offaddr;
+            CatValue v = vf ? eval_formula_internal(e, sp, vf) : cat_value_number(0);
+            if (n > 0) c_encode(a->data + offaddr, n, c_resolve_type(e, type), &v);
+            cat_value_free(&v);
+        }
+        cat_free(type);
+        return 0;
+    }
+    case CB_POINTER_GET: {
+        static const char *ptr[] = { "cpointer", "pointer" };
+        static const char *off[] = { "coffset", "offset" };
+        static const char *ty[]  = { "ctype", "type" };
+        double p = c_slot_num(e, sp, b, ptr, 2, 0) + c_slot_num(e, sp, b, off, 2, 0);
+        char *type = c_slot_str(e, sp, b, ty, 2);
+        if (!type) type = cat_strdup("double");
+        const char *resolved = c_resolve_type(e, type);
+        CAlloc *a = c_heap_find(&e->heap, p);
+        CatValue out = cat_value_number(0);
+        if (a) {
+            size_t n = c_type_size(resolved);
+            size_t offaddr = (size_t)(p - a->addr);
+            if (offaddr + n > a->size) n = a->size - offaddr;
+            if (n > 0) out = c_decode(a->data + offaddr, n, resolved);
+        }
+        cat_free(type);
+        if (b->arg0) cat_sprite_set_var(sp, b->arg0, out);
+        else cat_value_free(&out);
+        return 0;
+    }
+    case CB_RETURN:
+        fi->done = true;
+        return 1;
+    case CB_BREAK:
+        while (fi->frame_count > 0) {
+            Frame *fr = &fi->frames[fi->frame_count - 1];
+            fi->frame_count--;
+            if (fr->loop_kind != 0) break;
+        }
+        return 0;
+    case CB_CONTINUE:
+        while (fi->frame_count > 0) {
+            Frame *fr = &fi->frames[fi->frame_count - 1];
+            if (fr->loop_kind != 0) { fr->ip = fr->count; break; }
+            fi->frame_count--;
+        }
         return 0;
     default: return 0;
     }
