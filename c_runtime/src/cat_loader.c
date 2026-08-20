@@ -101,6 +101,15 @@ static int map_brick(const char *type) {
         {"ReturnBrick", CB_RETURN},
         {"BreakBrick", CB_BREAK},
         {"ContinueBrick", CB_CONTINUE},
+        /* Выполнение произвольного кода (free-text inline). */
+        {"ExecuteCCodeBrick", CB_C_CODE},
+        {"CCodeBrick", CB_C_CODE},
+        {"ExecuteJavaCodeBrick", CB_JAVA_CODE},
+        {"JavaCodeBrick", CB_JAVA_CODE},
+        /* Клоны спрайтов. */
+        {"WhenClonedBrick", CB_WHEN_CLONED},
+        {"CloneBrick", CB_CLONE},
+        {"DeleteThisCloneBrick", CB_DELETE_THIS_CLONE},
     };
     for (size_t i = 0; i < sizeof(M)/sizeof(M[0]); ++i)
         if (strcmp(M[i].n, type) == 0) return M[i].k;

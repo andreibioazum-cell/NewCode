@@ -48,6 +48,26 @@ static void F_EQ(const char *cat, const char *lhs, double rhs) {
         "<rightChild><type>NUMBER</type><value>%g</value></rightChild></formula>", cat, lhs, rhs);
     X(b);
 }
+static void F_SENSOR(const char *cat, const char *name) {
+    char b[256];
+    snprintf(b, sizeof b, "<formula category=\"%s\"><type>SENSOR</type><value>%s</value></formula>", cat, name);
+    X(b);
+}
+static void F_FUNC1(const char *cat, const char *fn, const char *argType, const char *argVal) {
+    char b[512];
+    snprintf(b, sizeof b,
+        "<formula category=\"%s\"><type>FUNCTION</type><value>%s</value>"
+        "<leftChild><type>%s</type><value>%s</value></leftChild></formula>", cat, fn, argType, argVal);
+    X(b);
+}
+static void F_BIN(const char *cat, const char *op, const char *lt, const char *lv, const char *rt, const char *rv) {
+    char b[600];
+    snprintf(b, sizeof b,
+        "<formula category=\"%s\"><type>OPERATOR</type><value>%s</value>"
+        "<leftChild><type>%s</type><value>%s</value></leftChild>"
+        "<rightChild><type>%s</type><value>%s</value></rightChild></formula>", cat, op, lt, lv, rt, rv);
+    X(b);
+}
 
 /* Скомпилировать XML в машинный код и выполнить; stdout -> out (выделяется). */
 static int compile_and_run(const char *xml, char **out, size_t *out_len, int *exit_code) {
@@ -288,11 +308,91 @@ static int test_broadcast(void) {
     return 0;
 }
 
+/* Регрессия на баг кодогенерации:
+   "SP->x = <NcVal-выражение> без приведения к double".
+   Раньше PlaceAt/SetX/SetY/ChangeX/ChangeY с формулой (а не с числом)
+   порождали некомпилируемый C: поле double = значение-структура NcVal.
+   Здесь формулы — настоящие выражения (PLUS, MULT, SQRT), а не числа. */
+static int test_place_at_with_formula(void) {
+    cur = doc;
+    X("<program><header><programName>P</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    /* PlaceAt: X = 10 + 5 = 15, Y = 3 * 4 = 12 */
+    X("<brick type=\"PlaceAtBrick\"><formulaList>");
+    F_BIN("X_POSITION", "PLUS", "NUMBER", "10", "NUMBER", "5");
+    F_BIN("Y_POSITION", "MULT", "NUMBER", "3", "NUMBER", "4");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_SENSOR("value", "OBJECT_X");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_SENSOR("value", "OBJECT_Y");
+    X("</formulaList></brick>");
+    /* SetX с функцией: SQRT(144) = 12 */
+    X("<brick type=\"SetXBrick\"><formulaList>");
+    F_FUNC1("X_POSITION", "SQRT", "NUMBER", "144");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_SENSOR("value", "OBJECT_X");
+    X("</formulaList></brick>");
+    /* ChangeX на 5 -> 12 + 5 = 17 */
+    X("<brick type=\"ChangeXByNBrick\"><formulaList>");
+    F_NUM("X_POSITION_CHANGE", 5);
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_SENSOR("value", "OBJECT_X");
+    X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "15"));   /* PlaceAt X = 10+5 */
+    OK(contains(out, "12"));   /* PlaceAt Y = 3*4 (и SetX = SQRT(144)) */
+    OK(contains(out, "17"));   /* SetX 12 + ChangeX 5 */
+    free(out);
+    return 0;
+}
+
+static int test_execute_c_code_and_clones(void) {
+    cur = doc;
+    X("<program><header><programName>X</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    /* Блок «выполнить код C»: сырой C встраивается прямо в сгенерированный вывод. */
+    X("<brick type=\"ExecuteCCodeBrick\"><formulaList>");
+    F_STR("code", "puts(\"ccodeok\");");
+    X("</formulaList></brick>");
+    /* Клонирование — безопасный no-op в статической компиляции. */
+    X("<brick type=\"CloneBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "before-clone");
+    X("</formulaList></brick>");
+    /* «Удалить клон» компилируется в return — хвост скрипта не выполняется. */
+    X("<brick type=\"DeleteThisCloneBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "after-clone-should-not-print");
+    X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "ccodeok"));                        /* встроенный C выполнился */
+    OK(contains(out, "before-clone"));                    /* CloneBrick не сломал поток */
+    OK(!contains(out, "after-clone-should-not-print"));   /* DeleteThisClone == return */
+    free(out);
+    return 0;
+}
+
 int main(void) {
     if (test_arithmetic_and_print()) return 1;
+    if (test_place_at_with_formula()) return 1;
     if (test_c_blocks_native_memory()) return 1;
     if (test_break_continue_return()) return 1;
     if (test_broadcast()) return 1;
+    if (test_execute_c_code_and_clones()) return 1;
     printf("test_compiler OK; peak mem = %zu\n", cat_mem_peak());
     return 0;
 }

@@ -840,6 +840,17 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
             fi->frame_count--;
         }
         return 0;
+    /* Клоны и выполнение произвольного кода: в интерпретаторе (fallback)
+       безопасные заглушки. CB_C_CODE/CB_JAVA_CODE требуют компиляции
+       (см. cat_compiler.c), CB_CLONE не моделируется в статике. */
+    case CB_C_CODE:
+    case CB_JAVA_CODE:
+    case CB_CLONE:
+    case CB_WHEN_CLONED:
+        return 0;
+    case CB_DELETE_THIS_CLONE:
+        fi->done = true;
+        return 1;
     default: return 0;
     }
 }

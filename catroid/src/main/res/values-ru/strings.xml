@@ -879,6 +879,40 @@
     <string formatted="false" name="category_raspi">Raspberry Pi</string>
     <string formatted="false" name="category_assertions">Тестирование</string>
     <string formatted="false" name="category_search_bricks">Поиск блоков</string>
+    <!-- C-блоки: низкоуровневые операции с памятью и управлением потоком -->
+    <string formatted="false" name="category_c">C</string>
+    <string formatted="false" name="brick_c_allocate">Выделить</string>
+    <string formatted="false" name="brick_c_allocate_zeroed">Выделить обнулённые</string>
+    <string formatted="false" name="brick_c_bytes">байт</string>
+    <string formatted="false" name="brick_c_pointer_into">и сохранить указатель в</string>
+    <string formatted="false" name="brick_c_items_of">элементов по</string>
+    <string formatted="false" name="brick_c_resize">Изменить размер указателя</string>
+    <string formatted="false" name="brick_c_to">до</string>
+    <string formatted="false" name="brick_c_to_destination">в</string>
+    <string formatted="false" name="brick_c_free">Освободить память по указателю</string>
+    <string formatted="false" name="brick_c_memcpy">Скопировать</string>
+    <string formatted="false" name="brick_c_bytes_from">байт из указателя</string>
+    <string formatted="false" name="brick_c_memset">Заполнить</string>
+    <string formatted="false" name="brick_c_bytes_at">байт по указателю</string>
+    <string formatted="false" name="brick_c_with">значением байта</string>
+    <string formatted="false" name="brick_c_typedef">Тип</string>
+    <string formatted="false" name="brick_c_equals">=</string>
+    <string formatted="false" name="brick_c_cast">Привести</string>
+    <string formatted="false" name="brick_c_to_type">к типу</string>
+    <string formatted="false" name="brick_c_write_at">Записать значение по указателю</string>
+    <string formatted="false" name="brick_c_plus">+</string>
+    <string formatted="false" name="brick_c_value_label">значение</string>
+    <string formatted="false" name="brick_c_as_type">как тип</string>
+    <string formatted="false" name="brick_c_read_at">Прочитать по указателю</string>
+    <string formatted="false" name="brick_c_return">Возврат (остановить этот скрипт)</string>
+    <string formatted="false" name="brick_c_break">Прервать цикл</string>
+    <string formatted="false" name="brick_c_continue">Продолжить цикл</string>
+    <string formatted="false" name="brick_c_type_default">double</string>
+    <string formatted="false" name="brick_c_typedef_name_default">my_int</string>
+    <string formatted="false" name="brick_c_base_type_default">int</string>
+    <string formatted="false" name="brick_execute_c_code">Выполнить код C</string>
+    <string formatted="false" name="brick_execute_java_code">Выполнить код Java</string>
+    <string formatted="false" name="brick_code_label">код</string>
     <!--  -->
     <!-- User Defined Bricks -->
     <string formatted="false" name="brick_user_defined_add_label">Добавить метку</string>

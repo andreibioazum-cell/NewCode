@@ -94,6 +94,14 @@
         <item name="icon_recently_used">@drawable/ic_recently_used_pos</item>
     </style>
 
+    <!-- Launch-тема для лаунчера (ProjectListActivity).
+         windowBackground совпадает с фоном первого экрана (toolbar), поэтому
+         при холодном старте не виден отдельный «чёрный» кадр оконного фона
+         (#04222C), мелькающий перед основным интерфейсом (#002B3B). -->
+    <style name="Catroid.Launch" parent="Catroid">
+        <item name="android:windowBackground">@color/toolbar_background</item>
+    </style>
+
     <!-- Toolbar -->
     <style name="ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/toolbar_title</item>

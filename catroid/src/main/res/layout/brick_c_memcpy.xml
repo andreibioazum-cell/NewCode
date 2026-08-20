@@ -58,7 +58,7 @@
         </TextView>
         <TextView
             style="@style/BrickText.SingleLine"
-            android:text="@string/brick_c_to">
+            android:text="@string/brick_c_to_destination">
         </TextView>
         <TextView
             android:id="@+id/brick_c_memcpy_edit_text_destination"
