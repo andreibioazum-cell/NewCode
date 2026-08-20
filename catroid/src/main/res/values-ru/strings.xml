@@ -881,7 +881,6 @@
     <string formatted="false" name="category_search_bricks">Поиск блоков</string>
     <!-- C-блоки: низкоуровневые операции с памятью и управлением потоком -->
     <string formatted="false" name="category_c">C</string>
-    <string formatted="false" name="category_recently_used">Недавно использованные</string>
     <string formatted="false" name="brick_c_allocate">Выделить</string>
     <string formatted="false" name="brick_c_allocate_zeroed">Выделить обнулённые</string>
     <string formatted="false" name="brick_c_bytes">байт</string>
