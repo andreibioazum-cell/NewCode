@@ -38,8 +38,21 @@ import org.catrobat.catroid.content.bricks.AskBrick
 import org.catrobat.catroid.content.bricks.AskSpeechBrick
 import org.catrobat.catroid.content.bricks.AssertEqualsBrick
 import org.catrobat.catroid.content.bricks.AssertUserListsBrick
-import org.catrobat.catroid.content.bricks.BackgroundRequestBrick
 import org.catrobat.catroid.content.bricks.BreakBrick
+import org.catrobat.catroid.content.bricks.WhileBrick
+import org.catrobat.catroid.content.bricks.DoWhileBrick
+import org.catrobat.catroid.content.bricks.SwitchBrick
+import org.catrobat.catroid.content.bricks.CaseBrick
+import org.catrobat.catroid.content.bricks.SwitchEndBrick
+import org.catrobat.catroid.content.bricks.TernaryBrick
+import org.catrobat.catroid.content.bricks.IncrementBrick
+import org.catrobat.catroid.content.bricks.DecrementBrick
+import org.catrobat.catroid.content.bricks.SizeofBrick
+import org.catrobat.catroid.content.bricks.StructBrick
+import org.catrobat.catroid.content.bricks.EnumBrick
+import org.catrobat.catroid.content.bricks.AssertBrick
+import org.catrobat.catroid.content.bricks.GotoBrick
+import org.catrobat.catroid.content.bricks.LabelBrick
 import org.catrobat.catroid.content.bricks.Brick
 import org.catrobat.catroid.content.bricks.BroadcastBrick
 import org.catrobat.catroid.content.bricks.BroadcastReceiverBrick
@@ -86,7 +99,6 @@ import org.catrobat.catroid.content.bricks.IfLogicBeginBrick
 import org.catrobat.catroid.content.bricks.IfOnEdgeBounceBrick
 import org.catrobat.catroid.content.bricks.IfThenLogicBeginBrick
 import org.catrobat.catroid.content.bricks.InsertItemIntoUserListBrick
-import org.catrobat.catroid.content.bricks.LookRequestBrick
 import org.catrobat.catroid.content.bricks.MallocBrick
 import org.catrobat.catroid.content.bricks.MemcpyBrick
 import org.catrobat.catroid.content.bricks.MemsetBrick
@@ -191,7 +203,6 @@ import org.catrobat.catroid.content.bricks.VibrationBrick
 import org.catrobat.catroid.content.bricks.WaitBrick
 import org.catrobat.catroid.content.bricks.WaitTillIdleBrick
 import org.catrobat.catroid.content.bricks.WaitUntilBrick
-import org.catrobat.catroid.content.bricks.WebRequestBrick
 import org.catrobat.catroid.content.bricks.WhenBackgroundChangesBrick
 import org.catrobat.catroid.content.bricks.WhenBounceOffBrick
 import org.catrobat.catroid.content.bricks.WhenBrick
@@ -521,14 +532,6 @@ open class CategoryBricksFactory {
             looksBrickList.add(ChooseCameraBrick())
             looksBrickList.add(FlashBrick())
         }
-        when {
-            !isBackgroundSprite -> looksBrickList.add(LookRequestBrick(BrickValues.LOOK_REQUEST))
-            ProjectManager.getInstance().currentProject.xmlHeader.islandscapeMode() -> looksBrickList.add(
-                BackgroundRequestBrick(BrickValues.BACKGROUND_REQUEST_LANDSCAPE)
-            )
-
-            else -> looksBrickList.add(BackgroundRequestBrick(BrickValues.BACKGROUND_REQUEST))
-        }
         looksBrickList.add(PaintNewLookBrick(context.getString(R.string.brick_paint_new_look_name)))
         looksBrickList.add(EditLookBrick())
         looksBrickList.add(CopyLookBrick(context.getString(R.string.brick_copy_look_name)))
@@ -600,15 +603,6 @@ open class CategoryBricksFactory {
                 context.getString(R.string.brick_store_csv_into_userlist_data)
             )
         )
-        dataBrickList.add(WebRequestBrick(context.getString(R.string.brick_web_request_default_value)))
-        when {
-            !isBackgroundSprite -> dataBrickList.add(LookRequestBrick(BrickValues.LOOK_REQUEST))
-            ProjectManager.getInstance().currentProject.xmlHeader.islandscapeMode() -> dataBrickList.add(
-                BackgroundRequestBrick(BrickValues.BACKGROUND_REQUEST_LANDSCAPE)
-            )
-
-            else -> dataBrickList.add(BackgroundRequestBrick(BrickValues.BACKGROUND_REQUEST))
-        }
         dataBrickList.add(AskBrick(context.getString(R.string.brick_ask_default_question)))
         if (SettingsFragment.isAISpeechRecognitionSharedPreferenceEnabled(context)) {
             dataBrickList.add(AskSpeechBrick(context.getString(R.string.brick_ask_speech_default_question)))
@@ -628,15 +622,6 @@ open class CategoryBricksFactory {
         deviceBrickList.add(ResetTimerBrick())
         deviceBrickList.add(WhenBrick())
         deviceBrickList.add(WhenTouchDownBrick())
-        deviceBrickList.add(WebRequestBrick(context.getString(R.string.brick_web_request_default_value)))
-        when {
-            !isBackgroundSprite -> deviceBrickList.add(LookRequestBrick(BrickValues.LOOK_REQUEST))
-            ProjectManager.getInstance().currentProject.xmlHeader.islandscapeMode() -> deviceBrickList.add(
-                BackgroundRequestBrick(BrickValues.BACKGROUND_REQUEST_LANDSCAPE)
-            )
-
-            else -> deviceBrickList.add(BackgroundRequestBrick(BrickValues.BACKGROUND_REQUEST))
-        }
         deviceBrickList.add(OpenUrlBrick(BrickValues.OPEN_IN_BROWSER))
         deviceBrickList.add(VibrationBrick(BrickValues.VIBRATE_SECONDS))
 
@@ -697,6 +682,19 @@ open class CategoryBricksFactory {
         cBrickList.add(MemsetBrick(BrickValues.C_POINTER, BrickValues.C_MEMSET_VALUE, BrickValues.C_MEMCPY_SIZE))
         cBrickList.add(CastBrick(BrickValues.C_MEMSET_VALUE,
             context.getString(R.string.brick_c_type_default), null))
+        cBrickList.add(SizeofBrick(context.getString(R.string.brick_c_type_default), null))
+        cBrickList.add(StructBrick("my_struct", "double x; double y;"))
+        cBrickList.add(EnumBrick("my_enum", "A, B = 5, C"))
+        cBrickList.add(TernaryBrick(0.0, 1.0, 0.0, null))
+        cBrickList.add(IncrementBrick(null))
+        cBrickList.add(DecrementBrick(null))
+        cBrickList.add(AssertBrick(1.0))
+        cBrickList.add(GotoBrick(context.getString(R.string.brick_c_label_default)))
+        cBrickList.add(LabelBrick(context.getString(R.string.brick_c_label_default)))
+        cBrickList.add(WhileBrick(0.0))
+        cBrickList.add(DoWhileBrick(0.0))
+        cBrickList.add(SwitchBrick(0.0))
+        cBrickList.add(CaseBrick(0.0))
         cBrickList.add(BreakBrick())
         cBrickList.add(ContinueBrick())
         cBrickList.add(ReturnBrick())
@@ -771,7 +769,6 @@ open class CategoryBricksFactory {
                 context.getString(R.string.brick_store_csv_into_userlist_data)
             )
         )
-        assertionsBrickList.add(WebRequestBrick(context.getString(R.string.brick_web_request_default_value)))
         return assertionsBrickList
     }
 
@@ -835,12 +832,9 @@ open class CategoryBricksFactory {
         when (brick) {
             is AskBrick -> category = res.getString(R.string.category_looks)
             is AskSpeechBrick -> category = res.getString(R.string.category_sound)
-            is LookRequestBrick -> category = res.getString(R.string.category_looks)
-            is BackgroundRequestBrick -> category = res.getString(R.string.category_looks)
             is WhenClonedBrick -> category = res.getString(R.string.category_control)
             is WhenBackgroundChangesBrick -> category = res.getString(R.string.category_event)
             is SetVariableBrick -> category = res.getString(R.string.category_data)
-            is WebRequestBrick -> category = res.getString(R.string.category_data)
             is StoreCSVIntoUserListBrick -> category = res.getString(R.string.category_data)
             is UserDefinedBrick -> category = res.getString(R.string.category_user_bricks)
             is UserDefinedReceiverBrick -> category = res.getString(R.string.category_user_bricks)

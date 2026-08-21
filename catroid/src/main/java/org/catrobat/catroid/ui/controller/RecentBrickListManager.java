@@ -27,7 +27,6 @@ import org.catrobat.catroid.content.bricks.Brick;
 import org.catrobat.catroid.content.bricks.ComeToFrontBrick;
 import org.catrobat.catroid.content.bricks.GoNStepsBackBrick;
 import org.catrobat.catroid.content.bricks.IfOnEdgeBounceBrick;
-import org.catrobat.catroid.content.bricks.LookRequestBrick;
 import org.catrobat.catroid.content.bricks.PenDownBrick;
 import org.catrobat.catroid.content.bricks.PenUpBrick;
 import org.catrobat.catroid.content.bricks.SayBubbleBrick;
@@ -56,7 +55,7 @@ public final class RecentBrickListManager {
 			IfOnEdgeBounceBrick.class, GoNStepsBackBrick.class, ComeToFrontBrick.class,
 			SetLookBrick.class, SetLookByIndexBrick.class, SayBubbleBrick.class,
 			SayForBubbleBrick.class, ThinkBubbleBrick.class, ThinkForBubbleBrick.class,
-			LookRequestBrick.class, PenDownBrick.class, PenUpBrick.class, SetPenSizeBrick.class,
+			PenDownBrick.class, PenUpBrick.class, SetPenSizeBrick.class,
 			SetPenColorBrick.class, StampBrick.class};
 
 	private static final RecentBrickListManager INSTANCE = new RecentBrickListManager();

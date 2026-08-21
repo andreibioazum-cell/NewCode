@@ -10,8 +10,13 @@
 * весь код проекта транслируется в настоящий C — `Repeat` → `for`,
   `Forever` → `for(;;)`, `If` → `if`, формулы → выражения;
 * `break` / `continue` / `return` — это машинные C-операторы;
+* `while` / `do-while` / `for` / `switch-case` / `goto`-`label` — это
+  настоящие одноимённые конструкции C (не эмуляция);
 * значения (`NcVal`) и списки (`NcList`) живут **на стеке и в статике** —
   для них куча не используется вовсе;
+* **свёртка констант**: выражения из числовых литералов (например
+  `2 + 5`) вычисляются на этапе компиляции и записываются в сгенерированный
+  C как единственная константа — без вызовов `nc_add`/`nc_mul` в рантайме;
 * C-блоки (`malloc`/`calloc`/`realloc`/`free`/`memcpy`/`memset`,
   разыменование указателей) работают с **реальной памятью процесса**
   через явные `malloc`/`free` — освобождение только явное.
@@ -61,13 +66,13 @@ code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_pro
 | Категория      | Блоки                                                                 |
 |----------------|------------------------------------------------------------------------|
 | События        | When started, When tapped, When broadcast, Broadcast, Broadcast&Wait  |
-| Управление     | Wait, Forever, Repeat, Repeat Until, If/Else, If Then, Stop, Note, Return, Break, Continue |
+| Управление     | Wait, Forever, Repeat, Repeat Until, If/Else, If Then, Stop, Note, Return, Break, Continue, While, DoWhile, For (from..to..step), Switch/Case, Goto/Label |
 | Движение       | PlaceAt, SetX/Y, ChangeX/Y, Move N steps, Turn left/right, Point in dir, Glide |
 | Внешний вид    | Show, Hide, SetSize, ChangeSize, Say, Think, Set/Next/Previous look   |
 | Звук           | PlaySound, StopAllSounds, SetVolume, ChangeVolume                     |
 | Данные         | SetVariable, ChangeVariable, AddToList, DeleteFromList, ClearList, InsertIntoList, ReplaceInList |
-| Формулы        | +, −, ×, ÷, %, ^, сравнения, AND/OR/NOT, sin/cos/tan/sqrt/abs/round/floor/ceil/ln/log/exp/min/max/random/length/join/letter, USER_VARIABLE, USER_LIST, SENSOR |
-| C-блоки        | Malloc, Calloc, Realloc, Free, Memcpy, Memset, Typedef, Cast, PointerSet, PointerGet — настоящие операции с памятью |
+| Формулы        | +, −, ×, ÷, %, ^, сравнения, AND/OR/NOT, побитовые & \| ^ << >> ~, sin/cos/tan/sqrt/abs/round/floor/ceil/ln/log/exp/min/max/random/length/join/letter, USER_VARIABLE, USER_LIST, SENSOR |
+| C-блоки        | Malloc, Calloc, Realloc, Free, Memcpy, Memset, Typedef, Cast, PointerSet, PointerGet — настоящие операции с памятью; Sizeof, Ternary (?:), Increment/Decrement (var++/var--), Struct, Enum, Assert |
 | Код (inline)   | ExecuteCCode (сырой C встраивается в вывод и исполняется нативно), ExecuteJavaCode (хранит исходник Java; исполняется скриптовым движком в Android-интерпретаторе) |
 | Клоны          | Clone, DeleteThisClone, WhenCloned — настоящие zero-copy клоны (см. ниже) |
 | Отладка/CLI    | PrintBrick (наше расширение — печатает значение в stdout)             |
@@ -109,8 +114,11 @@ JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad) не
   создаётся, проект не лагает. `Broadcast` получают и клоны.
 * **Компилятор** (`run`/`build`): для спрайта со скриптами WhenCloned
   генерируется `clone_fire_<i>()`: фиксированный пул поз
-  `NC_CLONE_CAP` (по умолчанию 16, переопределяется `-DNC_CLONE_CAP=`)
-  + побитовая копия структуры позы. Клон синхронно выполняет скрипты
+  `NC_CLONE_CAP` (по умолчанию 64, переопределяется `-DNC_CLONE_CAP=`,
+  максимум 64 — один `unsigned long long` битовой маски) + побитовая копия
+  структуры позы. Свободный слот ищется **за O(1)** через
+  `__builtin_ctzll` по битовой маске занятых слотов (без линейного
+  прохода и без массива флагов). Клон синхронно выполняет скрипты
   WhenCloned и освобождает слот пула (статический рантайм
   последовательный). Пул заполнен => новый клон пропускается.
 

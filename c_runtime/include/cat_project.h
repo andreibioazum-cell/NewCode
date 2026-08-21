@@ -102,7 +102,35 @@ typedef enum {
        синхронно из фиксированного пула поз (см. cat_compiler.c). */
     CB_WHEN_CLONED,
     CB_CLONE,
-    CB_DELETE_THIS_CLONE
+    CB_DELETE_THIS_CLONE,
+
+    /* --- Расширенный набор языка C: управляющие конструкции --- */
+    CB_WHILE,            /* while (условие) { ... } */
+    CB_DO_WHILE,         /* do { ... } while (условие); */
+    CB_FOR_FROM_TO,      /* for (v = from; v <= to; v += step) { ... } */
+
+    /* --- switch/case --- */
+    CB_SWITCH,           /* switch (значение) { ... } */
+    CB_CASE,             /* case значение:  (метка внутри switch) */
+    CB_CASE_BREAK,       /* break;  (выход из case) */
+    CB_SWITCH_END,       /* } (конец switch) */
+
+    /* --- goto / label --- */
+    CB_GOTO,             /* goto метка; */
+    CB_LABEL,            /* метка: */
+
+    /* --- выражения и операции --- */
+    CB_TERNARY,          /* var = условие ? a : b; */
+    CB_INC,              /* var++; */
+    CB_DEC,              /* var--; */
+    CB_SIZEOF,           /* var = (число)sizeof(тип); */
+
+    /* --- объявление составных типов --- */
+    CB_STRUCT,           /* typedef struct { ...поля... } alias; */
+    CB_ENUM,             /* typedef enum { ...константы... } alias; */
+
+    /* --- проверки --- */
+    CB_ASSERT            /* assert(условие); */
 } CatBrickKind;
 
 /*

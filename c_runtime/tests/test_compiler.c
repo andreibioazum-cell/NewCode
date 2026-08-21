@@ -68,6 +68,13 @@ static void F_BIN(const char *cat, const char *op, const char *lt, const char *l
         "<rightChild><type>%s</type><value>%s</value></rightChild></formula>", cat, op, lt, lv, rt, rv);
     X(b);
 }
+static void F_UNARY(const char *cat, const char *op, const char *at, const char *av) {
+    char b[512];
+    snprintf(b, sizeof b,
+        "<formula category=\"%s\"><type>OPERATOR</type><value>%s</value>"
+        "<rightChild><type>%s</type><value>%s</value></rightChild></formula>", cat, op, at, av);
+    X(b);
+}
 
 /* Скомпилировать XML в машинный код и выполнить; stdout -> out (выделяется). */
 static int compile_and_run(const char *xml, char **out, size_t *out_len, int *exit_code) {
@@ -422,6 +429,277 @@ static int test_static_clone_pool(void) {
     return 0;
 }
 
+/* --- Расширенный набор языка C --- */
+
+/* Циклы while / do-while / for-from-to, switch/case, goto/label,
+   ternary, ++/--, sizeof, struct/enum, побитовые операции. */
+static int test_c_control_flow(void) {
+    cur = doc;
+    X("<program><header><programName>W</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    /* while: i = 0; while (i < 3) i++; => 3 */
+    X("<brick type=\"SetVariableBrick\"><userVariable>i</userVariable><formulaList>");
+    F_NUM("value", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"WhileBrick\"><formulaList>");
+    F_BIN("condition", "SMALLER_THAN", "USER_VARIABLE", "i", "NUMBER", "3");
+    X("</formulaList></brick>");
+    X("<brick type=\"IncrementBrick\"><userVariable>i</userVariable></brick>");
+    X("<brick type=\"LoopEndBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "i");
+    X("</formulaList></brick>");
+    /* do-while: i = 10; do { i-- } while (i > 7); => 7 */
+    X("<brick type=\"SetVariableBrick\"><userVariable>i</userVariable><formulaList>");
+    F_NUM("value", 10);
+    X("</formulaList></brick>");
+    X("<brick type=\"DoWhileBrick\"><formulaList>");
+    F_BIN("condition", "GREATER_THAN", "USER_VARIABLE", "i", "NUMBER", "7");
+    X("</formulaList></brick>");
+    X("<brick type=\"DecrementBrick\"><userVariable>i</userVariable></brick>");
+    X("<brick type=\"LoopEndBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "i");
+    X("</formulaList></brick>");
+    /* for (i = 1; i <= 5; i += 2) sum += i; => 1+3+5 = 9 */
+    X("<brick type=\"SetVariableBrick\"><userVariable>sum</userVariable><formulaList>");
+    F_NUM("value", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"ForVariableFromToBrick\"><userVariable>i</userVariable><formulaList>");
+    F_NUM("from", 1); F_NUM("to", 5); F_NUM("step", 2);
+    X("</formulaList></brick>");
+    X("<brick type=\"ChangeVariableBrick\"><userVariable>sum</userVariable><formulaList>");
+    F_VAR("value", "i");
+    X("</formulaList></brick>");
+    X("<brick type=\"LoopEndBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "sum");
+    X("</formulaList></brick>");
+    /* switch(x) { case 1: ...; case 2: print two; break; } */
+    X("<brick type=\"SetVariableBrick\"><userVariable>x</userVariable><formulaList>");
+    F_NUM("value", 2);
+    X("</formulaList></brick>");
+    X("<brick type=\"SwitchBrick\"><formulaList>");
+    F_VAR("value", "x");
+    X("</formulaList></brick>");
+    X("<brick type=\"CaseBrick\"><formulaList>");
+    F_NUM("value", 1);
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "one");
+    X("</formulaList></brick>");
+    X("<brick type=\"CaseBreakBrick\"/>");
+    X("<brick type=\"CaseBrick\"><formulaList>");
+    F_NUM("value", 2);
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "two");
+    X("</formulaList></brick>");
+    X("<brick type=\"CaseBreakBrick\"/>");
+    X("<brick type=\"SwitchEndBrick\"/>");
+    /* goto/label: пропустить среднюю строку */
+    X("<brick type=\"GotoBrick\"><formulaList>");
+    F_STR("label", "skip");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "skipped");
+    X("</formulaList></brick>");
+    X("<brick type=\"LabelBrick\"><formulaList>");
+    F_STR("label", "skip");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "after-goto");
+    X("</formulaList></brick>");
+    /* ternary: res = (5 > 3) ? 10 : 20; */
+    X("<brick type=\"TernaryBrick\"><userVariable>res</userVariable><formulaList>");
+    F_BIN("condition", "GREATER_THAN", "NUMBER", "5", "NUMBER", "3");
+    F_NUM("ciftrue", 10); F_NUM("ciffalse", 20);
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "res");
+    X("</formulaList></brick>");
+    /* sizeof(double) == 8 */
+    X("<brick type=\"SizeofBrick\"><userVariable>sz</userVariable><formulaList>");
+    F_STR("C_TYPE", "double");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "sz");
+    X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "3"));           /* while: 3 */
+    OK(contains(out, "7"));           /* do-while: 7 */
+    OK(contains(out, "9"));           /* for: 1+3+5 */
+    OK(contains(out, "two"));         /* switch case 2 */
+    OK(!contains(out, "one"));        /* case 1 не выполнялся */
+    OK(!contains(out, "skipped"));    /* goto перепрыгнул */
+    OK(contains(out, "after-goto"));
+    OK(contains(out, "10"));          /* ternary */
+    OK(contains(out, "8"));           /* sizeof(double) */
+    free(out);
+    return 0;
+}
+
+/* Побитовые операции и составные типы struct/enum. */
+static int test_c_bitwise_and_types(void) {
+    cur = doc;
+    X("<program><header><programName>BT</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    /* struct Point { double x; double y; } */
+    X("<brick type=\"StructBrick\"><formulaList>");
+    F_STR("C_NAME", "Point"); F_STR("C_FIELDS", "double x; double y;");
+    X("</formulaList></brick>");
+    /* enum Color { RED, GREEN = 5, BLUE } */
+    X("<brick type=\"EnumBrick\"><formulaList>");
+    F_STR("C_NAME", "Color"); F_STR("C_ENUMERATORS", "RED, GREEN = 5, BLUE");
+    X("</formulaList></brick>");
+    /* sizeof(Point) == 16 */
+    X("<brick type=\"SizeofBrick\"><userVariable>sp</userVariable><formulaList>");
+    F_STR("C_TYPE", "Point");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "sp");
+    X("</formulaList></brick>");
+    /* 6 & 3 = 2 */
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_BIN("value", "BIT_AND", "NUMBER", "6", "NUMBER", "3");
+    X("</formulaList></brick>");
+    /* 1 | 2 = 3 */
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_BIN("value", "BIT_OR", "NUMBER", "1", "NUMBER", "2");
+    X("</formulaList></brick>");
+    /* 5 ^ 3 = 6 */
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_BIN("value", "BIT_XOR", "NUMBER", "5", "NUMBER", "3");
+    X("</formulaList></brick>");
+    /* 1 << 4 = 16 */
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_BIN("value", "SHIFT_LEFT", "NUMBER", "1", "NUMBER", "4");
+    X("</formulaList></brick>");
+    /* 16 >> 2 = 4 */
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_BIN("value", "SHIFT_RIGHT", "NUMBER", "16", "NUMBER", "2");
+    X("</formulaList></brick>");
+    /* ~0 = -1 */
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_UNARY("value", "BIT_NOT", "NUMBER", "0");
+    X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "16"));   /* sizeof(Point) */
+    OK(contains(out, "2"));    /* 6 & 3 */
+    OK(contains(out, "3"));    /* 1 | 2 */
+    OK(contains(out, "6"));    /* 5 ^ 3 */
+    OK(contains(out, "16"));   /* 1 << 4 */
+    OK(contains(out, "4"));    /* 16 >> 2 */
+    OK(contains(out, "-1"));   /* ~0 */
+    free(out);
+    return 0;
+}
+
+/* Свёртка констант: константные выражения считаются на этапе компиляции,
+   и в сгенерированном C не остаётся вызовов nc_add/nc_mul для литералов. */
+static int test_constant_folding(void) {
+    cur = doc;
+    X("<program><header><programName>CF</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    X("<brick type=\"SetVariableBrick\"><userVariable>y</userVariable><formulaList>");
+    F_BIN("value", "PLUS", "NUMBER", "2", "NUMBER", "5");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "y");
+    X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    CatProject *p = cat_load_project_xml_str(doc);
+    OK(p != NULL);
+    char *c = cat_compile_to_c(p);
+    OK(c != NULL);
+    OK(contains(c, "nc_num(7)"));          /* 2 + 5 свернулось */
+    OK(!contains(c, "nc_add(nc_num"));     /* нет вызова сложения литералов */
+    cat_free(c);
+    cat_project_free(p);
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "7"));
+    free(out);
+    return 0;
+}
+
+/* Проверка совместимости с тем, как Android-приложение NewCode сериализует
+   формулы C-блоков: категории слотов = имена BrickField (IF_CONDITION,
+   TERNARY_CONDITION/TERNARY_IF_TRUE/TERNARY_IF_FALSE, C_TYPE, C_LABEL). */
+static int test_android_slot_names(void) {
+    cur = doc;
+    X("<program><header><programName>AN</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    /* ternary: res = (1 > 0) ? 10 : 20 */
+    X("<brick type=\"TernaryBrick\"><userVariable>res</userVariable><formulaList>");
+    F_BIN("TERNARY_CONDITION", "GREATER_THAN", "NUMBER", "1", "NUMBER", "0");
+    F_NUM("TERNARY_IF_TRUE", 10);
+    F_NUM("TERNARY_IF_FALSE", 20);
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "res");
+    X("</formulaList></brick>");
+    /* while (IF_CONDITION): i = 0; while (i < 2) i++; */
+    X("<brick type=\"SetVariableBrick\"><userVariable>i</userVariable><formulaList>");
+    F_NUM("value", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"WhileBrick\"><formulaList>");
+    F_BIN("IF_CONDITION", "SMALLER_THAN", "USER_VARIABLE", "i", "NUMBER", "2");
+    X("</formulaList></brick>");
+    X("<brick type=\"IncrementBrick\"><userVariable>i</userVariable></brick>");
+    X("<brick type=\"LoopEndBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "i");
+    X("</formulaList></brick>");
+    /* sizeof(C_TYPE): sz = sizeof(double) */
+    X("<brick type=\"SizeofBrick\"><userVariable>sz</userVariable><formulaList>");
+    F_STR("C_TYPE", "double");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_VAR("value", "sz");
+    X("</formulaList></brick>");
+    /* goto/label (C_LABEL) */
+    X("<brick type=\"GotoBrick\"><formulaList>");
+    F_STR("C_LABEL", "skip");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "nope");
+    X("</formulaList></brick>");
+    X("<brick type=\"LabelBrick\"><formulaList>");
+    F_STR("C_LABEL", "skip");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "ok");
+    X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "10"));   /* ternary */
+    OK(contains(out, "2"));    /* while с IF_CONDITION */
+    OK(contains(out, "8"));    /* sizeof(C_TYPE) */
+    OK(!contains(out, "nope")); /* goto перепрыгнул */
+    OK(contains(out, "ok"));
+    free(out);
+    return 0;
+}
+
 int main(void) {
     if (test_arithmetic_and_print()) return 1;
     if (test_place_at_with_formula()) return 1;
@@ -430,6 +708,10 @@ int main(void) {
     if (test_broadcast()) return 1;
     if (test_execute_c_code_and_clones()) return 1;
     if (test_static_clone_pool()) return 1;
+    if (test_c_control_flow()) return 1;
+    if (test_c_bitwise_and_types()) return 1;
+    if (test_constant_folding()) return 1;
+    if (test_android_slot_names()) return 1;
     printf("test_compiler OK; peak mem = %zu\n", cat_mem_peak());
     return 0;
 }

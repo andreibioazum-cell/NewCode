@@ -73,8 +73,6 @@ public class LookData implements Cloneable, Nameable, Serializable {
 
 	private boolean valid = true;
 
-	private boolean isWebRequest = false;
-
 	public LookData() {
 	}
 
@@ -90,14 +88,6 @@ public class LookData implements Cloneable, Nameable, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public boolean getIsWebRequest() {
-		return isWebRequest;
-	}
-
-	public void setIsWebRequest(Boolean isWebRequest) {
-		this.isWebRequest = isWebRequest;
 	}
 
 	public String getXstreamFileName() {

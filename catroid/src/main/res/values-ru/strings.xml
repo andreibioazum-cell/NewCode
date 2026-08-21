@@ -910,6 +910,25 @@
     <string formatted="false" name="brick_c_type_default">double</string>
     <string formatted="false" name="brick_c_typedef_name_default">my_int</string>
     <string formatted="false" name="brick_c_base_type_default">int</string>
+    <string formatted="false" name="brick_c_set">присвоить</string>
+    <string formatted="false" name="brick_c_store_in">и сохранить в</string>
+    <string formatted="false" name="brick_c_ternary_then">то</string>
+    <string formatted="false" name="brick_c_ternary_else">иначе</string>
+    <string formatted="false" name="brick_c_increment">Увеличить</string>
+    <string formatted="false" name="brick_c_decrement">Уменьшить</string>
+    <string formatted="false" name="brick_c_sizeof">Размер типа</string>
+    <string formatted="false" name="brick_c_struct">Структура</string>
+    <string formatted="false" name="brick_c_with_fields">с полями</string>
+    <string formatted="false" name="brick_c_enum">Перечисление</string>
+    <string formatted="false" name="brick_c_with_values">со значениями</string>
+    <string formatted="false" name="brick_c_assert">Утверждение</string>
+    <string formatted="false" name="brick_c_goto">Перейти к</string>
+    <string formatted="false" name="brick_c_label">Метка</string>
+    <string formatted="false" name="brick_c_while">Пока</string>
+    <string formatted="false" name="brick_c_do_while">Делать пока</string>
+    <string formatted="false" name="brick_c_switch">Переключатель</string>
+    <string formatted="false" name="brick_c_case">Вариант</string>
+    <string formatted="false" name="brick_c_label_default">начало</string>
     <string formatted="false" name="brick_execute_c_code">Выполнить код C</string>
     <string formatted="false" name="brick_execute_java_code">Выполнить код Java</string>
     <string formatted="false" name="brick_code_label">код</string>
@@ -1220,9 +1239,6 @@
     <string formatted="false" name="brick_replace_item_in_userlist_replace_in_list">Заменить предмет в списке</string>
     <string formatted="false" name="brick_replace_item_in_userlist_item_at_index">с позиции</string>
     <string formatted="false" name="brick_replace_item_in_userlist_with_value">на</string>
-    <string formatted="false" name="brick_web_request">Отправить веб-запрос</string>
-    <string formatted="false" name="brick_web_request_default_value">https://catrob.at/joke</string>
-    <string formatted="false" name="brick_web_request_result">и сохранить ответ в</string>
     <string formatted="false" name="web_request_warning_title">Разрешить веб-доступ?</string>
     <string formatted="false" name="web_request_warning_message">Будьте очень внимательны перед предоставлением доступа, поскольку ссылка
         может раскрыть вашу личную информацию, например, точное географическое местоположение или любой текст,
@@ -1238,11 +1254,6 @@
         позже, вы можете удалить веб-адрес из списка доверенных доменов в
         настройках этого приложения.
     </string>
-    <string formatted="false" name="brick_look_request">Получить изображение из</string>
-    <string formatted="false" name="brick_look_request_result">и использовать как текущий образ</string>
-    <string formatted="false" name="brick_background_request_result">и использовать как текущий фон</string>
-    <string formatted="false" name="look_request_http_error_message">"Отправленный запрос по адресу %1$s выдал ошибку HTTP %2$s"</string>
-    <string formatted="false" name="look_request_type_error_message">"По адресу %1$s не удалось распознать формат изображения"</string>
     <string formatted="false" name="brick_store_csv_into_userlist_store">Сохранить в столбец</string>
     <string formatted="false" name="brick_store_csv_into_userlist_of">из</string>
     <string formatted="false" name="brick_store_csv_into_userlist_csv">значения через запятую</string>

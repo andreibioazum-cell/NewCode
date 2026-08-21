@@ -113,13 +113,7 @@ object FormulaElementOperations {
     fun getLookName(lookData: LookData?) = lookData?.name ?: ""
 
     @JvmStatic
-    fun getNumberOfLooks(lookData: LookData?, lookDataList: List<LookData>): Int {
-        return if (lookData?.isWebRequest == true) {
-            lookDataList.count() + 1
-        } else {
-            lookDataList.count()
-        }
-    }
+    fun getNumberOfLooks(lookData: LookData?, lookDataList: List<LookData>): Int = lookDataList.count()
 
     @JvmStatic
     fun tryCalculateCollidesWithEdge(

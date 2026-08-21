@@ -16,6 +16,7 @@
 #define _DEFAULT_SOURCE
 #endif
 
+#include <assert.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -80,6 +81,14 @@ static inline NcVal nc_eq(NcVal a, NcVal b) {
     return nc_bool(a.n == b.n);
 }
 static inline NcVal nc_ne(NcVal a, NcVal b)     { NcVal e = nc_eq(a, b); return nc_bool(!nc_truthy(e)); }
+
+/* --- побитовые операции языка C (целые, как в C: (long long)nc_d(...)) --- */
+static inline NcVal nc_bit_and(NcVal a, NcVal b) { return nc_num((double)((long long)nc_d(a) & (long long)nc_d(b))); }
+static inline NcVal nc_bit_or (NcVal a, NcVal b) { return nc_num((double)((long long)nc_d(a) | (long long)nc_d(b))); }
+static inline NcVal nc_bit_xor(NcVal a, NcVal b) { return nc_num((double)((long long)nc_d(a) ^ (long long)nc_d(b))); }
+static inline NcVal nc_bit_not(NcVal a)          { return nc_num((double)(~(long long)nc_d(a))); }
+static inline NcVal nc_shl    (NcVal a, NcVal b) { return nc_num((double)((long long)nc_d(a) << ((int)nc_d(b) & 63))); }
+static inline NcVal nc_shr    (NcVal a, NcVal b) { return nc_num((double)((long long)nc_d(a) >> ((int)nc_d(b) & 63))); }
 
 /* --- математические функции (углы в градусах, как в Catrobat) --- */
 static inline double nc_deg(double d)           { return d * M_PI / 180.0; }

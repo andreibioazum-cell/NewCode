@@ -16,12 +16,20 @@ cd c_runtime && make && ./newcode run examples/c_memory.xml
 
 Из кодовой базы Android-приложения удалены все блоки-расширения
 (**Lego NXT/EV3, Raspberry Pi, Arduino, Phiro, Parrot Drone,
-JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad**) —
+JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad**), а также
+сетевые блоки **«Веб-запрос»** (`WebRequestBrick`) и
+**«Получить изображение из»** (`LookRequestBrick`/`BackgroundRequestBrick`) —
 поддерживаются только основные категории: события, управление,
 движение, внешний вид, звук, переменные/списки, формулы и низкоуровневые
-C-блоки. Приложение носит имя **NewCode** (Java-пакеты
-`org.catrobat.catroid` оставлены без изменений ради совместимости
-формата проектов).
+C-блоки (теперь включая почти весь базовый C: `while`, `do-while`, `for`,
+`switch/case`, `goto/label`, `?:`, `++/--`, `sizeof`, `struct`, `enum`,
+`assert`, побитовые операции `& | ^ << >> ~`). Приложение носит имя
+**NewCode** (Java-пакеты `org.catrobat.catroid` оставлены без изменений
+ради совместимости формата проектов).
+
+Проекты `.catrobat` сохраняются/экспортируются в **ультра-сжатом ZIP**
+(`Deflater.BEST_COMPRESSION` — раньше архив записывался вообще без сжатия),
+при этом остаются обычным ZIP, совместимым с оригинальным Catroid.
 
 Дополнительно вычищено для лёгкости сборки: локали сокращены до
 **английской и русской** (~12 МБ переводов 70+ языков удалены),

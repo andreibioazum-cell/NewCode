@@ -75,4 +75,7 @@ Gemfile
 c_runtime/*.o
 c_runtime/src/*.o
 c_runtime/tests/test_all
+c_runtime/tests/test_c_blocks
+c_runtime/tests/test_clones
+c_runtime/tests/test_compiler
 c_runtime/catrobat_run

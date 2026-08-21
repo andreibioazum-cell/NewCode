@@ -23,11 +23,16 @@
 #include "nc_rt_data.h"
 
 #include <ctype.h>
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 /* ------------------------------------------------------------------ */
 /* Строковый буфер генератора                                          */
@@ -108,6 +113,14 @@ typedef struct {
     NcTypedef *tds;
     size_t     td_count, td_cap;
 
+    /* объявления составных типов (struct/enum) — выводятся до кода */
+    char     **type_decls;
+    size_t     type_decl_count, type_decl_cap;
+
+    /* метки goto, объявленные блоками LabelBrick */
+    char     **labels;
+    size_t     label_count, label_cap;
+
     CatSprite *sprite;   /* текущий спрайт */
     int        sprite_i; /* его индекс */
     int        loop_depth;
@@ -139,6 +152,10 @@ static int nc_name_add(NcName **arr, size_t *n, size_t *cap, const char *name) {
     (*arr)[*n].name = cat_strdup(name);
     return (int)(*n)++;
 }
+
+static void type_decl_add(NcGen *g, const char *decl);
+static int  label_find(NcGen *g, const char *name);
+static int  label_add(NcGen *g, const char *name);
 
 /* ------------------------------------------------------------------ */
 /* Нормализованный поиск слотов (как в интерпретаторе)                 */
@@ -195,12 +212,59 @@ static void collect_bricks(NcGen *g, CatBrick **bricks, size_t n) {
         case CB_SET_VARIABLE: case CB_CHANGE_VARIABLE:
         case CB_MALLOC: case CB_CALLOC: case CB_REALLOC:
         case CB_CAST: case CB_POINTER_GET:
+        case CB_TERNARY: case CB_INC: case CB_DEC: case CB_SIZEOF:
+            if (b->arg0) nc_name_add(&g->vars, &g->var_count, &g->var_cap, b->arg0);
+            break;
+        case CB_FOR_FROM_TO:
             if (b->arg0) nc_name_add(&g->vars, &g->var_count, &g->var_cap, b->arg0);
             break;
         case CB_ADD_TO_LIST: case CB_DELETE_FROM_LIST:
         case CB_CLEAR_LIST: case CB_INSERT_INTO_LIST: case CB_REPLACE_IN_LIST:
             if (b->arg0) nc_name_add(&g->lists, &g->list_count, &g->list_cap, b->arg0);
             break;
+        case CB_STRUCT: {
+            char *alias = NULL, *fields = NULL;
+            CatFormula *af = fml(b, "cname", "C_NAME", "name", NULL);
+            CatFormula *ff = fml(b, "cfields", "C_FIELDS", "fields", "value", NULL);
+            if (af && af->kind == CF_STRING) alias = cat_value_to_cstring(&af->literal);
+            if (ff && ff->kind == CF_STRING) fields = cat_value_to_cstring(&ff->literal);
+            if (!alias && b->arg0) alias = cat_strdup(b->arg0);
+            if (!fields && b->arg1) fields = cat_strdup(b->arg1);
+            if (alias && fields && fields[0]) {
+                char *decl = (char *)cat_malloc(strlen(alias) + strlen(fields) + 40);
+                sprintf(decl, "typedef struct { %s } %s;", fields, alias);
+                type_decl_add(g, decl);
+                cat_free(decl);
+            }
+            cat_free(alias); cat_free(fields);
+            break;
+        }
+        case CB_ENUM: {
+            char *alias = NULL, *enums = NULL;
+            CatFormula *af = fml(b, "cname", "C_NAME", "name", NULL);
+            CatFormula *ef = fml(b, "cenums", "C_ENUMERATORS", "enumerators", "value", NULL);
+            if (af && af->kind == CF_STRING) alias = cat_value_to_cstring(&af->literal);
+            if (ef && ef->kind == CF_STRING) enums = cat_value_to_cstring(&ef->literal);
+            if (!alias && b->arg0) alias = cat_strdup(b->arg0);
+            if (!enums && b->arg1) enums = cat_strdup(b->arg1);
+            if (alias && enums && enums[0]) {
+                char *decl = (char *)cat_malloc(strlen(alias) + strlen(enums) + 40);
+                sprintf(decl, "typedef enum { %s } %s;", enums, alias);
+                type_decl_add(g, decl);
+                cat_free(decl);
+            }
+            cat_free(alias); cat_free(enums);
+            break;
+        }
+        case CB_LABEL: {
+            char *nm = NULL;
+            CatFormula *lf = fml(b, "label", "C_LABEL", "name", NULL);
+            if (lf && lf->kind == CF_STRING) nm = cat_value_to_cstring(&lf->literal);
+            if (!nm && b->arg0) nm = cat_strdup(b->arg0);
+            if (nm && nm[0]) label_add(g, nm);
+            cat_free(nm);
+            break;
+        }
         default: break;
         }
         for (size_t s = 0; s < b->slot_count; ++s)
@@ -239,6 +303,12 @@ static const char *binop_fn(const char *op) {
     if (strcmp(op, ">=") == 0 || strcasecmp(op, "GREATER_OR_EQUAL") == 0) return "nc_ge";
     if (strcasecmp(op, "AND") == 0 || strcasecmp(op, "LOGICAL_AND") == 0) return "nc_and";
     if (strcasecmp(op, "OR") == 0 || strcasecmp(op, "LOGICAL_OR") == 0) return "nc_or";
+    /* побитовые операции языка C */
+    if (strcmp(op, "&") == 0 || strcasecmp(op, "BIT_AND") == 0) return "nc_bit_and";
+    if (strcmp(op, "|") == 0 || strcasecmp(op, "BIT_OR") == 0) return "nc_bit_or";
+    if (strcmp(op, "^") == 0 || strcasecmp(op, "BIT_XOR") == 0) return "nc_bit_xor";
+    if (strcmp(op, "<<") == 0 || strcasecmp(op, "SHIFT_LEFT") == 0) return "nc_shl";
+    if (strcmp(op, ">>") == 0 || strcasecmp(op, "SHIFT_RIGHT") == 0) return "nc_shr";
     return "nc_add";
 }
 
@@ -279,6 +349,102 @@ static void emit_string_literal(SB *g, const char *s) {
         }
     }
     sb_puts(g, "\")");
+}
+
+/* Свёртка констант: выражения из числовых литералов вычисляются на этапе
+   компиляции в единственный nc_num(...). Это уменьшает сгенерированный код
+   и убирает лишние вызовы nc_*-функций в рантайме (настоящая оптимизация). */
+static int f_is_num(const CatFormula *f) {
+    return f && f->kind == CF_NUMBER;
+}
+
+static int fold_const(SB *o, CatFormula *f) {
+    double x;
+    switch (f->kind) {
+    case CF_UNARY_OP:
+        if (!f_is_num(f->argc ? f->args[0] : NULL)) return 0;
+        x = cat_value_to_number(&f->args[0]->literal);
+        if (strcmp(f->op ? f->op : "-", "-") == 0 || strcasecmp(f->op, "MINUS") == 0)
+            sb_printf(o, "nc_num(%.17g)", -x);
+        else if (strcmp(f->op, "~") == 0 || strcasecmp(f->op, "BIT_NOT") == 0)
+            sb_printf(o, "nc_num(%.17g)", (double)(~(long long)x));
+        else
+            sb_printf(o, "nc_bool(%d)", x == 0.0 ? 0 : 1);
+        return 1;
+    case CF_BINARY_OP: {
+        CatFormula *a = f->argc > 0 ? f->args[0] : NULL;
+        CatFormula *b = f->argc > 1 ? f->args[1] : NULL;
+        if (!f_is_num(a) || !f_is_num(b)) return 0;
+        double p = cat_value_to_number(&a->literal);
+        double q = cat_value_to_number(&b->literal);
+        const char *op = f->op ? f->op : "+";
+        int is_cmp = 0, cmp = 0;
+        double z = 0;
+        if (strcmp(op, "+") == 0 || strcasecmp(op, "PLUS") == 0) z = p + q;
+        else if (strcmp(op, "-") == 0 || strcasecmp(op, "MINUS") == 0) z = p - q;
+        else if (strcmp(op, "*") == 0 || strcasecmp(op, "MULT") == 0) z = p * q;
+        else if (strcmp(op, "/") == 0 || strcasecmp(op, "DIVIDE") == 0) z = q == 0 ? 0 : p / q;
+        else if (strcmp(op, "%") == 0 || strcasecmp(op, "MOD") == 0 || strcasecmp(op, "MODULO") == 0) z = q == 0 ? 0 : fmod(p, q);
+        else if (strcmp(op, "^") == 0 || strcasecmp(op, "POW") == 0) z = pow(p, q);
+        else if (strcmp(op, "&") == 0 || strcasecmp(op, "BIT_AND") == 0) z = (double)((long long)p & (long long)q);
+        else if (strcmp(op, "|") == 0 || strcasecmp(op, "BIT_OR") == 0) z = (double)((long long)p | (long long)q);
+        else if (strcmp(op, "^") == 0 || strcasecmp(op, "BIT_XOR") == 0) z = (double)((long long)p ^ (long long)q);
+        else if (strcmp(op, "<<") == 0 || strcasecmp(op, "SHIFT_LEFT") == 0) z = (double)((long long)p << ((int)q & 63));
+        else if (strcmp(op, ">>") == 0 || strcasecmp(op, "SHIFT_RIGHT") == 0) z = (double)((long long)p >> ((int)q & 63));
+        else if (strcasecmp(op, "AND") == 0 || strcasecmp(op, "LOGICAL_AND") == 0) { is_cmp = 1; cmp = (p != 0) && (q != 0); }
+        else if (strcasecmp(op, "OR") == 0 || strcasecmp(op, "LOGICAL_OR") == 0) { is_cmp = 1; cmp = (p != 0) || (q != 0); }
+        else if (strcmp(op, "<") == 0 || strcasecmp(op, "SMALLER_THAN") == 0) { is_cmp = 1; cmp = p < q; }
+        else if (strcmp(op, ">") == 0 || strcasecmp(op, "GREATER_THAN") == 0) { is_cmp = 1; cmp = p > q; }
+        else if (strcmp(op, "<=") == 0 || strcasecmp(op, "SMALLER_OR_EQUAL") == 0) { is_cmp = 1; cmp = p <= q; }
+        else if (strcmp(op, ">=") == 0 || strcasecmp(op, "GREATER_OR_EQUAL") == 0) { is_cmp = 1; cmp = p >= q; }
+        else if (strcmp(op, "=") == 0 || strcmp(op, "==") == 0 || strcasecmp(op, "EQUAL") == 0) { is_cmp = 1; cmp = p == q; }
+        else if (strcmp(op, "!=") == 0 || strcasecmp(op, "NOT_EQUAL") == 0) { is_cmp = 1; cmp = p != q; }
+        else return 0;
+        if (is_cmp) sb_printf(o, "nc_bool(%d)", cmp ? 1 : 0);
+        else sb_printf(o, "nc_num(%.17g)", z);
+        return 1;
+    }
+    case CF_FUNCTION: {
+        /* Сворачиваем чистые математические функции с числовыми аргументами. */
+        const char *fn = f->op ? f->op : "";
+        CatFormula *a = f->argc > 0 ? f->args[0] : NULL;
+        CatFormula *b = f->argc > 1 ? f->args[1] : NULL;
+        if (!f_is_num(a) || (f->argc > 1 && !f_is_num(b))) return 0;
+        double p = cat_value_to_number(&a->literal);
+        double q = b ? cat_value_to_number(&b->literal) : 0;
+        if (strcasecmp(fn, "SQRT") == 0) sb_printf(o, "nc_num(%.17g)", sqrt(p));
+        else if (strcasecmp(fn, "ABS") == 0) sb_printf(o, "nc_num(%.17g)", fabs(p));
+        else if (strcasecmp(fn, "SIN") == 0) sb_printf(o, "nc_num(%.17g)", sin(p * M_PI / 180.0));
+        else if (strcasecmp(fn, "COS") == 0) sb_printf(o, "nc_num(%.17g)", cos(p * M_PI / 180.0));
+        else if (strcasecmp(fn, "TAN") == 0) sb_printf(o, "nc_num(%.17g)", tan(p * M_PI / 180.0));
+        else if (strcasecmp(fn, "ROUND") == 0) sb_printf(o, "nc_num(%.17g)", floor(p + 0.5));
+        else if (strcasecmp(fn, "FLOOR") == 0) sb_printf(o, "nc_num(%.17g)", floor(p));
+        else if (strcasecmp(fn, "CEIL") == 0) sb_printf(o, "nc_num(%.17g)", ceil(p));
+        else if (strcasecmp(fn, "LN") == 0) sb_printf(o, "nc_num(%.17g)", log(p));
+        else if (strcasecmp(fn, "LOG") == 0) sb_printf(o, "nc_num(%.17g)", log10(p));
+        else if (strcasecmp(fn, "EXP") == 0) sb_printf(o, "nc_num(%.17g)", exp(p));
+        else if (strcasecmp(fn, "MIN") == 0) sb_printf(o, "nc_num(%.17g)", p < q ? p : q);
+        else if (strcasecmp(fn, "MAX") == 0) sb_printf(o, "nc_num(%.17g)", p > q ? p : q);
+        else return 0;
+        return 1;
+    }
+    default:
+        return 0;
+    }
+}
+
+static void gen_c_expr(NcGen *g, CatFormula *f, const char *def);
+
+/* Вывод double-выражения: если формула — числовой литерал, печатаем само
+   число (без nc_d(nc_num(...))), иначе nc_d(...). */
+static void gen_double_expr(NcGen *g, CatFormula *f, const char *def) {
+    if (f_is_num(f)) {
+        sb_printf(&g->out, "%.17g", cat_value_to_number(&f->literal));
+    } else {
+        sb_puts(&g->out, "nc_d(");
+        gen_c_expr(g, f, def);
+        sb_putc(&g->out, ')');
+    }
 }
 
 static void gen_formula(NcGen *g, CatFormula *f) {
@@ -328,9 +494,11 @@ static void gen_formula(NcGen *g, CatFormula *f) {
         break;
     }
     case CF_UNARY_OP: {
+        if (fold_const(o, f)) break;
         const char *op = f->op ? f->op : "-";
         const char *fn;
         if (strcmp(op, "-") == 0 || strcasecmp(op, "MINUS") == 0) fn = "nc_neg";
+        else if (strcmp(op, "~") == 0 || strcasecmp(op, "BIT_NOT") == 0) fn = "nc_bit_not";
         else fn = "nc_not";
         sb_printf(o, "%s(", fn);
         gen_formula(g, f->argc ? f->args[0] : NULL);
@@ -338,6 +506,7 @@ static void gen_formula(NcGen *g, CatFormula *f) {
         break;
     }
     case CF_BINARY_OP: {
+        if (fold_const(o, f)) break;
         sb_printf(o, "%s(", binop_fn(f->op));
         gen_formula(g, f->argc > 0 ? f->args[0] : NULL);
         sb_puts(o, ", ");
@@ -346,6 +515,7 @@ static void gen_formula(NcGen *g, CatFormula *f) {
         break;
     }
     case CF_FUNCTION: {
+        if (fold_const(o, f)) break;
         const char *fn = func_fn(f->op);
         if (!fn) { sb_puts(o, "nc_num(0)"); break; }
         sb_printf(o, "%s(", fn);
@@ -362,6 +532,35 @@ static void gen_formula(NcGen *g, CatFormula *f) {
 /* ------------------------------------------------------------------ */
 /* typedef-и и типы                                                    */
 /* ------------------------------------------------------------------ */
+
+/* Регистрирует объявление составного типа (struct/enum) для вывода в шапке. */
+static void type_decl_add(NcGen *g, const char *decl) {
+    if (!decl || !decl[0]) return;
+    if (g->type_decl_count == g->type_decl_cap) {
+        g->type_decl_cap = g->type_decl_cap ? g->type_decl_cap * 2 : 8;
+        g->type_decls = (char **)cat_realloc(g->type_decls, sizeof(char *) * g->type_decl_cap);
+    }
+    g->type_decls[g->type_decl_count++] = cat_strdup(decl);
+}
+
+static int label_find(NcGen *g, const char *name) {
+    if (!name) return -1;
+    for (size_t i = 0; i < g->label_count; ++i)
+        if (strcmp(g->labels[i], name) == 0) return (int)i;
+    return -1;
+}
+
+static int label_add(NcGen *g, const char *name) {
+    if (!name || !name[0]) return -1;
+    int id = label_find(g, name);
+    if (id >= 0) return id;
+    if (g->label_count == g->label_cap) {
+        g->label_cap = g->label_cap ? g->label_cap * 2 : 8;
+        g->labels = (char **)cat_realloc(g->labels, sizeof(char *) * g->label_cap);
+    }
+    g->labels[g->label_count] = cat_strdup(name);
+    return (int)g->label_count++;
+}
 
 static void td_add(NcGen *g, const char *alias, const char *base) {
     if (!alias || !alias[0] || !base || !base[0]) return;
@@ -512,30 +711,28 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
          * поля спрайта обязано оборачивать формулу в nc_d(...), иначе С-компилятор
          * выдаёт «incompatible types when assigning to type 'double' from type 'NcVal'». */
         case CB_PLACE_AT:
-            sb_indent(o); sb_puts(o, "SP->x = nc_d("); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
-            sb_indent(o); sb_puts(o, "SP->y = nc_d("); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->x = "); gen_double_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            sb_indent(o); sb_puts(o, "SP->y = "); gen_double_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
             break;
         case CB_SET_X:
-            sb_indent(o); sb_puts(o, "SP->x = nc_d("); gen_c_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->x = "); gen_double_expr(g, fml(b, "x", "X_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
             break;
         case CB_SET_Y:
-            sb_indent(o); sb_puts(o, "SP->y = nc_d("); gen_c_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->y = "); gen_double_expr(g, fml(b, "y", "Y_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
             break;
         case CB_CHANGE_X:
-            /* Оптимизация: было SP->x = nc_d(nc_add(nc_num(SP->x), e)) —
-               лишний NcVal-раунд и расхождение с интерпретатором (тот делал
-               строковую конкатенацию для координат). Теперь напрямую +=, как
-               в cat_interpreter.c (sp->x += to_number(v)). */
+            /* Напрямую += (как в cat_interpreter.c: sp->x += to_number(v)),
+               без лишнего NcVal-раунда и без строковой конкатенации. */
             sb_indent(o);
-            sb_puts(o, "SP->x += nc_d(");
-            gen_c_expr(g, fml(b, "x", "X_POSITION_CHANGE", NULL), "nc_num(0)");
-            sb_puts(o, ");\n");
+            sb_puts(o, "SP->x += ");
+            gen_double_expr(g, fml(b, "x", "X_POSITION_CHANGE", NULL), "nc_num(0)");
+            sb_puts(o, ";\n");
             break;
         case CB_CHANGE_Y:
             sb_indent(o);
-            sb_puts(o, "SP->y += nc_d(");
-            gen_c_expr(g, fml(b, "y", "Y_POSITION_CHANGE", NULL), "nc_num(0)");
-            sb_puts(o, ");\n");
+            sb_puts(o, "SP->y += ");
+            gen_double_expr(g, fml(b, "y", "Y_POSITION_CHANGE", NULL), "nc_num(0)");
+            sb_puts(o, ";\n");
             break;
         case CB_MOVE_STEPS: {
             int t = ++g->out.counter;
@@ -552,19 +749,19 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
             break;
         }
         case CB_TURN_LEFT:
-            sb_indent(o); sb_puts(o, "SP->direction -= nc_d(");
-            gen_c_expr(g, fml(b, "degrees", "TURN_LEFT_DEGREES", "DEGREES", NULL), "nc_num(0)");
-            sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->direction -= ");
+            gen_double_expr(g, fml(b, "degrees", "TURN_LEFT_DEGREES", "DEGREES", NULL), "nc_num(0)");
+            sb_puts(o, ";\n");
             break;
         case CB_TURN_RIGHT:
-            sb_indent(o); sb_puts(o, "SP->direction += nc_d(");
-            gen_c_expr(g, fml(b, "degrees", "TURN_RIGHT_DEGREES", "DEGREES", NULL), "nc_num(0)");
-            sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->direction += ");
+            gen_double_expr(g, fml(b, "degrees", "TURN_RIGHT_DEGREES", "DEGREES", NULL), "nc_num(0)");
+            sb_puts(o, ";\n");
             break;
         case CB_POINT_IN_DIRECTION:
-            sb_indent(o); sb_puts(o, "SP->direction = nc_d(");
-            gen_c_expr(g, fml(b, "degrees", "DEGREES", NULL), "nc_num(90)");
-            sb_puts(o, ");\n");
+            sb_indent(o); sb_puts(o, "SP->direction = ");
+            gen_double_expr(g, fml(b, "degrees", "DEGREES", NULL), "nc_num(90)");
+            sb_puts(o, ";\n");
             break;
         case CB_GLIDE_TO:
             sb_indent(o); sb_puts(o, "nc_glide(&SP->x, &SP->y, nc_d(");
@@ -579,13 +776,13 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
         case CB_SHOW: sb_line(o, "SP->visible = 1;"); break;
         case CB_HIDE: sb_line(o, "SP->visible = 0;"); break;
         case CB_SET_SIZE_TO:
-            sb_indent(o); sb_puts(o, "SP->size = nc_d(");
-            gen_c_expr(g, fml(b, "size", "SIZE", NULL), "nc_num(100)");
+            sb_indent(o); sb_puts(o, "SP->size = ");
+            gen_double_expr(g, fml(b, "size", "SIZE", NULL), "nc_num(100)");
             sb_puts(o, ");\n");
             break;
         case CB_CHANGE_SIZE_BY:
-            sb_indent(o); sb_puts(o, "SP->size += nc_d(");
-            gen_c_expr(g, fml(b, "size", "SIZE_CHANGE", NULL), "nc_num(0)");
+            sb_indent(o); sb_puts(o, "SP->size += ");
+            gen_double_expr(g, fml(b, "size", "SIZE_CHANGE", NULL), "nc_num(0)");
             sb_puts(o, ");\n");
             break;
         case CB_SAY:
@@ -627,9 +824,9 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
             break;
         /* --- управление --- */
         case CB_WAIT:
-            sb_indent(o); sb_puts(o, "nc_wait(nc_d(");
-            gen_c_expr(g, fml(b, "seconds", "DURATION_IN_SECONDS", "TIME_TO_WAIT_IN_SECONDS", NULL), "nc_num(0)");
-            sb_puts(o, "));\n");
+            sb_indent(o); sb_puts(o, "nc_wait(");
+            gen_double_expr(g, fml(b, "seconds", "DURATION_IN_SECONDS", "TIME_TO_WAIT_IN_SECONDS", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
             break;
         case CB_BROADCAST: case CB_BROADCAST_WAIT: {
             const char *msg = b->arg0 ? b->arg0 : "";
@@ -891,6 +1088,153 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
                текущий скрипт, после остальных слот пула освобождается. */
             sb_line(o, "return; /* delete this clone */");
             break;
+        /* --- Расширенный набор языка C --- */
+        case CB_WHILE:
+            sb_indent(o); sb_puts(o, "while (nc_truthy(");
+            gen_c_expr(g, fml(b, "IF_CONDITION", "condition", "WHILE_CONDITION", NULL), "nc_bool(0)");
+            sb_puts(o, ")) {\n");
+            g->out.indent++; g->loop_depth++;
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--; g->loop_depth--;
+            sb_line(o, "}");
+            break;
+        case CB_DO_WHILE:
+            sb_line(o, "do {");
+            g->out.indent++; g->loop_depth++;
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--; g->loop_depth--;
+            sb_indent(o); sb_puts(o, "} while (nc_truthy(");
+            gen_c_expr(g, fml(b, "IF_CONDITION", "condition", "DO_WHILE_CONDITION", NULL), "nc_bool(0)");
+            sb_puts(o, "));\n");
+            break;
+        case CB_FOR_FROM_TO: {
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            int t = ++g->out.counter;
+            sb_line(o, "{");
+            g->out.indent++;
+            sb_indent(o); sb_printf(o, "double f_%d = nc_d(", t);
+            gen_c_expr(g, fml(b, "from", "FROM", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            sb_indent(o); sb_printf(o, "double t_%d = nc_d(", t);
+            gen_c_expr(g, fml(b, "to", "TO", NULL), "nc_num(0)");
+            sb_puts(o, ");\n");
+            sb_indent(o); sb_printf(o, "double s_%d = nc_d(", t);
+            gen_c_expr(g, fml(b, "step", "STEP", "increment", "INCREMENT", "value", NULL), "nc_num(1)");
+            sb_puts(o, ");\n");
+            sb_indent(o); sb_printf(o, "long n_%d = (s_%d == 0.0) ? 0 : (long)((t_%d - f_%d) / s_%d);\n", t, t, t, t, t);
+            sb_indent(o); sb_printf(o, "if (n_%d < 0) n_%d = 0; else n_%d += 1;\n", t, t, t);
+            sb_indent(o); sb_printf(o, "for (long i_%d = 0; i_%d < n_%d; ++i_%d) {\n", t, t, t, t);
+            g->out.indent++; g->loop_depth++;
+            if (id >= 0) sb_line(o, "v%d = nc_num(f_%d + (double)i_%d * s_%d);", id, t, t, t);
+            else sb_line(o, "; /* for: неизвестная переменная */");
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--; g->loop_depth--;
+            sb_line(o, "}");
+            g->out.indent--;
+            sb_line(o, "}");
+            break;
+        }
+        case CB_SWITCH:
+            sb_indent(o); sb_puts(o, "switch ((long long)nc_d(");
+            gen_c_expr(g, fml(b, "value", "SWITCH_VALUE", NULL), "nc_num(0)");
+            sb_puts(o, ")) {\n");
+            g->out.indent++;
+            gen_bricks(g, b->children, b->child_count);
+            g->out.indent--;
+            sb_line(o, "}");
+            break;
+        case CB_CASE: {
+            /* case-метки в C обязаны быть целочисленными константами времени
+               компиляции, поэтому динамические значения превращаем в
+               комментарий-предупреждение (реальный C так и работает). */
+            CatFormula *vf = fml(b, "value", "CASE_VALUE", NULL);
+            if (f_is_num(vf)) {
+                sb_indent(o);
+                sb_printf(o, "case (long long)%.17g:\n", cat_value_to_number(&vf->literal));
+            } else {
+                sb_line(o, "; /* case: значение не константа — пропущено */");
+            }
+            break;
+        }
+        case CB_CASE_BREAK:
+            sb_line(o, "break;");
+            break;
+        case CB_SWITCH_END:
+            break;
+        case CB_GOTO: {
+            char *nm = NULL;
+            CatFormula *gf = fml(b, "label", "C_LABEL", "name", NULL);
+            if (gf && gf->kind == CF_STRING) nm = cat_value_to_cstring(&gf->literal);
+            if (!nm && b->arg0) nm = cat_strdup(b->arg0);
+            int id = label_find(g, nm ? nm : "");
+            if (id >= 0) sb_line(o, "goto nc_lbl_%d; /* goto %s */", id, nm ? nm : "?");
+            else sb_line(o, "; /* goto %s: метки нет */", nm ? nm : "?");
+            cat_free(nm);
+            break;
+        }
+        case CB_LABEL: {
+            char *nm = NULL;
+            CatFormula *lf = fml(b, "label", "C_LABEL", "name", NULL);
+            if (lf && lf->kind == CF_STRING) nm = cat_value_to_cstring(&lf->literal);
+            if (!nm && b->arg0) nm = cat_strdup(b->arg0);
+            int id = label_find(g, nm ? nm : "");
+            if (id >= 0) sb_line(o, "nc_lbl_%d: ; /* label %s */", id, nm ? nm : "?");
+            else sb_line(o, "; /* label %s: неизвестно */", nm ? nm : "?");
+            cat_free(nm);
+            break;
+        }
+        case CB_TERNARY: {
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            sb_indent(o);
+            if (id >= 0) sb_printf(o, "v%d = (nc_truthy(", id);
+            else sb_puts(o, "; (");
+            gen_c_expr(g, fml(b, "TERNARY_CONDITION", "condition", NULL), "nc_bool(0)");
+            sb_puts(o, ") ? ");
+            gen_c_expr(g, fml(b, "TERNARY_IF_TRUE", "ciftrue", "IF_TRUE", "iftrue", NULL), "nc_num(0)");
+            sb_puts(o, " : ");
+            gen_c_expr(g, fml(b, "TERNARY_IF_FALSE", "ciffalse", "IF_FALSE", "iffalse", NULL), "nc_num(0)");
+            if (id >= 0) sb_puts(o, ");\n");
+            else sb_puts(o, "); /* ternary: нет переменной */\n");
+            break;
+        }
+        case CB_INC: {
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            if (id >= 0) sb_line(o, "v%d = nc_add(v%d, nc_num(1)); /* v%d++ */", id, id, id);
+            else sb_line(o, "; /* var++: неизвестная переменная */");
+            break;
+        }
+        case CB_DEC: {
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            if (id >= 0) sb_line(o, "v%d = nc_sub(v%d, nc_num(1)); /* v%d-- */", id, id, id);
+            else sb_line(o, "; /* var--: неизвестная переменная */");
+            break;
+        }
+        case CB_SIZEOF: {
+            char *type = NULL;
+            CatFormula *tf = fml(b, "ctype", "C_TYPE", "type", NULL);
+            if (tf && tf->kind == CF_STRING) type = cat_value_to_cstring(&tf->literal);
+            if (!type && b->arg1) type = cat_strdup(b->arg1);
+            if (!type) type = cat_strdup("double");
+            int id = b->arg0 ? nc_name_find(g->vars, g->var_count, b->arg0) : -1;
+            sb_indent(o);
+            if (id >= 0)
+                sb_printf(o, "v%d = nc_num((double)sizeof(%s)); /* sizeof(%s) */\n",
+                          id, resolve_type(g, type), type);
+            else
+                sb_printf(o, "; /* sizeof(%s) */\n", type);
+            cat_free(type);
+            break;
+        }
+        case CB_STRUCT: case CB_ENUM:
+            /* Объявление вынесено в шапку (collect_bricks); здесь — комментарий. */
+            sb_line(o, "; /* %s: объявлено в шапке программы */",
+                    b->kind == CB_STRUCT ? "struct" : "enum");
+            break;
+        case CB_ASSERT:
+            sb_indent(o); sb_puts(o, "assert(nc_truthy(");
+            gen_c_expr(g, fml(b, "IF_CONDITION", "condition", "ASSERT_CONDITION", "value", NULL), "nc_bool(0)");
+            sb_puts(o, "));\n");
+            break;
         default:
             sb_line(o, "; /* brick #%d пропущен */", (int)b->kind);
             break;
@@ -967,9 +1311,15 @@ char *cat_compile_to_c(CatProject *p) {
     sb_line(o, " */");
     sb_line(o, "#include \"nc_rt.h\"");
     sb_line(o, "");
-    sb_line(o, "/* Клоны: фиксированный пул поз на спрайт. Копируется только поза;\n   куча и число клонов не раздуваются => проект не лагает. */");
+    /* Объявления составных типов (struct/enum) из блоков. */
+    for (size_t i = 0; i < g.type_decl_count; ++i)
+        sb_line(o, "%s", g.type_decls[i]);
+    if (g.type_decl_count) sb_line(o, "");
+    sb_line(o, "/* Клоны: фиксированный пул поз на спрайт. Копируется только поза;\n"
+              "   куча и число клонов не раздуваются => проект не лагает.\n"
+              "   Свободный слот ищется за O(1) по битовой маске (__builtin_ctzll). */");
     sb_line(o, "#ifndef NC_CLONE_CAP");
-    sb_line(o, "#define NC_CLONE_CAP 16");
+    sb_line(o, "#define NC_CLONE_CAP 64 /* максимум 64: битовая маска 64 бита */");
     sb_line(o, "#endif");
     sb_line(o, "");
 
@@ -984,8 +1334,8 @@ char *cat_compile_to_c(CatProject *p) {
             CatSprite *sp = sc->sprites[spi];
             sb_line(o, "static Spr spr%zu; /* спрайт: %s */", idx, sp->name ? sp->name : "?");
             if (g.clone_scripts[idx] > 0) {
-                sb_line(o, "static Spr  nc_clones_%zu[NC_CLONE_CAP]; /* пул клонов: %s */", idx, sp->name ? sp->name : "?");
-                sb_line(o, "static char nc_clone_used_%zu[NC_CLONE_CAP];", idx);
+                sb_line(o, "static Spr nc_clones_%zu[NC_CLONE_CAP]; /* пул клонов: %s */", idx, sp->name ? sp->name : "?");
+                sb_line(o, "static unsigned long long nc_clone_used_%zu; /* битовая маска занятых слотов */", idx);
             }
         }
     }
@@ -1056,22 +1406,20 @@ char *cat_compile_to_c(CatProject *p) {
             CatSprite *sp = sc->sprites[spi];
             sb_printf(o, "static void clone_fire_%zu(Spr *src) { /* клон спрайта \"%s\" */\n",
                       idx, sp->name ? sp->name : "?");
-            sb_line(o, "    for (int ci = 0; ci < NC_CLONE_CAP; ++ci) {");
-            sb_line(o, "        if (nc_clone_used_%zu[ci]) continue;", idx);
-            sb_line(o, "        nc_clone_used_%zu[ci] = 1;", idx);
-            sb_line(o, "        nc_clones_%zu[ci] = *src; /* поза — побитовая копия, ноль strdup/GC */", idx);
+            sb_line(o, "    unsigned long long free_mask_%zu = ~nc_clone_used_%zu;", idx, idx);
+            sb_line(o, "    if (free_mask_%zu == 0ULL) return; /* пул клонов исчерпан */", idx);
+            sb_line(o, "    int ci = __builtin_ctzll(free_mask_%zu); /* первый свободный слот, O(1) */", idx);
+            sb_line(o, "    nc_clone_used_%zu |= (1ULL << ci);", idx);
+            sb_line(o, "    nc_clones_%zu[ci] = *src; /* поза — побитовая копия, ноль strdup/GC */", idx);
             for (size_t k = 0; k < sp->script_count; ++k) {
                 CatScript *scr = sp->scripts[k];
                 if (scr->head && scr->head->kind == CB_WHEN_CLONED) {
-                    sb_printf(o, "        ");
+                    sb_printf(o, "    ");
                     gen_script_decl(&g, (int)idx, (int)k);
                     sb_printf(o, "(&nc_clones_%zu[ci]);\n", idx);
                 }
             }
-            sb_line(o, "        nc_clone_used_%zu[ci] = 0; /* delete this clone / конец скриптов */", idx);
-            sb_line(o, "        return;");
-            sb_line(o, "    }");
-            sb_line(o, "    /* пул исчерпан: тихо пропускаем — лавины клонов не будет */");
+            sb_line(o, "    nc_clone_used_%zu &= ~(1ULL << ci); /* delete this clone / конец скриптов */", idx);
             sb_line(o, "}");
             sb_line(o, "");
         }
@@ -1132,6 +1480,10 @@ char *cat_compile_to_c(CatProject *p) {
     cat_free(g.lists);
     for (size_t i = 0; i < g.td_count; ++i) { cat_free(g.tds[i].alias); cat_free(g.tds[i].base); }
     cat_free(g.tds);
+    for (size_t i = 0; i < g.type_decl_count; ++i) cat_free(g.type_decls[i]);
+    cat_free(g.type_decls);
+    for (size_t i = 0; i < g.label_count; ++i) cat_free(g.labels[i]);
+    cat_free(g.labels);
     for (size_t i = 0; i < g.bmsg_count; ++i) cat_free(g.bmsg[i]);
     cat_free(g.bmsg);
     cat_free(g.clone_scripts);

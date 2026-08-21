@@ -111,6 +111,11 @@
     </style>
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/toolbar_icons</item>
+        <!-- Явный фон тулбара: раньше он задавался только в toolbar.xml, и при
+             некоторых состояниях темы/ночном режиме заголовок «Проекты» терял
+             тёмную подложку (белый текст на светлом фоне). Дублируем фон в
+             теме, чтобы он применялся всегда. -->
+        <item name="background">@color/toolbar_background</item>
     </style>
 
     <!-- ActionMode -->

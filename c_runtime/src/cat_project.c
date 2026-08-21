@@ -311,6 +311,22 @@ const char *cat_brick_kind_name(CatBrickKind k) {
     case CB_WHEN_CLONED: return "WhenCloned";
     case CB_CLONE: return "clone";
     case CB_DELETE_THIS_CLONE: return "delete this clone";
+    case CB_WHILE: return "while";
+    case CB_DO_WHILE: return "do-while";
+    case CB_FOR_FROM_TO: return "for (from..to)";
+    case CB_SWITCH: return "switch";
+    case CB_CASE: return "case";
+    case CB_CASE_BREAK: return "break (case)";
+    case CB_SWITCH_END: return "switch end";
+    case CB_GOTO: return "goto";
+    case CB_LABEL: return "label";
+    case CB_TERNARY: return "ternary ?:";
+    case CB_INC: return "var++";
+    case CB_DEC: return "var--";
+    case CB_SIZEOF: return "sizeof";
+    case CB_STRUCT: return "struct";
+    case CB_ENUM: return "enum";
+    case CB_ASSERT: return "assert";
     default: return "?";
     }
 }

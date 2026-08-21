@@ -35,7 +35,6 @@ import org.catrobat.catroid.content.bricks.SetVariableBrick;
 import org.catrobat.catroid.content.bricks.ShowTextBrick;
 import org.catrobat.catroid.content.bricks.ShowTextColorSizeAlignmentBrick;
 import org.catrobat.catroid.content.bricks.UserVariableBrickInterface;
-import org.catrobat.catroid.content.bricks.WebRequestBrick;
 import org.catrobat.catroid.content.bricks.WriteVariableOnDeviceBrick;
 import org.catrobat.catroid.formulaeditor.UserVariable;
 import org.catrobat.catroid.test.MockUtil;
@@ -68,7 +67,6 @@ public class CloneBrickUpdateVariableTest {
 				{"HideTextBrick", new HideTextBrick()},
 				{"ShowTextBrick", new ShowTextBrick()},
 				{"ShowTextColorSizeAlignmentBrick", new ShowTextColorSizeAlignmentBrick()},
-				{"WebRequestBrick", new WebRequestBrick()},
 				{"ReadVariableFromDeviceBrick", new ReadVariableFromDeviceBrick()},
 				{"WriteVariableOnDeviceBrick", new WriteVariableOnDeviceBrick()},
 		});

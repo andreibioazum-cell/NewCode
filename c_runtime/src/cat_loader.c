@@ -111,6 +111,24 @@ static int map_brick(const char *type) {
         {"WhenClonedScript", CB_WHEN_CLONED},
         {"CloneBrick", CB_CLONE},
         {"DeleteThisCloneBrick", CB_DELETE_THIS_CLONE},
+
+        /* --- Расширенный набор языка C --- */
+        {"WhileBrick", CB_WHILE},
+        {"DoWhileBrick", CB_DO_WHILE},
+        {"ForVariableFromToBrick", CB_FOR_FROM_TO},
+        {"SwitchBrick", CB_SWITCH},
+        {"CaseBrick", CB_CASE},
+        {"SwitchEndBrick", CB_SWITCH_END},
+        {"CaseBreakBrick", CB_CASE_BREAK},
+        {"GotoBrick", CB_GOTO},
+        {"LabelBrick", CB_LABEL},
+        {"TernaryBrick", CB_TERNARY},
+        {"IncrementBrick", CB_INC},
+        {"DecrementBrick", CB_DEC},
+        {"SizeofBrick", CB_SIZEOF},
+        {"StructBrick", CB_STRUCT},
+        {"EnumBrick", CB_ENUM},
+        {"AssertBrick", CB_ASSERT},
     };
     for (size_t i = 0; i < sizeof(M)/sizeof(M[0]); ++i)
         if (strcmp(M[i].n, type) == 0) return M[i].k;
@@ -239,16 +257,22 @@ static CatBrick *parse_brick(CatXmlNode *n, bool *is_end_of_block) {
     return b;
 }
 
-/* Собирает плоский поток брикков в дерево: сжимает Forever/Repeat/If ... LoopEnd/IfEnd. */
+/* Собирает плоский поток брикков в дерево: сжимает Forever/Repeat/If/While/
+   DoWhile/For/Switch ... LoopEnd/IfEnd/SwitchEnd. */
 static void build_tree(CatBrick ***flat, size_t *idx, size_t total, CatBrick ***out, size_t *out_n, int stop_at_else) {
     *out = NULL; *out_n = 0;
     while (*idx < total) {
         CatBrick *b = (*flat)[*idx];
         if (!b) { (*idx)++; continue; }
-        if (b->kind == CB_LOOP_END || b->kind == CB_IF_END || b->kind == CB_IF_THEN_END) { (*idx)++; return; }
+        if (b->kind == CB_LOOP_END || b->kind == CB_IF_END || b->kind == CB_IF_THEN_END ||
+            b->kind == CB_SWITCH_END) { (*idx)++; return; }
         if (stop_at_else && b->kind == CB_IF_ELSE) return;
         (*idx)++;
-        if (b->kind == CB_FOREVER || b->kind == CB_REPEAT || b->kind == CB_REPEAT_UNTIL) {
+        if (b->kind == CB_FOREVER || b->kind == CB_REPEAT || b->kind == CB_REPEAT_UNTIL ||
+            b->kind == CB_WHILE || b->kind == CB_DO_WHILE || b->kind == CB_FOR_FROM_TO) {
+            build_tree(flat, idx, total, &b->children, &b->child_count, 0);
+        } else if (b->kind == CB_SWITCH) {
+            /* тело switch: case-метки и брикки до SwitchEnd */
             build_tree(flat, idx, total, &b->children, &b->child_count, 0);
         } else if (b->kind == CB_IF_BEGIN) {
             build_tree(flat, idx, total, &b->children, &b->child_count, 1);

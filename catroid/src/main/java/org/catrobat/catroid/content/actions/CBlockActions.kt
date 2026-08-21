@@ -224,3 +224,235 @@ class ContinueLoopAction : TemporalAction() {
         LoopController.signalContinue(script)
     }
 }
+
+/** var = (condition ? ifTrue : ifFalse) — the C-compiler emits a real C `?:`. */
+class TernaryAction : TemporalAction() {
+    var scope: Scope? = null
+    var condition: Formula? = null
+    var ifTrue: Formula? = null
+    var ifFalse: Formula? = null
+    var userVariable: UserVariable? = null
+
+    override fun update(percent: Float) {
+        val cond = try {
+            condition?.interpretBoolean(scope) ?: false
+        } catch (interpretationException: InterpretationException) {
+            Log.d(TAG, "Formula interpretation for this specific Brick failed.", interpretationException)
+            false
+        }
+        val result = if (cond) ifTrue.interpretSafely(scope) else ifFalse.interpretSafely(scope)
+        userVariable?.setValue(result)
+    }
+}
+
+/** var++ */
+class IncrementAction : TemporalAction() {
+    var userVariable: UserVariable? = null
+
+    override fun update(percent: Float) {
+        val current = userVariable?.value?.toString()?.toDoubleOrNull() ?: 0.0
+        userVariable?.setValue(current + 1.0)
+    }
+}
+
+/** var-- */
+class DecrementAction : TemporalAction() {
+    var userVariable: UserVariable? = null
+
+    override fun update(percent: Float) {
+        val current = userVariable?.value?.toString()?.toDoubleOrNull() ?: 0.0
+        userVariable?.setValue(current - 1.0)
+    }
+}
+
+/** var = sizeof(type) — uses the same primitive sizes as the C runtime. */
+class SizeofAction : TemporalAction() {
+    var scope: Scope? = null
+    var cMemory: CMemory? = null
+    var type: Formula? = null
+    var userVariable: UserVariable? = null
+
+    override fun update(percent: Float) {
+        val memory = cMemory ?: return
+        val typeName = type.interpretSafely(scope)?.toString() ?: "double"
+        val resolved = memory.resolveType(typeName)
+        userVariable?.setValue(CMemory.typeSize(resolved).toDouble())
+    }
+}
+
+/** typedef struct { ... } alias — записывает typedef в память C-блоков. */
+class StructAction : TemporalAction() {
+    var scope: Scope? = null
+    var cMemory: CMemory? = null
+    var name: Formula? = null
+    var fields: Formula? = null
+
+    override fun update(percent: Float) {
+        val memory = cMemory ?: return
+        val alias = name.interpretSafely(scope)?.toString() ?: return
+        val body = fields.interpretSafely(scope)?.toString() ?: return
+        memory.defineTypedef(alias, "struct:$body")
+    }
+}
+
+/** typedef enum { ... } alias — записывает typedef в память C-блоков. */
+class EnumAction : TemporalAction() {
+    var scope: Scope? = null
+    var cMemory: CMemory? = null
+    var name: Formula? = null
+    var enumerators: Formula? = null
+
+    override fun update(percent: Float) {
+        val memory = cMemory ?: return
+        val alias = name.interpretSafely(scope)?.toString() ?: return
+        val body = enumerators.interpretSafely(scope)?.toString() ?: return
+        memory.defineTypedef(alias, "enum:$body")
+    }
+}
+
+/** assert(condition) — в C-компиляции это настоящий assert(). */
+class AssertAction : TemporalAction() {
+    var scope: Scope? = null
+    var condition: Formula? = null
+
+    override fun update(percent: Float) {
+        val cond = try {
+            condition?.interpretBoolean(scope) ?: true
+        } catch (interpretationException: InterpretationException) {
+            Log.d(TAG, "Formula interpretation for this specific Brick failed.", interpretationException)
+            true
+        }
+        if (!cond) {
+            Log.w(TAG, "assert failed")
+        }
+    }
+}
+
+/** goto label — выполняется в C-компиляторе; в Java-интерпретаторе нет goto. */
+class GotoAction : TemporalAction() {
+    override fun update(percent: Float) {
+    }
+}
+
+/** label: — метка goto; в Java-интерпретаторе не требуется. */
+class LabelAction : TemporalAction() {
+    override fun update(percent: Float) {
+    }
+}
+
+/** case value: — метка внутри switch; в C-компиляции это настоящий case. */
+class CaseAction : TemporalAction() {
+    override fun update(percent: Float) {
+    }
+}
+
+/** switch (value) { ... } — тело обрабатывается C-компилятором; в Java-интерпретаторе
+    блоки тела выполняются последовательно (упрощение). */
+class SwitchAction : TemporalAction() {
+    var action: com.badlogic.gdx.scenes.scene2d.Action? = null
+
+    override fun update(percent: Float) {
+    }
+
+    override fun act(delta: Float): Boolean {
+        return action?.act(delta) ?: true
+    }
+
+    override fun restart() {
+        action?.restart()
+        super.restart()
+    }
+}
+
+/** while (condition) { ... } — Java-интерпретатор повторяет тело, пока условие истинно. */
+class WhileAction : LoopAction() {
+    private var isCurrentLoopInitialized = false
+    override var currentTime = 0f
+    var scope: Scope? = null
+    var condition: Formula? = null
+
+    public override fun delegate(delta: Float): Boolean {
+        if (!isCurrentLoopInitialized) {
+            currentTime = 0f
+            isCurrentLoopInitialized = true
+        }
+        currentTime += delta
+        if (!interpretCondition()) {
+            return true
+        }
+        if (action != null) {
+            val script = (scope?.sequence as? ScriptSequenceAction)?.script
+            val bodyDone = action.act(delta)
+            if (LoopController.consumeBreak(script)) {
+                return true
+            }
+            val iterationDone = LoopController.consumeContinue(script) ||
+                bodyDone && !isLoopDelayNeeded()
+            if (iterationDone) {
+                isCurrentLoopInitialized = false
+                action?.restart()
+            }
+        }
+        return false
+    }
+
+    private fun interpretCondition(): Boolean = try {
+        condition?.interpretBoolean(scope) ?: false
+    } catch (interpretationException: InterpretationException) {
+        Log.d(TAG, "Formula interpretation for this specific Brick failed.", interpretationException)
+        false
+    }
+
+    override fun restart() {
+        isCurrentLoopInitialized = false
+        super.restart()
+    }
+}
+
+/** do { ... } while (condition); — тело выполняется минимум один раз. */
+class DoWhileAction : LoopAction() {
+    private var isCurrentLoopInitialized = false
+    private var executedOnce = false
+    override var currentTime = 0f
+    var scope: Scope? = null
+    var condition: Formula? = null
+
+    public override fun delegate(delta: Float): Boolean {
+        if (!isCurrentLoopInitialized) {
+            currentTime = 0f
+            isCurrentLoopInitialized = true
+        }
+        currentTime += delta
+        if (executedOnce && !interpretCondition()) {
+            return true
+        }
+        if (action != null) {
+            val script = (scope?.sequence as? ScriptSequenceAction)?.script
+            val bodyDone = action.act(delta)
+            if (LoopController.consumeBreak(script)) {
+                return true
+            }
+            val iterationDone = LoopController.consumeContinue(script) ||
+                bodyDone && !isLoopDelayNeeded()
+            if (iterationDone) {
+                executedOnce = true
+                isCurrentLoopInitialized = false
+                action?.restart()
+            }
+        }
+        return false
+    }
+
+    private fun interpretCondition(): Boolean = try {
+        condition?.interpretBoolean(scope) ?: false
+    } catch (interpretationException: InterpretationException) {
+        Log.d(TAG, "Formula interpretation for this specific Brick failed.", interpretationException)
+        false
+    }
+
+    override fun restart() {
+        isCurrentLoopInitialized = false
+        executedOnce = false
+        super.restart()
+    }
+}
