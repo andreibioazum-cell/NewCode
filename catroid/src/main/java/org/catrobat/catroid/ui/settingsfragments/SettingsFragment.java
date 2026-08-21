@@ -41,7 +41,6 @@ import org.catrobat.catroid.BuildConfig;
 import org.catrobat.catroid.ProjectManager;
 import org.catrobat.catroid.R;
 import org.catrobat.catroid.common.Constants;
-import org.catrobat.catroid.common.DroneConfigPreference;
 import org.catrobat.catroid.formulaeditor.SensorHandler;
 import org.catrobat.catroid.ui.ProjectListActivity;
 import org.catrobat.catroid.ui.recyclerview.dialog.AppStoreDialogFragment;
@@ -54,7 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
@@ -297,18 +295,6 @@ public class SettingsFragment extends PreferenceFragment {
 		return getBooleanSharedPreference(false, SETTINGS_SHOW_PARROT_AR_DRONE_BRICKS, context);
 	}
 
-	public static boolean isJSSharedPreferenceEnabled(Context context) {
-		return getBooleanSharedPreference(false, SETTINGS_SHOW_JUMPING_SUMO_BRICKS, context);
-	}
-
-	public static boolean isMindstormsNXTSharedPreferenceEnabled(Context context) {
-		return getBooleanSharedPreference(false, SETTINGS_MINDSTORMS_NXT_BRICKS_CHECKBOX_PREFERENCE, context);
-	}
-
-	public static boolean isMindstormsEV3SharedPreferenceEnabled(Context context) {
-		return getBooleanSharedPreference(false, SETTINGS_MINDSTORMS_EV3_BRICKS_CHECKBOX_PREFERENCE, context);
-	}
-
 	public static boolean isPhiroSharedPreferenceEnabled(Context context) {
 		return getBooleanSharedPreference(false, SETTINGS_SHOW_PHIRO_BRICKS_CHECKBOX_PREFERENCE,
 				context);
@@ -324,27 +310,9 @@ public class SettingsFragment extends PreferenceFragment {
 				.apply();
 	}
 
-	public static void setJumpingSumoSharedPreferenceEnabled(Context context, boolean value) {
-		getSharedPreferences(context).edit()
-				.putBoolean(SETTINGS_SHOW_JUMPING_SUMO_BRICKS, value)
-				.apply();
-	}
-
 	public static void setArduinoSharedPreferenceEnabled(Context context, boolean value) {
 		getSharedPreferences(context).edit()
 				.putBoolean(SETTINGS_SHOW_ARDUINO_BRICKS, value)
-				.apply();
-	}
-
-	public static void setRaspiSharedPreferenceEnabled(Context context, boolean value) {
-		getSharedPreferences(context).edit()
-				.putBoolean(SETTINGS_SHOW_RASPI_BRICKS, value)
-				.apply();
-	}
-
-	public static void setPlotSharedPreferenceEnabled(Context context, boolean value) {
-		getSharedPreferences(context).edit()
-				.putBoolean(SETTINGS_SHOW_PLOT_BRICKS, value)
 				.apply();
 	}
 
@@ -462,57 +430,6 @@ public class SettingsFragment extends PreferenceFragment {
 
 	private static SharedPreferences getSharedPreferences(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context);
-	}
-
-	public static String getRaspiHost(Context context) {
-		return getSharedPreferences(context).getString(RASPI_HOST, null);
-	}
-
-	public static int getRaspiPort(Context context) {
-		return Integer.parseInt(getSharedPreferences(context).getString(RASPI_PORT, null));
-	}
-
-	public static String getRaspiRevision(Context context) {
-		return getSharedPreferences(context).getString(RASPI_VERSION_SPINNER, null);
-	}
-
-	public static DroneConfigPreference.Preferences[] getDronePreferenceMapping(Context context) {
-
-		final String[] dronePreferences =
-				new String[] {DRONE_CONFIGS, DRONE_ALTITUDE_LIMIT, DRONE_VERTICAL_SPEED, DRONE_ROTATION_SPEED, DRONE_TILT_ANGLE};
-
-		DroneConfigPreference.Preferences[] preferenceMapping = new DroneConfigPreference.Preferences[5];
-		for (int i = 0; i < 5; i++) {
-			String preference = getSharedPreferences(context).getString(dronePreferences[i], null);
-			preferenceMapping[i] = DroneConfigPreference.Preferences.getPreferenceFromPreferenceCode(preference);
-		}
-
-		return preferenceMapping;
-	}
-
-	public static DroneConfigPreference.Preferences getDronePreferenceMapping(Context context, String
-			preferenceSetting) {
-		String preference = getSharedPreferences(context).getString(preferenceSetting, null);
-		return DroneConfigPreference.Preferences.getPreferenceFromPreferenceCode(preference);
-	}
-
-	public static void enableLegoMindstormsNXTBricks(Context context) {
-		getSharedPreferences(context).edit()
-				.putBoolean(SETTINGS_MINDSTORMS_NXT_BRICKS_CHECKBOX_PREFERENCE, true)
-				.apply();
-	}
-
-	public static void enableLegoMindstormsEV3Bricks(Context context) {
-		getSharedPreferences(context).edit()
-				.putBoolean(SETTINGS_MINDSTORMS_EV3_BRICKS_CHECKBOX_PREFERENCE, true)
-				.apply();
-	}
-
-	@VisibleForTesting
-	public static void setMultiplayerVariablesPreferenceEnabled(Context context, boolean value) {
-		getSharedPreferences(context).edit()
-				.putBoolean(SETTINGS_MULTIPLAYER_VARIABLES_ENABLED, value)
-				.apply();
 	}
 
 	public static boolean isMultiplayerVariablesPreferenceEnabled(Context context) {
