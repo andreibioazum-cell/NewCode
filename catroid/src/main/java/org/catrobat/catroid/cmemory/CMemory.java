@@ -212,10 +212,6 @@ public class CMemory implements Serializable {
 		return toDouble(value);
 	}
 
-	public int totalAllocatedBytes() {
-		return (int) totalBytes;
-	}
-
 	public int allocationCount() {
 		return allocations.size();
 	}

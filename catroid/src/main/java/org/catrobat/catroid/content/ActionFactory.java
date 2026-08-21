@@ -118,7 +118,7 @@ import org.catrobat.catroid.content.actions.DecrementAction;
 import org.catrobat.catroid.content.actions.SizeofAction;
 import org.catrobat.catroid.content.actions.StructAction;
 import org.catrobat.catroid.content.actions.EnumAction;
-import org.catrobat.catroid.content.actions.AssertAction;
+import org.catrobat.catroid.content.actions.CAssertAction;
 import org.catrobat.catroid.content.actions.GotoAction;
 import org.catrobat.catroid.content.actions.LabelAction;
 import org.catrobat.catroid.content.actions.CaseAction;
@@ -1399,7 +1399,7 @@ public class ActionFactory extends Actions {
 	}
 
 	public Action createAssertAction(Sprite sprite, SequenceAction sequence, Formula condition) {
-		AssertAction action = Actions.action(AssertAction.class);
+		CAssertAction action = Actions.action(CAssertAction.class);
 		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
 		action.setScope(scope);
 		action.setCondition(condition);

@@ -311,7 +311,7 @@ class EnumAction : TemporalAction() {
 }
 
 /** assert(condition) — в C-компиляции это настоящий assert(). */
-class AssertAction : TemporalAction() {
+class CAssertAction : TemporalAction() {
     var scope: Scope? = null
     var condition: Formula? = null
 
