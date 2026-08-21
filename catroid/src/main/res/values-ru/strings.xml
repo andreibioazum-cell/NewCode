@@ -1615,15 +1615,7 @@
     <!--  -->
     <!-- Plot Arc direction strings -->
     <string formatted="false" name="direction_left">влево</string>
-    <string formatted="false" name="direction_right">вправо</string>
-    <string formatted="false" name="plot_arc_direction">Plot arc going</string>
-    <string formatted="false" name="laser_arc_direction">Create arc going</string>
-    <string formatted="false" name="plot_with_radius">with radius</string>
-    <string formatted="false" name="plot_for_degrees">в течении</string>
-    <string formatted="false" name="plot_through">Plot arc going through</string>
-    <string formatted="false" name="laser_through">Create arc going through</string>
-    <string formatted="false" name="plot_through_target">going to</string>
-    <!--  -->
+    <string formatted="false" name="direction_right">вправо</string>    <!--  -->
     <!-- Phiro bricks -->
     <!-- motor -->
     <string formatted="false" name="phiro_motor_stop">Остановить мотор Phiro</string>
