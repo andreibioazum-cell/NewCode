@@ -26,19 +26,43 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import org.catrobat.catroid.content.bricks.Brick
+import org.catrobat.catroid.content.bricks.BrickBaseType
 
 class PrototypeBrickAdapter(private var brickList: List<Brick>) : BaseAdapter() {
+    private val layoutViewTypes = HashMap<Int, Int>()
     override fun getCount(): Int = brickList.size
 
     override fun getItem(position: Int): Brick = brickList[position]
 
-    override fun getItemId(position: Int): Long = position.toLong()
+    override fun getItemId(position: Int): Long {
+        val id = brickList[position].brickID ?: return System.identityHashCode(brickList[position]).toLong()
+        return id.mostSignificantBits xor id.leastSignificantBits
+    }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? =
-        brickList[position].getPrototypeView(parent?.context)
+    override fun hasStableIds(): Boolean = true
+
+    override fun getViewTypeCount(): Int = MAX_BRICK_VIEW_TYPES
+
+    override fun getItemViewType(position: Int): Int {
+        val layout = (brickList[position] as? BrickBaseType)?.viewResource ?: return 0
+        return layoutViewTypes.getOrPut(layout) {
+            if (layoutViewTypes.size < MAX_BRICK_VIEW_TYPES) layoutViewTypes.size
+            else (layout and Int.MAX_VALUE) % MAX_BRICK_VIEW_TYPES
+        }
+    }
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
+        val brick = brickList[position]
+        (brick as? BrickBaseType)?.prepareForReuse(convertView)
+        return parent?.context?.let { brick.getPrototypeView(it) }
+    }
 
     fun replaceList(list: List<Brick>) {
         brickList = list
         notifyDataSetChanged()
+    }
+
+    private companion object {
+        const val MAX_BRICK_VIEW_TYPES = 256
     }
 }

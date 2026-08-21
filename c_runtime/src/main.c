@@ -57,9 +57,13 @@ static int write_file(const char *dir, const char *name, const char *content) {
 /* Собрать сгенерированную программу. 0 = успех. */
 static int cc_build(const char *dir, const char *out_path) {
     char cmd[2048];
+    const char *cc = getenv("CC");
+    const char *opt = getenv("NEWCODE_CFLAGS");
+    if (!cc || !cc[0]) cc = "cc";
+    if (!opt || !opt[0]) opt = "-O3 -flto -fno-math-errno -fno-trapping-math";
     snprintf(cmd, sizeof cmd,
-             "cc -std=c11 -O2 -Wno-unused-function -o \"%s\" \"%s/nc_program.c\" -lm",
-             out_path, dir);
+             "%s -std=c11 %s -Wno-unused-function -o \"%s\" \"%s/nc_program.c\" -lm",
+             cc, opt, out_path, dir);
     fprintf(stderr, "newcode: %s\n", cmd);
     int rc = system(cmd);
     if (rc == -1) return -1;

@@ -270,6 +270,8 @@ const char *cat_brick_kind_name(CatBrickKind k) {
     case CB_TURN_RIGHT: return "TurnRight";
     case CB_POINT_IN_DIRECTION: return "PointInDirection";
     case CB_GLIDE_TO: return "GlideTo";
+    case CB_ARC: return "Arc";
+    case CB_GO_THROUGH: return "GoThrough";
     case CB_SHOW: return "Show";
     case CB_HIDE: return "Hide";
     case CB_SET_SIZE_TO: return "SetSize";

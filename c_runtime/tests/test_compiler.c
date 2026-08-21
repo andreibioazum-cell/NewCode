@@ -624,7 +624,8 @@ static int test_constant_folding(void) {
     OK(p != NULL);
     char *c = cat_compile_to_c(p);
     OK(c != NULL);
-    OK(contains(c, "nc_num(7)"));          /* 2 + 5 свернулось */
+    OK(contains(c, "static double v0"));   /* числовая переменная специализировалась */
+    OK(contains(c, "v0 = 7;"));            /* 2 + 5 свернулось */
     OK(!contains(c, "nc_add(nc_num"));     /* нет вызова сложения литералов */
     cat_free(c);
     cat_project_free(p);
@@ -700,6 +701,60 @@ static int test_android_slot_names(void) {
     return 0;
 }
 
+static int test_native_motion_and_numeric_specialization(void) {
+    cur = doc;
+    X("<program><header><programName>FAST</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList><script type=\"StartScript\"><brickList>");
+    X("<brick type=\"PlaceAtBrick\"><formulaList>");
+    F_NUM("X_POSITION", 0); F_NUM("Y_POSITION", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"PointInDirectionBrick\"><formulaList>");
+    F_NUM("DEGREES", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"ArcBrick\"><direction>LEFT</direction><formulaList>");
+    F_NUM("SIZE", 10); F_NUM("DEGREES", 90);
+    X("</formulaList></brick>");
+    X("<brick type=\"GoThroughBrick\"><formulaList>");
+    F_NUM("X_POSITION", 0); F_NUM("Y_POSITION", 10);
+    F_NUM("X_DESTINATION", 10); F_NUM("Y_DESTINATION", 10);
+    X("</formulaList></brick>");
+    X("<brick type=\"SetVariableBrick\"><userVariable>counter</userVariable><formulaList>");
+    F_NUM("value", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"RepeatBrick\"><formulaList>");
+    F_NUM("times", 100);
+    X("</formulaList></brick>");
+    X("<brick type=\"ChangeVariableBrick\"><userVariable>counter</userVariable><formulaList>");
+    F_NUM("value", 1);
+    X("</formulaList></brick><brick type=\"LoopEndBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>"); F_SENSOR("value", "OBJECT_X"); X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>"); F_SENSOR("value", "OBJECT_Y"); X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>"); F_SENSOR("value", "DIRECTION"); X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>"); F_VAR("value", "counter"); X("</formulaList></brick>");
+    X("</brickList></script></scriptList></object></objectList></scene></scenes></program>");
+
+    CatProject *p = cat_load_project_xml_str(doc);
+    OK(p != NULL);
+    OK(cat_loader_last_unknown_count() == 0);
+    char *c = cat_compile_to_c(p);
+    OK(c != NULL);
+    OK(contains(c, "nc_arc("));
+    OK(contains(c, "nc_go_through("));
+    OK(contains(c, "static double v0"));
+    OK(contains(c, "v0 += 1;"));
+    OK(!contains(c, "v0 = nc_add(v0"));
+    cat_free(c);
+    cat_project_free(p);
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "10\n10\n90\n100"));
+    free(out);
+    return 0;
+}
+
 int main(void) {
     if (test_arithmetic_and_print()) return 1;
     if (test_place_at_with_formula()) return 1;
@@ -712,6 +767,7 @@ int main(void) {
     if (test_c_bitwise_and_types()) return 1;
     if (test_constant_folding()) return 1;
     if (test_android_slot_names()) return 1;
+    if (test_native_motion_and_numeric_specialization()) return 1;
     printf("test_compiler OK; peak mem = %zu\n", cat_mem_peak());
     return 0;
 }

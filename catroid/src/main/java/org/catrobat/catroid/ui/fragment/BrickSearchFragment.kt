@@ -23,14 +23,17 @@
 
 package org.catrobat.catroid.ui.fragment
 
+import android.database.Cursor
 import android.os.Bundle
-import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -39,21 +42,20 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.ListFragment
 import org.catrobat.catroid.ProjectManager
 import org.catrobat.catroid.R
-import org.catrobat.catroid.common.Constants.PROGESSIVE_INPUT_COUNTDOWN_INTERVALL
 import org.catrobat.catroid.common.Constants.PROGESSIVE_INPUT_DELAY
 import org.catrobat.catroid.content.bricks.Brick
+import org.catrobat.catroid.content.bricks.BrickBaseType
 import org.catrobat.catroid.ui.BottomBar.hideBottomBar
+import org.catrobat.catroid.ui.EdgeToEdge
 import org.catrobat.catroid.ui.SpriteActivity
 import org.catrobat.catroid.ui.adapter.PrototypeBrickAdapter
 import org.catrobat.catroid.ui.hideKeyboard
 import org.catrobat.catroid.ui.settingsfragments.AccessibilityProfile
 import org.catrobat.catroid.ui.settingsfragments.SettingsFragment
 import org.catrobat.catroid.utils.ToastUtil
-import java.util.Locale
-import android.widget.AbsListView
-import android.database.Cursor
-import org.catrobat.catroid.ui.EdgeToEdge
 import org.catrobat.catroid.utils.setVisibleOrGone
+import java.util.IdentityHashMap
+import java.util.Locale
 
 class BrickSearchFragment : ListFragment() {
 
@@ -69,8 +71,10 @@ class BrickSearchFragment : ListFragment() {
     private var addBrickListener: AddBrickFragment.OnAddBrickListener? = null
     private var category: String? = null
     private var adapter: PrototypeBrickAdapter? = null
-    @Volatile private var emptyQuery: Boolean = true
-    @Volatile private var previousQuery: String = ""
+    private val searchHandler = Handler(Looper.getMainLooper())
+    private val searchableText = IdentityHashMap<Brick, String>()
+    private var pendingSearch: Runnable? = null
+    private var searchGeneration = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_brick_search, container, false)
@@ -108,6 +112,9 @@ class BrickSearchFragment : ListFragment() {
     }
 
     override fun onDestroy() {
+        pendingSearch?.let(searchHandler::removeCallbacks)
+        pendingSearch = null
+        searchGeneration++
         val actionBar = (activity as? AppCompatActivity)?.supportActionBar
         val isRestoringPreviouslyDestroyedActivity = actionBar == null
         if (!isRestoringPreviouslyDestroyedActivity) {
@@ -124,6 +131,7 @@ class BrickSearchFragment : ListFragment() {
             isIconified = false
             queryHint = context.getString(R.string.search_hint)
         }
+        searchResults.clear()
         searchResults.addAll(recentlyUsedBricks)
         adapter = PrototypeBrickAdapter(searchResults)
         listAdapter = adapter
@@ -146,50 +154,15 @@ class BrickSearchFragment : ListFragment() {
 
         searchView = searchItem
         if (searchView != null) {
-                var countDownTimer: CountDownTimer
-                adapter = PrototypeBrickAdapter(searchResults)
-                listAdapter = adapter
-                queryTextListener = object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextChange(query: String): Boolean {
-                        previousQuery = query
-                        recentlyUsedTitle?.setVisibleOrGone(query.isEmpty())
-                        countDownTimer = object : CountDownTimer(
-                            PROGESSIVE_INPUT_DELAY,
-                            PROGESSIVE_INPUT_COUNTDOWN_INTERVALL
-                        ) {
-                            @SuppressWarnings("EmptyFunctionBlock")
-                            override fun onTick(millisUntilFinished: Long) {
-                            }
-
-                            override fun onFinish() {
-                                when (query) {
-                                    previousQuery -> searchAndFillBrickList(query)
-                                }
-                            }
-                        }
-                        emptyQuery = query.isEmpty()
-                        if (query.isEmpty()) {
-                            searchResults.clear()
-                            searchResults.addAll(recentlyUsedBricks)
-                            adapter?.replaceList(searchResults)
-                            countDownTimer.cancel()
-                            setShowProgressBar(false)
-                        } else {
-                            countDownTimer.start()
-                            setShowProgressBar(true)
-                        }
-                        return true
-                    }
+            queryTextListener = object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(query: String): Boolean {
+                    recentlyUsedTitle?.setVisibleOrGone(query.isBlank())
+                    scheduleSearch(query, PROGESSIVE_INPUT_DELAY)
+                    return true
+                }
 
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    searchResults.clear()
-                    searchBrick(query)
-                    adapter?.replaceList(searchResults)
-                    if (searchResults.isEmpty()) {
-                        ToastUtil.showError(context, context?.getString(R.string.no_results_found))
-                    } else {
-                        searchView?.clearFocus()
-                    }
+                    scheduleSearch(query, 0L, clearFocusWhenDone = true)
                     return true
                 }
             }
@@ -231,57 +204,100 @@ class BrickSearchFragment : ListFragment() {
 
     private fun onlyBeginnerBricks(): Boolean = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(AccessibilityProfile.BEGINNER_BRICKS, false)
 
-    private fun searchAndFillBrickList(query: String) {
-        searchResults.clear()
-        if (emptyQuery) {
+    private fun scheduleSearch(
+        query: String,
+        delayMillis: Long,
+        clearFocusWhenDone: Boolean = false
+    ) {
+        pendingSearch?.let(searchHandler::removeCallbacks)
+        val generation = ++searchGeneration
+        val normalizedQuery = query.trim().lowercase(Locale.ROOT)
+
+        if (normalizedQuery.isEmpty()) {
+            searchResults.clear()
+            searchResults.addAll(recentlyUsedBricks)
+            adapter?.replaceList(searchResults)
+            setShowProgressBar(false)
             return
         }
-        adapter?.replaceList(searchResults)
-        searchBrick(query)
-        if (searchResults.isEmpty()) {
-            ToastUtil.showError(
-                context,
-                context?.getString(R.string.no_results_found)
-            )
+
+        setShowProgressBar(true)
+        val starter = Runnable {
+            if (generation == searchGeneration) {
+                searchInBatches(normalizedQuery, generation, clearFocusWhenDone)
+            }
         }
-        if (emptyQuery) {
-            return
-        }
-        adapter?.replaceList(searchResults)
-        setShowProgressBar(false)
+        pendingSearch = starter
+        searchHandler.postDelayed(starter, delayMillis)
     }
 
-    private fun searchBrick(query: String) {
-        availableBricks.forEach { brick ->
-            val regexQuery = (".*" + query.lowercase(Locale.ROOT)
-                .replace("\\s".toRegex(), ".*") + ".*").toRegex()
-            val brickView = brick.getView(context)
-            if (regexQuery.containsMatchIn(findBrickString(brickView)) &&
-                !searchResultContains(brick)) {
-                searchResults.add(brick)
+    /**
+     * Inflating every one of 150+ prototype blocks in one UI callback caused a
+     * visible freeze. Build the localized text index once, in small batches,
+     * and reuse it for every following query. No regex is compiled per brick.
+     */
+    private fun searchInBatches(query: String, generation: Int, clearFocusWhenDone: Boolean) {
+        val activeContext = context ?: return
+        val tokens = query.split(Regex("\\s+")).filter { it.isNotEmpty() }
+        val matches = ArrayList<Brick>()
+        val matchedClasses = HashSet<Class<*>>()
+        var index = 0
+        lateinit var batch: Runnable
+
+        batch = Runnable {
+            if (generation != searchGeneration || !isAdded) {
+                return@Runnable
+            }
+            val end = minOf(index + SEARCH_INDEX_BATCH_SIZE, availableBricks.size)
+            while (index < end) {
+                val brick = availableBricks[index++]
+                val text = searchableText[brick] ?: run {
+                    val indexedText = findBrickString(brick.getPrototypeView(activeContext))
+                    (brick as? BrickBaseType)?.releaseDetachedView()
+                    searchableText[brick] = indexedText
+                    indexedText
+                }
+                if (tokens.all(text::contains) && matchedClasses.add(brick.javaClass)) {
+                    matches.add(brick)
+                }
+            }
+
+            if (index < availableBricks.size) {
+                pendingSearch = batch
+                // Returning to the Looper between batches lets drawing and
+                // touch input run even while the first search index is built.
+                searchHandler.postDelayed(batch, SEARCH_INDEX_BATCH_DELAY_MS)
+            } else {
+                searchResults.clear()
+                searchResults.addAll(matches)
+                adapter?.replaceList(searchResults)
+                setShowProgressBar(false)
+                pendingSearch = null
+                if (matches.isEmpty()) {
+                    ToastUtil.showError(context, getString(R.string.no_results_found))
+                } else if (clearFocusWhenDone) {
+                    searchView?.clearFocus()
+                }
             }
         }
-    }
-    private fun searchResultContains(brick: Brick): Boolean {
-        searchResults.forEach {
-            if (brick.javaClass == it.javaClass) {
-                return true
-            }
-        }
-        return false
+        pendingSearch = batch
+        searchHandler.post(batch)
     }
 
     private fun findBrickString(view: View): String {
-        var wholeStringFoundInBrick = ""
-        if (view is ViewGroup) {
-            for (i in 0 until view.childCount) {
-                val child = view.getChildAt(i)
-                val stringFoundInBrick = findBrickString(child)
-                if (stringFoundInBrick.isNotBlank()) wholeStringFoundInBrick = wholeStringFoundInBrick.plus(stringFoundInBrick)
+        val result = StringBuilder()
+        appendBrickString(view, result)
+        return result.toString().lowercase(Locale.ROOT)
+    }
+
+    private fun appendBrickString(view: View, result: StringBuilder) {
+        when (view) {
+            is TextView -> result.append(view.text).append(' ')
+            is ViewGroup -> for (i in 0 until view.childCount) {
+                appendBrickString(view.getChildAt(i), result)
             }
-        } else if (view is TextView) return view.text.toString().lowercase(Locale.ROOT)
-        return wholeStringFoundInBrick
         }
+    }
 
     fun getRecentlyUsedBricks() {
         val categoryBricksFactory: CategoryBricksFactory = when {
@@ -290,6 +306,7 @@ class BrickSearchFragment : ListFragment() {
         }
         val backgroundSprite = ProjectManager.getInstance().currentlyEditedScene.backgroundSprite
         val sprite = ProjectManager.getInstance().currentSprite
+        recentlyUsedBricks.clear()
         recentlyUsedBricks.addAll(categoryBricksFactory.getBricks(requireContext().getString(R.string.category_recently_used), backgroundSprite.equals(sprite), requireContext()))
     }
 
@@ -301,8 +318,9 @@ class BrickSearchFragment : ListFragment() {
         }
         val backgroundSprite = ProjectManager.getInstance().currentlyEditedScene.backgroundSprite
         val sprite = ProjectManager.getInstance().currentSprite
+        availableBricks.clear()
+        searchableText.clear()
         if (category != context?.getString(R.string.category_search_bricks)) {
-            availableBricks.clear()
             availableBricks.addAll(categoryBricksFactory.getBricks(category, backgroundSprite.equals(sprite), requireContext()))
         } else {
             availableBricks.addAll(categoryBricksFactory.getBricks(requireContext().getString(R.string.category_recently_used), backgroundSprite.equals(sprite), requireContext()))
@@ -330,6 +348,8 @@ class BrickSearchFragment : ListFragment() {
     companion object {
         @JvmField
         val BRICK_SEARCH_FRAGMENT_TAG = BrickSearchFragment::class.java.simpleName
+        private const val SEARCH_INDEX_BATCH_SIZE = 12
+        private const val SEARCH_INDEX_BATCH_DELAY_MS = 1L
         private var listIndexToFocus = -1
         @JvmStatic
         fun newInstance(addBrickListener: AddBrickFragment.OnAddBrickListener?, selectedCategory: String?):

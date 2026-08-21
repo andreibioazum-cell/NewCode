@@ -63,6 +63,8 @@ static int map_brick(const char *type) {
         {"TurnRightBrick", CB_TURN_RIGHT},
         {"PointInDirectionBrick", CB_POINT_IN_DIRECTION},
         {"GlideToBrick", CB_GLIDE_TO},
+        {"ArcBrick", CB_ARC},
+        {"GoThroughBrick", CB_GO_THROUGH},
         {"ShowBrick", CB_SHOW},
         {"HideBrick", CB_HIDE},
         {"SetSizeToBrick", CB_SET_SIZE_TO},
@@ -242,6 +244,11 @@ static void parse_extras(CatXmlNode *host, CatBrick *b) {
     if (lk) {
         CatXmlNode *nm = cat_xml_child(lk, "name");
         if (nm && nm->text) b->arg0 = cat_strdup(nm->text);
+    }
+    /* ArcBrick stores LEFT/RIGHT as a regular enum field, not a formula. */
+    if (b->kind == CB_ARC && !b->arg0) {
+        CatXmlNode *direction = cat_xml_child(host, "direction");
+        if (direction && direction->text) b->arg0 = cat_strdup(direction->text);
     }
 }
 

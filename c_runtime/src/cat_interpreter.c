@@ -785,6 +785,40 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_TURN_LEFT: { CatValue v=slot_or(e,inst,b,"degrees",0); inst->direction-=cat_value_to_number(&v); cat_value_free(&v); return 0; }
     case CB_TURN_RIGHT:{ CatValue v=slot_or(e,inst,b,"degrees",0); inst->direction+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
     case CB_POINT_IN_DIRECTION:{ CatValue v=slot_or(e,inst,b,"degrees",90); inst->direction=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_ARC: {
+        static const char *radius_names[] = { "radius", "size" };
+        static const char *degree_names[] = { "degrees" };
+        double radius = fabs(c_slot_num(e, inst, b, radius_names, 2, 0));
+        double degrees = c_slot_num(e, inst, b, degree_names, 1, 0);
+        int left = !b->arg0 || strcasecmp(b->arg0, "LEFT") == 0;
+        if (degrees < 0) { degrees = -degrees; left = !left; }
+        double motion = inst->direction * M_PI / 180.0;
+        double cx = inst->x + radius * (left ? -cos(motion) : cos(motion));
+        double cy = inst->y + radius * (left ? sin(motion) : -sin(motion));
+        double start = atan2(inst->y - cy, inst->x - cx);
+        double sign = left ? 1.0 : -1.0;
+        double angle = start + sign * degrees * M_PI / 180.0;
+        inst->x = cx + radius * cos(angle);
+        inst->y = cy + radius * sin(angle);
+        inst->direction = atan2(sign * -sin(angle), sign * cos(angle)) * 180.0 / M_PI;
+        return 0;
+    }
+    case CB_GO_THROUGH: {
+        static const char *x1_names[] = { "x", "xposition" };
+        static const char *y1_names[] = { "y", "yposition" };
+        static const char *x2_names[] = { "x2", "xdestination" };
+        static const char *y2_names[] = { "y2", "ydestination" };
+        double x2 = c_slot_num(e, inst, b, x2_names, 2, 0);
+        double y2 = c_slot_num(e, inst, b, y2_names, 2, 0);
+        double through_x = c_slot_num(e, inst, b, x1_names, 2, 0);
+        double through_y = c_slot_num(e, inst, b, y1_names, 2, 0);
+        double anchor_x = 2.0 * through_x - (inst->x + x2) * 0.5;
+        double anchor_y = 2.0 * through_y - (inst->y + y2) * 0.5;
+        double dx = 2.0 * (x2 - anchor_x), dy = 2.0 * (y2 - anchor_y);
+        inst->x = x2; inst->y = y2;
+        if (dx != 0 || dy != 0) inst->direction = atan2(dx, dy) * 180.0 / M_PI;
+        return 0;
+    }
     case CB_SHOW: inst->visible = true; return 0;
     case CB_HIDE: inst->visible = false; return 0;
     case CB_SET_SIZE_TO: { CatValue v=slot_or(e,inst,b,"size",100); inst->size=cat_value_to_number(&v); cat_value_free(&v); return 0; }

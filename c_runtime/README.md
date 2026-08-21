@@ -17,6 +17,13 @@
 * **свёртка констант**: выражения из числовых литералов (например
   `2 + 5`) вычисляются на этапе компиляции и записываются в сгенерированный
   C как единственная константа — без вызовов `nc_add`/`nc_mul` в рантайме;
+* **специализация переменных**: счётчики и другие переменные, которые никогда
+  не получают текст, объявляются как обычные `double`; `изменить x на 1`
+  превращается прямо в `v += 1`, `x++` — в `++v`, а числовые формулы — в
+  обычные C-выражения без копирования большой структуры `NcVal`;
+* `Forever` больше не спит 16 мс после **каждого** прохода: цикл выполняется
+  с нативной скоростью и лишь периодически отдаёт квант ОС, чтобы не
+  замораживать интерфейс хоста;
 * C-блоки (`malloc`/`calloc`/`realloc`/`free`/`memcpy`/`memset`,
   разыменование указателей) работают с **реальной памятью процесса**
   через явные `malloc`/`free` — освобождение только явное.
@@ -40,13 +47,16 @@ make run-example     # пример проекта C-блоков, скомпи�
 ```
 
 Ключ `-k`/`--keep` оставляет сгенерированные исходники (путь печатается).
+Нативная сборка по умолчанию использует `-O3 -flto -fno-math-errno`;
+компилятор и флаги можно переопределить переменными `CC` и
+`NEWCODE_CFLAGS`.
 
 ## Конвейер
 
 ```
 code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_program.c
                                                         │
-                                          cc -std=c11 -O2 + nc_rt.h
+                                cc -std=c11 -O3 -flto + nc_rt.h
                                                         ▼
                                             нативный исполняемый файл
                                           (машинный код, без VM и GC)
@@ -67,7 +77,7 @@ code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_pro
 |----------------|------------------------------------------------------------------------|
 | События        | When started, When tapped, When broadcast, Broadcast, Broadcast&Wait  |
 | Управление     | Wait, Forever, Repeat, Repeat Until, If/Else, If Then, Stop, Note, Return, Break, Continue, While, DoWhile, For (from..to..step), Switch/Case, Goto/Label |
-| Движение       | PlaceAt, SetX/Y, ChangeX/Y, Move N steps, Turn left/right, Point in dir, Glide |
+| Движение       | PlaceAt, SetX/Y, ChangeX/Y, Move N steps, Turn left/right, Point in dir, Glide, Arc («двигаться по дуге»), GoThrough («пройти через») |
 | Внешний вид    | Show, Hide, SetSize, ChangeSize, Say, Think, Set/Next/Previous look   |
 | Звук           | PlaySound, StopAllSounds, SetVolume, ChangeVolume                     |
 | Данные         | SetVariable, ChangeVariable, AddToList, DeleteFromList, ClearList, InsertIntoList, ReplaceInList |
@@ -88,8 +98,9 @@ JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad) не
   статически связывает `Broadcast` с получателями). Скрипты выполняются
   последовательно — это детерминированное упрощение вместо параллельных
   fiber'ов интерпретатора.
-* `Forever` после каждой итерации делает `nc_tick()` (пауза 16 мс), чтобы
-  не занимать ядро busy-loop'ом.
+* `Forever` исполняет тело как настоящий бесконечный цикл C. По умолчанию
+  `sched_yield()` вызывается раз в 65 536 итераций (`NC_FOREVER_YIELD_MASK`),
+  поэтому горячие счётчики работают быстро, но поток не блокирует хост навсегда.
 * `Stop all scripts` → `exit(0)`, `Stop this script`/`Return` → `return`,
   `Break`/`Continue` вне цикла безопасно игнорируются.
 * `typedef` разрешаются на этапе компиляции: `PointerSet`/`PointerGet`

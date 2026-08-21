@@ -64,6 +64,11 @@ abstract class ListSelectorBrick : BrickBaseType(), View.OnClickListener,
         brickFieldView.setOnClickListener(this)
     }
 
+    fun clearClickListeners() {
+        val brickFieldView = view.findViewById<TextView>(selectorId)
+        brickFieldView.setOnClickListener(null)
+    }
+
     override fun onClick(view: View) {
         showFragment(view.context, this)
     }

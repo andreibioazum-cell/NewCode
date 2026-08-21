@@ -192,8 +192,15 @@ public class Look extends Image {
 		return false;
 	}
 
+	public synchronized void resetBrightnessContrastHueShader() {
+		// A new Stage can own a new GL context; never reuse the old program.
+		shader = null;
+	}
+
 	public synchronized void createBrightnessContrastHueShader() {
-		shader = new BrightnessContrastHueShader();
+		if (shader == null) {
+			shader = new BrightnessContrastHueShader();
+		}
 		shader.setBrightness(brightness);
 		shader.setHue(hue);
 	}

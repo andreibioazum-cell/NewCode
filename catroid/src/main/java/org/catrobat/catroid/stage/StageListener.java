@@ -79,7 +79,9 @@ import org.catrobat.catroid.utils.VibrationManager;
 import org.catrobat.catroid.web.WebConnectionHolder;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +132,10 @@ public class StageListener implements ApplicationListener {
 	public WebConnectionHolder webConnectionHolder;
 
 	private List<Sprite> sprites;
+	/* Shader compilation is expensive on Android GPUs. Actors are attached
+	 * immediately and use the default shader for the first frame; custom color
+	 * shaders are then prepared one per frame instead of blocking game start. */
+	private final Deque<Look> pendingShaderLooks = new ArrayDeque<>();
 	public CameraPositioner cameraPositioner;
 
 	private float virtualWidthHalf;
@@ -175,6 +181,7 @@ public class StageListener implements ApplicationListener {
 	@Override
 	public void create() {
 		deltaActionTimeDivisor = 10f;
+		firstFrameDrawn = false;
 
 		shapeRenderer = new ShapeRenderer();
 
@@ -266,14 +273,17 @@ public class StageListener implements ApplicationListener {
 	}
 
 	private void initActors(List<Sprite> sprites) {
+		pendingShaderLooks.clear();
+		firstFrameDrawn = false;
 		if (sprites.isEmpty()) {
 			return;
 		}
 
 		for (Sprite sprite : sprites) {
 			sprite.resetSprite();
-			sprite.look.createBrightnessContrastHueShader();
+			sprite.look.resetBrightnessContrastHueShader();
 			stage.addActor(sprite.look);
+			pendingShaderLooks.add(sprite.look);
 		}
 
 		penActor = new PenActor();
@@ -293,8 +303,8 @@ public class StageListener implements ApplicationListener {
 		} else {
 			copy.myOriginal = cloneMe;
 		}
-		copy.look.createBrightnessContrastHueShader();
 		addCloneActorToStage(stage, stage.getRoot(), cloneMe.look, copy.look);
+		pendingShaderLooks.add(copy.look);
 		sprites.add(copy);
 		if (!copy.getLookList().isEmpty()) {
 			int currentLookDataIndex = cloneMe.getLookList().indexOf(cloneMe.look.getLookData());
@@ -544,6 +554,9 @@ public class StageListener implements ApplicationListener {
 		}
 
 		if (!finished) {
+			if (firstFrameDrawn && !pendingShaderLooks.isEmpty()) {
+				pendingShaderLooks.removeFirst().createBrightnessContrastHueShader();
+			}
 			stage.draw();
 			firstFrameDrawn = true;
 		}

@@ -49,6 +49,13 @@ public abstract class BrickBaseType implements Brick {
 
 	public transient View view;
 	private transient CheckBox checkbox;
+	/*
+	 * ListView gives the adapter a detached convertView. Brick used to ignore it
+	 * and inflate a complete hierarchy on every scroll frame. Keep the candidate
+	 * only until getView() is called so views are recycled, not retained by the
+	 * model. The keyed layout tag prevents mixing different brick XML layouts.
+	 */
+	private transient View recycledView;
 
 	protected transient Brick parent;
 
@@ -77,6 +84,7 @@ public abstract class BrickBaseType implements Brick {
 		BrickBaseType clone = (BrickBaseType) super.clone();
 		clone.view = null;
 		clone.checkbox = null;
+		clone.recycledView = null;
 		clone.parent = null;
 		clone.commentedOut = commentedOut;
 		clone.brickId = UUID.randomUUID();
@@ -90,10 +98,53 @@ public abstract class BrickBaseType implements Brick {
 	@LayoutRes
 	public abstract int getViewResource();
 
+	/**
+	 * Supplies a detached ListView row for the next getView() call. Subclasses
+	 * keep their existing binding code: their super.getView(context) call picks
+	 * up this row and then refreshes formulas, spinners and listeners normally.
+	 */
+	public void prepareForReuse(@Nullable View candidate) {
+		recycledView = candidate;
+	}
+
+	private void releaseRecycledView(View candidate) {
+		if (view == candidate) {
+			view = null;
+			checkbox = null;
+		}
+	}
+
+	/** Drop an unattached prototype row after indexing it for search. */
+	public void releaseDetachedView() {
+		if (view != null && view.getParent() == null) {
+			view = null;
+			checkbox = null;
+			recycledView = null;
+		}
+	}
+
 	@CallSuper
 	@Override
 	public View getView(Context context) {
-		view = LayoutInflater.from(context).inflate(getViewResource(), null, false);
+		final int layout = getViewResource();
+		View candidate = recycledView;
+		recycledView = null;
+
+		Object candidateLayout = candidate == null ? null
+				: candidate.getTag(R.id.brick_recycled_layout);
+		Object previousOwner = candidate == null ? null
+				: candidate.getTag(R.id.brick_recycled_owner);
+		if (previousOwner instanceof BrickBaseType && previousOwner != this) {
+			((BrickBaseType) previousOwner).releaseRecycledView(candidate);
+		}
+		if (candidate != null && candidateLayout instanceof Integer
+				&& ((Integer) candidateLayout) == layout) {
+			view = candidate;
+		} else {
+			view = LayoutInflater.from(context).inflate(layout, null, false);
+			view.setTag(R.id.brick_recycled_layout, layout);
+		}
+		view.setTag(R.id.brick_recycled_owner, this);
 		checkbox = view.findViewById(R.id.brick_checkbox);
 		return view;
 	}
@@ -106,19 +157,27 @@ public abstract class BrickBaseType implements Brick {
 	}
 
 	public void disableSpinners() {
-		disableSpinners(view);
+		setSpinnersEnabled(view, false);
+	}
+
+	public void enableSpinners() {
+		setSpinnersEnabled(view, true);
 	}
 
 	private void disableSpinners(View view) {
+		setSpinnersEnabled(view, false);
+	}
+
+	private void setSpinnersEnabled(View view, boolean enabled) {
 		if (view instanceof Spinner) {
-			view.setEnabled(false);
-			view.setClickable(false);
-			view.setFocusable(false);
+			view.setEnabled(enabled);
+			view.setClickable(enabled);
+			view.setFocusable(enabled);
 		}
 		if (view instanceof ViewGroup) {
 			ViewGroup parent = (ViewGroup) view;
 			for (int i = 0; i < parent.getChildCount(); i++) {
-				disableSpinners(parent.getChildAt(i));
+				setSpinnersEnabled(parent.getChildAt(i), enabled);
 			}
 		}
 	}

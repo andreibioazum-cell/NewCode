@@ -250,8 +250,7 @@ class IncrementAction : TemporalAction() {
     var userVariable: UserVariable? = null
 
     override fun update(percent: Float) {
-        val current = userVariable?.value?.toString()?.toDoubleOrNull() ?: 0.0
-        userVariable?.setValue(current + 1.0)
+        userVariable?.addNumericValue(1.0)
     }
 }
 
@@ -260,8 +259,7 @@ class DecrementAction : TemporalAction() {
     var userVariable: UserVariable? = null
 
     override fun update(percent: Float) {
-        val current = userVariable?.value?.toString()?.toDoubleOrNull() ?: 0.0
-        userVariable?.setValue(current - 1.0)
+        userVariable?.addNumericValue(-1.0)
     }
 }
 

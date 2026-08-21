@@ -2170,4 +2170,25 @@
     <string formatted="false" name="undo_sort">Не сортировать</string>
     <string formatted="false" name="sort">Сортировать</string>
     <string formatted="false" name="checkbox">флажок</string>
+
+    <!-- Полный русский набор строк, добавленных после исходной локализации. -->
+    <string formatted="false" name="arc_direction">Двигаться по дуге</string>
+    <string formatted="false" name="arc_with_radius">с радиусом</string>
+    <string formatted="false" name="arc_for_degrees">на</string>
+    <string formatted="false" name="go_through">Пройти через</string>
+    <string formatted="false" name="go_through_target">затем к</string>
+    <string formatted="false" name="preference_title_enable_mqtt_bricks">Расширение MQTT</string>
+    <string formatted="false" name="preference_description_mqtt_bricks">Разрешить приложению подключаться к брокерам MQTT</string>
+    <string formatted="false" name="preference_title_mqtt_enabled">Включить блоки MQTT</string>
+    <string formatted="false" name="preference_description_mqtt_enabled">Включить блоки и датчики MQTT</string>
+    <string formatted="false" name="preference_title_mqtt_category">Настройки MQTT</string>
+    <string formatted="false" name="preference_title_mqtt_broker_host">Адрес брокера</string>
+    <string formatted="false" name="preference_description_mqtt_broker_host">IP-адрес или имя хоста брокера MQTT</string>
+    <string formatted="false" name="preference_title_mqtt_broker_port">Порт брокера</string>
+    <string formatted="false" name="preference_description_mqtt_broker_port">Номер порта брокера MQTT (1–65535)</string>
+    <string formatted="false" name="preference_title_mqtt_use_tls">Использовать TLS</string>
+    <string formatted="false" name="preference_title_mqtt_username">Имя пользователя</string>
+    <string formatted="false" name="preference_title_mqtt_password">Пароль</string>
+    <string formatted="false" name="preference_title_mqtt_client_id">Идентификатор клиента</string>
+    <string formatted="false" name="preference_mqtt_port_invalid">Порт должен быть числом от 1 до 65535</string>
 </resources>

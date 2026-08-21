@@ -33,28 +33,33 @@ public class UserVariable implements Serializable, UserData<Object> {
 	private int initialIndex = -1;
 	private UUID deviceValueKey;
 	private transient Object value;
+	/* Numeric variables are kept unboxed between operations. Hot loops can
+	 * update this primitive directly instead of allocating/parsing an Object on
+	 * every increment. getValue() still exposes the compatible Object API. */
+	private transient double numericValue;
+	private transient boolean numeric = true;
 	private transient boolean visible = true;
 	private transient boolean dummy = false;
 
 	public UserVariable() {
-		this.value = 0d;
+		setValue(0d);
 	}
 
 	public UserVariable(String name) {
 		this.name = name;
-		this.value = 0d;
+		setValue(0d);
 		this.deviceValueKey = UUID.randomUUID();
 	}
 
 	public UserVariable(final String name, final Object value) {
 		this.name = name;
-		this.value = value;
+		setValue(value);
 		this.deviceValueKey = UUID.randomUUID();
 	}
 
 	public UserVariable(UserVariable variable) {
 		this.name = variable.name;
-		this.value = variable.value;
+		setValue(variable.getValue());
 		this.deviceValueKey = UUID.randomUUID();
 	}
 
@@ -78,12 +83,55 @@ public class UserVariable implements Serializable, UserData<Object> {
 
 	@Override
 	public Object getValue() {
-		return value;
+		ensureNumericCache();
+		return numeric ? numericValue : value;
 	}
 
 	@Override
 	public void setValue(Object value) {
-		this.value = value;
+		if (value instanceof Number) {
+			numericValue = ((Number) value).doubleValue();
+			numeric = true;
+			this.value = null;
+		} else {
+			numeric = false;
+			this.value = value;
+		}
+	}
+
+	public boolean hasNumericValue() {
+		ensureNumericCache();
+		return numeric;
+	}
+
+	public double getNumericValue() {
+		ensureNumericCache();
+		return numeric ? numericValue : 0.0;
+	}
+
+	public void setNumericValue(double value) {
+		numericValue = value;
+		numeric = true;
+		this.value = null;
+	}
+
+	public void addNumericValue(double delta) {
+		ensureNumericCache();
+		if (numeric) {
+			numericValue += delta;
+		}
+	}
+
+	private void ensureNumericCache() {
+		if (!numeric && value == null) {
+			// Transient runtime fields are empty immediately after loading.
+			numericValue = 0.0;
+			numeric = true;
+		} else if (!numeric && value instanceof Number) {
+			numericValue = ((Number) value).doubleValue();
+			numeric = true;
+			value = null;
+		}
 	}
 
 	public boolean getVisible() {
@@ -104,7 +152,7 @@ public class UserVariable implements Serializable, UserData<Object> {
 
 	@Override
 	public void reset() {
-		value = 0d;
+		setNumericValue(0.0);
 	}
 
 	@Override
@@ -122,7 +170,9 @@ public class UserVariable implements Serializable, UserData<Object> {
 	}
 
 	public boolean hasSameValue(UserVariable variableToCheck) {
-		return variableToCheck.value.equals(value);
+		Object otherValue = variableToCheck.getValue();
+		Object thisValue = getValue();
+		return otherValue == null ? thisValue == null : otherValue.equals(thisValue);
 	}
 
 	@Override

@@ -24,5 +24,9 @@
 <resources>
 
     <item name="drag_and_drop_list_view_image_view" type="id"/>
+    <!-- Keyed tags used by the brick adapters to safely recycle heterogeneous
+         brick layouts without retaining one View hierarchy per block. -->
+    <item name="brick_recycled_layout" type="id"/>
+    <item name="brick_recycled_owner" type="id"/>
 
 </resources>

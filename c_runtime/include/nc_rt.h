@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <sched.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -31,6 +32,9 @@
 #endif
 
 #define NC_SBUF 96
+#ifndef NC_FOREVER_YIELD_MASK
+#define NC_FOREVER_YIELD_MASK 65535ULL
+#endif
 
 /* Значение: число, символ/строка (встроенный буфер) или логическое. */
 typedef struct {
@@ -141,7 +145,10 @@ static inline void nc_sound(const char *name)         { printf("[plays sound: %s
 
 /* --- время --- */
 static inline void nc_wait(double seconds) { if (seconds > 0) usleep((unsigned)(seconds * 1000000.0)); }
-static inline void nc_tick(void)           { usleep(16000); }
+/* Forever loops execute at native speed and only yield occasionally. Sleeping
+   16 ms after every block iteration limited even `variable += 1` to ~60/s. */
+static inline void nc_yield(void)          { sched_yield(); }
+static inline void nc_tick(void)           { nc_yield(); } /* source compatibility */
 static inline void nc_glide(double *x, double *y, double tx, double ty, double seconds) {
     double sx = *x, sy = *y;
     const double dt = 1.0 / 60.0;
@@ -153,6 +160,45 @@ static inline void nc_glide(double *x, double *y, double tx, double ty, double s
         *y = sy + (ty - sy) * k;
         usleep((unsigned)(dt * 1000000.0));
     }
+}
+
+static inline double nc_safe_div_d(double a, double b) { return b == 0.0 ? 0.0 : a / b; }
+static inline double nc_safe_mod_d(double a, double b) { return b == 0.0 ? 0.0 : fmod(a, b); }
+static inline double nc_shl_d(double a, double b) { return (double)((long long)a << ((int)b & 63)); }
+static inline double nc_shr_d(double a, double b) { return (double)((long long)a >> ((int)b & 63)); }
+static inline double nc_rand_d(double a, double b) {
+    if (b < a) { double t = a; a = b; b = t; }
+    return a + ((double)rand() / ((double)RAND_MAX + 1.0)) * (b - a);
+}
+
+/* Motion primitives are native C too. Zero-duration visual blocks only need
+   their exact final pose; a host renderer can draw the updated Spr immediately. */
+static inline void nc_arc(double *x, double *y, double *direction,
+                          double radius, double degrees, int left) {
+    if (degrees < 0.0) { degrees = -degrees; left = !left; }
+    radius = fabs(radius);
+    const double motion = nc_deg(*direction);
+    const double cx = *x + radius * (left ? -cos(motion) : cos(motion));
+    const double cy = *y + radius * (left ?  sin(motion) : -sin(motion));
+    const double start = atan2(*y - cy, *x - cx);
+    const double sign = left ? 1.0 : -1.0;
+    const double angle = start + sign * nc_deg(degrees);
+    *x = cx + radius * cos(angle);
+    *y = cy + radius * sin(angle);
+    *direction = atan2(sign * -sin(angle), sign * cos(angle)) * 180.0 / M_PI;
+}
+
+static inline void nc_go_through(double *x, double *y, double *direction,
+                                 double through_x, double through_y,
+                                 double end_x, double end_y) {
+    const double start_x = *x, start_y = *y;
+    const double anchor_x = 2.0 * through_x - (start_x + end_x) * 0.5;
+    const double anchor_y = 2.0 * through_y - (start_y + end_y) * 0.5;
+    const double dx = 2.0 * (end_x - anchor_x);
+    const double dy = 2.0 * (end_y - anchor_y);
+    *x = end_x;
+    *y = end_y;
+    if (dx != 0.0 || dy != 0.0) *direction = atan2(dx, dy) * 180.0 / M_PI;
 }
 
 /* --- указатели и C-блоки: НАСТОЯЩИЕ адреса, явные malloc/free, без GC --- */

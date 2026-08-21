@@ -34,6 +34,7 @@ import androidx.annotation.IntDef
 import org.catrobat.catroid.content.Script
 import org.catrobat.catroid.content.Sprite
 import org.catrobat.catroid.content.bricks.Brick
+import org.catrobat.catroid.content.bricks.BrickBaseType
 import org.catrobat.catroid.content.bricks.CompositeBrick
 import org.catrobat.catroid.content.bricks.EmptyEventBrick
 import org.catrobat.catroid.content.bricks.EndBrick
@@ -46,6 +47,7 @@ import org.catrobat.catroid.ui.recyclerview.adapter.draganddrop.ViewStateManager
 import org.catrobat.catroid.ui.recyclerview.adapter.multiselection.MultiSelectionManager
 import java.util.ArrayList
 import java.util.Collections
+import java.util.IdentityHashMap
 
 class BrickAdapter(private val sprite: Sprite) :
     BaseAdapter(),
@@ -65,6 +67,8 @@ class BrickAdapter(private val sprite: Sprite) :
 
     private val selectionManager = MultiSelectionManager()
     private val viewStateManager = ViewStateManager()
+    private val layoutViewTypes = HashMap<Int, Int>()
+    private val itemPositions = IdentityHashMap<Brick, Int>()
 
     private var onItemClickListener: OnBrickClickListener? = null
     private var selectionListener: SelectionListener? = null
@@ -81,6 +85,7 @@ class BrickAdapter(private val sprite: Sprite) :
         const val ALL = 1
         const val SCRIPTS_ONLY = 2
         const val CONNECTED_ONLY = 3
+        private const val MAX_BRICK_VIEW_TYPES = 256
 
         @JvmStatic
         fun colorAsCommentedOut(background: Drawable) {
@@ -117,12 +122,28 @@ class BrickAdapter(private val sprite: Sprite) :
             script.setParents()
             script.addToFlatList(items)
         }
+        rebuildItemPositions()
         notifyDataSetChanged()
     }
 
+    private fun rebuildItemPositions() {
+        itemPositions.clear()
+        items.forEachIndexed { index, brick -> itemPositions[brick] = index }
+    }
+
+    private fun positionOf(brick: Brick): Int = itemPositions[brick] ?: items.indexOf(brick)
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val item = items[position]
+        // Rebind the detached row instead of inflating a new block hierarchy.
+        // BrickBaseType.getView() validates the layout tag before accepting it.
+        (item as? BrickBaseType)?.prepareForReuse(convertView)
         val itemView = item.getView(parent.context)
+        itemView.setOnClickListener(null)
+        item.checkBox?.setOnClickListener(null)
+        (item as? BrickBaseType)?.enableSpinners()
+        (item as? FormulaBrick)?.clearClickListeners()
+        (item as? ListSelectorBrick)?.clearClickListeners()
 
         itemView.visibility =
             if (viewStateManager.isVisible(position)) View.VISIBLE else View.INVISIBLE
@@ -240,7 +261,7 @@ class BrickAdapter(private val sprite: Sprite) :
         }
 
         for (i in flatItems.indices) {
-            adapterPosition = items.indexOf(flatItems[i])
+            adapterPosition = positionOf(flatItems[i])
             selectionManager.setSelectionTo(selected, adapterPosition)
             if (i > 0) {
                 viewStateManager.setEnabled(!selected, adapterPosition)
@@ -248,7 +269,7 @@ class BrickAdapter(private val sprite: Sprite) :
         }
 
         if (checkBoxMode == CONNECTED_ONLY) {
-            val firstFlatListPosition = items.indexOf(flatItems[0])
+            val firstFlatListPosition = positionOf(flatItems[0])
             updateConnectedItems(
                 position,
                 firstFlatListPosition,
@@ -284,8 +305,7 @@ class BrickAdapter(private val sprite: Sprite) :
                 clearConnectedItems()
             }
         }
-        for (item in items) {
-            val brickPosition = items.indexOf(item)
+        items.forEachIndexed { brickPosition, _ ->
             viewStateManager.setEnabled(
                 selectableForCopy(brickPosition, scriptSelected),
                 brickPosition
@@ -350,6 +370,7 @@ class BrickAdapter(private val sprite: Sprite) :
 
     fun addItem(position: Int, item: Brick?) {
         item?.let { items.add(position, it) }
+        rebuildItemPositions()
         notifyDataSetChanged()
     }
 
@@ -366,13 +387,14 @@ class BrickAdapter(private val sprite: Sprite) :
 
     override fun removeItems(items: List<Brick>): Boolean {
         if (this.items.removeAll(items)) {
+            rebuildItemPositions()
             notifyDataSetChanged()
             return true
         }
         return false
     }
 
-    override fun getPosition(brick: Brick?): Int = items.indexOf(brick)
+    override fun getPosition(brick: Brick?): Int = brick?.let(::positionOf) ?: -1
 
     override fun onItemMove(sourcePosition: Int, targetPosition: Int): Boolean {
         val source = items[sourcePosition]
@@ -383,6 +405,8 @@ class BrickAdapter(private val sprite: Sprite) :
             return false
         }
         Collections.swap(items, sourcePosition, targetPosition)
+        itemPositions[items[sourcePosition]] = sourcePosition
+        itemPositions[items[targetPosition]] = targetPosition
         return true
     }
 
@@ -550,7 +574,24 @@ class BrickAdapter(private val sprite: Sprite) :
 
     override fun getCount(): Int = items.size
 
-    override fun getItemId(position: Int): Long = items[position].hashCode().toLong()
+    override fun getViewTypeCount(): Int = MAX_BRICK_VIEW_TYPES
+
+    override fun getItemViewType(position: Int): Int {
+        val layout = (items[position] as? BrickBaseType)?.viewResource ?: return 0
+        return layoutViewTypes.getOrPut(layout) {
+            // There are currently fewer than 256 distinct brick layouts. The
+            // fallback remains safe because BrickBaseType checks the layout tag.
+            if (layoutViewTypes.size < MAX_BRICK_VIEW_TYPES) layoutViewTypes.size
+            else (layout and Int.MAX_VALUE) % MAX_BRICK_VIEW_TYPES
+        }
+    }
+
+    override fun hasStableIds(): Boolean = true
+
+    override fun getItemId(position: Int): Long {
+        val id = items[position].brickID ?: return System.identityHashCode(items[position]).toLong()
+        return id.mostSignificantBits xor id.leastSignificantBits
+    }
 
     interface SelectionListener {
         fun onSelectionChanged(selectedItemCnt: Int)

@@ -122,9 +122,17 @@ public abstract class FormulaBrick extends BrickBaseType implements View.OnClick
 	}
 
 	public void setClickListeners() {
+		setFormulaClickListener(this);
+	}
+
+	public void clearClickListeners() {
+		setFormulaClickListener(null);
+	}
+
+	private void setFormulaClickListener(View.OnClickListener listener) {
 		for (BiMap.Entry<FormulaField, Integer> entry : brickFieldToTextViewIdMap.entrySet()) {
 			TextView formulaFieldView = view.findViewById(entry.getValue());
-			formulaFieldView.setOnClickListener(this);
+			formulaFieldView.setOnClickListener(listener);
 		}
 	}
 
