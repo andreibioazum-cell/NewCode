@@ -642,6 +642,10 @@
         <item name="android:background">@drawable/brick_categories_winered</item>
     </style>
 
+    <style name="BrickCategory.Laser">
+        <item name="android:background">@drawable/brick_categories_raspberry</item>
+    </style>
+
     <style name="BrickCategory.Drone">
         <item name="android:background">@drawable/brick_categories_olive</item>
     </style>
@@ -664,6 +668,10 @@
 
     <style name="BrickCategory.Userbrick">
         <item name="android:background">@drawable/brick_categories_darkblue</item>
+    </style>
+
+    <style name="BrickCategory.C">
+        <item name="android:background">@drawable/brick_categories_cyan</item>
     </style>
 
      <style name="WebViewLoadingCircle" parent="android:Theme.Holo.Dialog">
