@@ -364,7 +364,7 @@ static int test_execute_c_code_and_clones(void) {
     X("<brick type=\"ExecuteCCodeBrick\"><formulaList>");
     F_STR("code", "puts(\"ccodeok\");");
     X("</formulaList></brick>");
-    /* Клонирование — безопасный no-op в статической компиляции. */
+    /* Клон без скриптов WhenCloned у спрайта — компилируется в комментарий. */
     X("<brick type=\"CloneBrick\"/>");
     X("<brick type=\"PrintBrick\"><formulaList>");
     F_STR("value", "before-clone");
@@ -386,6 +386,42 @@ static int test_execute_c_code_and_clones(void) {
     return 0;
 }
 
+/* Клон в статической компиляции: пул поз + общие скрипты.
+   Клон синхронно выполняет скрипты WhenCloned и получает позу создателя. */
+static int test_static_clone_pool(void) {
+    cur = doc;
+    X("<program><header><programName>CP</programName></header>"
+      "<scenes><scene><name>S</name><objectList><object><name>A</name>"
+      "<scriptList>");
+    X("<script type=\"StartScript\"><brickList>");
+    X("<brick type=\"PlaceAtBrick\"><formulaList>");
+    F_NUM("X_POSITION", 55); F_NUM("Y_POSITION", 0);
+    X("</formulaList></brick>");
+    X("<brick type=\"CloneBrick\"/>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "after-clone");
+    X("</formulaList></brick>");
+    X("</brickList></script>");
+    X("<script type=\"WhenClonedScript\"><brickList>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_STR("value", "clone-ran");
+    X("</formulaList></brick>");
+    X("<brick type=\"PrintBrick\"><formulaList>");
+    F_SENSOR("value", "OBJECT_X");
+    X("</formulaList></brick>");
+    X("</brickList></script>");
+    X("</scriptList></object></objectList></scene></scenes></program>");
+
+    char *out; size_t len; int code;
+    OK(compile_and_run(doc, &out, &len, &code) == 0);
+    OK(code == 0);
+    OK(contains(out, "clone-ran"));   /* клон выполнил скрипт WhenCloned */
+    OK(contains(out, "55"));          /* поза клона — копия позы создателя */
+    OK(contains(out, "after-clone"));
+    free(out);
+    return 0;
+}
+
 int main(void) {
     if (test_arithmetic_and_print()) return 1;
     if (test_place_at_with_formula()) return 1;
@@ -393,6 +429,7 @@ int main(void) {
     if (test_break_continue_return()) return 1;
     if (test_broadcast()) return 1;
     if (test_execute_c_code_and_clones()) return 1;
+    if (test_static_clone_pool()) return 1;
     printf("test_compiler OK; peak mem = %zu\n", cat_mem_peak());
     return 0;
 }

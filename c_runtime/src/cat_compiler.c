@@ -12,7 +12,10 @@
  *   - malloc/calloc/realloc/free/memcpy/memset и разыменование указателей
  *     работают с реальной памятью процесса (явное управление, без GC);
  *   - значения (NcVal) и списки (NcList) живут на стеке/в статике —
- *     сборщика мусора нет в принципе.
+ *     сборщика мусора нет в принципе;
+ *   - клоны спрайтов: фиксированный пул поз (NC_CLONE_CAP на спрайт),
+ *     поза копируется побитно, скрипты/переменные общие — ноль strdup,
+ *     ноль роста кучи, клоны не лагают.
  */
 #include "cat_compiler.h"
 #include "cat_mem.h"
@@ -108,6 +111,10 @@ typedef struct {
     CatSprite *sprite;   /* текущий спрайт */
     int        sprite_i; /* его индекс */
     int        loop_depth;
+
+    /* по плоскому индексу спрайта: число скриптов «когда я клон» */
+    int       *clone_scripts;
+    size_t     clone_scripts_n;
 
     /* таблица broadcast-сообщений */
     char    **bmsg;
@@ -870,14 +877,18 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
             cat_free(owned);
             break;
         }
-        /* --- Клоны спрайтов --- */
+        /* --- Клоны спрайтов: пул поз + общие скрипты (см. шаг 4b) --- */
         case CB_CLONE:
-            /* В статической C-компиляции спрайты — статические структуры;
-               динамическое клонирование не моделируется. Безопасный no-op. */
-            sb_line(o, "; /* clone: в статической компиляции клоны не создаются */");
+            if (g->sprite_i >= 0 && (size_t)g->sprite_i < g->clone_scripts_n &&
+                g->clone_scripts[g->sprite_i] > 0) {
+                sb_line(o, "clone_fire_%d(SP); /* clone: копия только позы */", g->sprite_i);
+            } else {
+                sb_line(o, "; /* clone: у спрайта нет скриптов WhenCloned */");
+            }
             break;
         case CB_DELETE_THIS_CLONE:
-            /* Ближайший эквивалент «удалить клон» — завершить его скрипт. */
+            /* В статике клон живёт внутри clone_fire: return завершает
+               текущий скрипт, после остальных слот пула освобождается. */
             sb_line(o, "return; /* delete this clone */");
             break;
         default:
@@ -902,6 +913,25 @@ char *cat_compile_to_c(CatProject *p) {
     g.p = p;
     g.out.cap = 65536;
     g.out.buf = (char *)cat_calloc(1, g.out.cap);
+
+    /* 0. Посчитать спрайты и их скрипты «когда я начинаю как клон». */
+    {
+        size_t total = 0;
+        for (size_t si = 0; si < p->scene_count; ++si)
+            total += p->scenes[si]->sprite_count;
+        g.clone_scripts_n = total;
+        g.clone_scripts = (int *)cat_calloc(total ? total : 1, sizeof(int));
+        size_t idx = 0;
+        for (size_t si = 0; si < p->scene_count; ++si) {
+            CatScene *sc = p->scenes[si];
+            for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+                CatSprite *sp = sc->sprites[spi];
+                for (size_t k = 0; k < sp->script_count; ++k)
+                    if (sp->scripts[k]->head && sp->scripts[k]->head->kind == CB_WHEN_CLONED)
+                        g.clone_scripts[idx]++;
+            }
+        }
+    }
 
     /* 1. Собрать переменные/списки по всем спрайтам. */
     for (size_t si = 0; si < p->scene_count; ++si) {
@@ -937,6 +967,11 @@ char *cat_compile_to_c(CatProject *p) {
     sb_line(o, " */");
     sb_line(o, "#include \"nc_rt.h\"");
     sb_line(o, "");
+    sb_line(o, "/* Клоны: фиксированный пул поз на спрайт. Копируется только поза;\n   куча и число клонов не раздуваются => проект не лагает. */");
+    sb_line(o, "#ifndef NC_CLONE_CAP");
+    sb_line(o, "#define NC_CLONE_CAP 16");
+    sb_line(o, "#endif");
+    sb_line(o, "");
 
     /* 2. Состояние спрайтов. */
     sb_line(o, "typedef struct {");
@@ -948,6 +983,10 @@ char *cat_compile_to_c(CatProject *p) {
         for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
             CatSprite *sp = sc->sprites[spi];
             sb_line(o, "static Spr spr%zu; /* спрайт: %s */", idx, sp->name ? sp->name : "?");
+            if (g.clone_scripts[idx] > 0) {
+                sb_line(o, "static Spr  nc_clones_%zu[NC_CLONE_CAP]; /* пул клонов: %s */", idx, sp->name ? sp->name : "?");
+                sb_line(o, "static char nc_clone_used_%zu[NC_CLONE_CAP];", idx);
+            }
         }
     }
     sb_line(o, "");
@@ -959,10 +998,24 @@ char *cat_compile_to_c(CatProject *p) {
         sb_line(o, "static NcList l%zu; /* список: %s */", i, g.lists[i].name);
     sb_line(o, "");
 
-    /* 4a. Предварительные объявления диспетчеров broadcast. */
+    /* 4a. Предварительные объявления: скрипты, broadcast, клоны. */
+    for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+            CatSprite *sp = sc->sprites[spi];
+            for (size_t k = 0; k < sp->script_count; ++k) {
+                if (!sp->scripts[k] || !sp->scripts[k]->head) continue;
+                sb_printf(o, "static void ");
+                gen_script_decl(&g, (int)idx, (int)k);
+                sb_printf(o, "(Spr *SP);\n");
+            }
+            if (g.clone_scripts[idx] > 0)
+                sb_line(o, "static void clone_fire_%zu(Spr *src);", idx);
+        }
+    }
     for (size_t m = 0; m < g.bmsg_count; ++m)
         sb_line(o, "static void bc%zu(void);", m);
-    if (g.bmsg_count) sb_line(o, "");
+    sb_line(o, "");
 
     /* 4. Функции скриптов. */
     for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
@@ -978,17 +1031,49 @@ char *cat_compile_to_c(CatProject *p) {
                 if (scr->head->kind == CB_WHEN_STARTED) kind = "WhenStarted";
                 else if (scr->head->kind == CB_WHEN_BROADCAST) kind = "WhenBroadcast";
                 else if (scr->head->kind == CB_WHEN_TAPPED) kind = "WhenTapped";
+                else if (scr->head->kind == CB_WHEN_CLONED) kind = "WhenCloned";
                 sb_printf(o, "static void ");
                 gen_script_decl(&g, (int)idx, (int)k);
-                sb_printf(o, "(void) { /* %s: %s */\n", kind, sp->name ? sp->name : "?");
+                sb_printf(o, "(Spr *SP) { /* %s: %s */\n", kind, sp->name ? sp->name : "?");
                 g.out.indent = 1;
                 g.loop_depth = 0;
-                sb_line(o, "Spr *SP = &spr%zu;", idx);
                 gen_bricks(&g, scr->bricks, scr->brick_count);
                 g.out.indent = 0;
                 sb_line(o, "}");
                 sb_line(o, "");
             }
+        }
+    }
+
+    /* 4b. Клоны: синхронный запуск скриптов WhenCloned из пула поз.
+       Поза — побитовая копия структуры Spr (O(1)); скрипты и переменные
+       общие. Статический рантайм последовательный, поэтому клон «живёт»
+       внутри clone_fire: отработал -> слот пула снова свободен. */
+    for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {
+        CatScene *sc = p->scenes[si];
+        for (size_t spi = 0; spi < sc->sprite_count; ++spi, ++idx) {
+            if (g.clone_scripts[idx] == 0) continue;
+            CatSprite *sp = sc->sprites[spi];
+            sb_printf(o, "static void clone_fire_%zu(Spr *src) { /* клон спрайта \"%s\" */\n",
+                      idx, sp->name ? sp->name : "?");
+            sb_line(o, "    for (int ci = 0; ci < NC_CLONE_CAP; ++ci) {");
+            sb_line(o, "        if (nc_clone_used_%zu[ci]) continue;", idx);
+            sb_line(o, "        nc_clone_used_%zu[ci] = 1;", idx);
+            sb_line(o, "        nc_clones_%zu[ci] = *src; /* поза — побитовая копия, ноль strdup/GC */", idx);
+            for (size_t k = 0; k < sp->script_count; ++k) {
+                CatScript *scr = sp->scripts[k];
+                if (scr->head && scr->head->kind == CB_WHEN_CLONED) {
+                    sb_printf(o, "        ");
+                    gen_script_decl(&g, (int)idx, (int)k);
+                    sb_printf(o, "(&nc_clones_%zu[ci]);\n", idx);
+                }
+            }
+            sb_line(o, "        nc_clone_used_%zu[ci] = 0; /* delete this clone / конец скриптов */", idx);
+            sb_line(o, "        return;");
+            sb_line(o, "    }");
+            sb_line(o, "    /* пул исчерпан: тихо пропускаем — лавины клонов не будет */");
+            sb_line(o, "}");
+            sb_line(o, "");
         }
     }
 
@@ -1005,7 +1090,7 @@ char *cat_compile_to_c(CatProject *p) {
                         strcmp(scr->head->arg0, g.bmsg[m]) == 0) {
                         sb_printf(o, "    ");
                         gen_script_decl(&g, (int)idx, (int)k);
-                        sb_printf(o, "();\n");
+                        sb_printf(o, "(&spr%zu);\n", idx);
                     }
                 }
             }
@@ -1032,7 +1117,7 @@ char *cat_compile_to_c(CatProject *p) {
                 if (scr->head && scr->head->kind == CB_WHEN_STARTED) {
                     sb_printf(o, "    ");
                     gen_script_decl(&g, (int)idx, (int)k);
-                    sb_printf(o, "();\n");
+                    sb_printf(o, "(&spr%zu);\n", idx);
                 }
             }
         }
@@ -1049,6 +1134,7 @@ char *cat_compile_to_c(CatProject *p) {
     cat_free(g.tds);
     for (size_t i = 0; i < g.bmsg_count; ++i) cat_free(g.bmsg[i]);
     cat_free(g.bmsg);
+    cat_free(g.clone_scripts);
 
     return g.out.buf;
 }

@@ -17,14 +17,36 @@
 
 static int ieq(const char *a, const char *b) { return a && b && strcasecmp(a, b) == 0; }
 
-static CatValue eval_sensor(CatSprite *sp, const char *name) {
+/* ---------- Экземпляр спрайта на сцене (спрайт или его клон) ---------- */
+/*
+ * Клон НЕ копирует проект: имя, скрипты, переменные и списки разделяются
+ * с прототипом (нулевое копирование => создание клона O(1), без лагов).
+ * У каждого экземпляра своя только «сценаическая поза»: координаты, курс,
+ * размер и видимость.
+ */
+typedef struct SpriteInst {
+    CatSprite *proto;    /* общие данные: имя, скрипты, переменные, списки */
+    double  x, y, direction, size, transparency, brightness;
+    bool    visible;
+    bool    is_clone;
+    bool    dead;        /* «delete this clone» пометил экземпляр */
+} SpriteInst;
+
+static void inst_copy_pose(SpriteInst *dst, const SpriteInst *src) {
+    dst->x = src->x; dst->y = src->y;
+    dst->direction = src->direction; dst->size = src->size;
+    dst->transparency = src->transparency; dst->brightness = src->brightness;
+    dst->visible = src->visible;
+}
+
+static CatValue eval_sensor(SpriteInst *inst, const char *name) {
     if (!name) return cat_value_number(0);
-    if (ieq(name, "OBJECT_X") || ieq(name, "X_POSITION")) return cat_value_number(sp ? sp->x : 0);
-    if (ieq(name, "OBJECT_Y") || ieq(name, "Y_POSITION")) return cat_value_number(sp ? sp->y : 0);
-    if (ieq(name, "OBJECT_ROTATION") || ieq(name, "DIRECTION")) return cat_value_number(sp ? sp->direction : 90);
-    if (ieq(name, "OBJECT_SIZE") || ieq(name, "SIZE")) return cat_value_number(sp ? sp->size : 100);
-    if (ieq(name, "OBJECT_TRANSPARENCY")) return cat_value_number(sp ? sp->transparency : 0);
-    if (ieq(name, "OBJECT_BRIGHTNESS")) return cat_value_number(sp ? sp->brightness : 100);
+    if (ieq(name, "OBJECT_X") || ieq(name, "X_POSITION")) return cat_value_number(inst ? inst->x : 0);
+    if (ieq(name, "OBJECT_Y") || ieq(name, "Y_POSITION")) return cat_value_number(inst ? inst->y : 0);
+    if (ieq(name, "OBJECT_ROTATION") || ieq(name, "DIRECTION")) return cat_value_number(inst ? inst->direction : 90);
+    if (ieq(name, "OBJECT_SIZE") || ieq(name, "SIZE")) return cat_value_number(inst ? inst->size : 100);
+    if (ieq(name, "OBJECT_TRANSPARENCY")) return cat_value_number(inst ? inst->transparency : 0);
+    if (ieq(name, "OBJECT_BRIGHTNESS")) return cat_value_number(inst ? inst->brightness : 100);
     if (ieq(name, "PI")) return cat_value_number(M_PI);
     if (ieq(name, "TRUE")) return cat_value_bool(true);
     if (ieq(name, "FALSE")) return cat_value_bool(false);
@@ -78,11 +100,12 @@ static CatValue eval_unary(const char *op, CatValue a) {
 
 /* Прото для внешнего доступа. */
 struct CatEngine;
-static CatValue eval_formula_internal(struct CatEngine *e, CatSprite *sp, const CatFormula *f);
+typedef struct SpriteInst SpriteInst;
+static CatValue eval_formula_internal(struct CatEngine *e, SpriteInst *inst, const CatFormula *f);
 
-static CatValue eval_function(struct CatEngine *e, CatSprite *sp, const char *fn, CatFormula **args, size_t argc) {
+static CatValue eval_function(struct CatEngine *e, SpriteInst *inst, const char *fn, CatFormula **args, size_t argc) {
     CatValue r = cat_value_number(0);
-    #define ARG(i) (i < argc ? eval_formula_internal(e, sp, args[i]) : cat_value_number(0))
+    #define ARG(i) (i < argc ? eval_formula_internal(e, inst, args[i]) : cat_value_number(0))
     if (ieq(fn, "SIN"))      { CatValue a=ARG(0); r=cat_value_number(sin(cat_value_to_number(&a)*M_PI/180.0)); cat_value_free(&a); }
     else if (ieq(fn,"COS"))  { CatValue a=ARG(0); r=cat_value_number(cos(cat_value_to_number(&a)*M_PI/180.0)); cat_value_free(&a); }
     else if (ieq(fn,"TAN"))  { CatValue a=ARG(0); r=cat_value_number(tan(cat_value_to_number(&a)*M_PI/180.0)); cat_value_free(&a); }
@@ -353,28 +376,40 @@ typedef struct Frame {
 } Frame;
 
 typedef struct Fiber {
-    CatSprite *sprite;
-    CatScript *script;
-    Frame     *frames;
-    size_t     frame_count;
-    size_t     frame_cap;
-    double     sleep_left;   /* сек до пробуждения */
-    bool       waiting_broadcast;
-    char      *waiting_msg;
-    bool       done;
+    SpriteInst *inst;
+    CatScript  *script;
+    Frame      *frames;
+    size_t      frame_count;
+    size_t      frame_cap;
+    double      sleep_left;   /* сек до пробуждения */
+    bool        waiting_broadcast;
+    char       *waiting_msg;
+    bool        done;
 } Fiber;
 
+/* Предохранитель от «лавины клонов»: больше этого числа живых клонов
+   интерпретатор не создаёт, чтобы проект не начал лагать. */
+#define NC_MAX_CLONES 1024
+
 struct CatEngine {
-    CatProject *project;
-    Fiber     **fibers;
-    size_t      fiber_count;
-    size_t      fiber_cap;
-    double      elapsed;
+    CatProject  *project;
+    Fiber      **fibers;
+    size_t       fiber_count;
+    size_t       fiber_cap;
+    double       elapsed;
     /* Состояние C-блоков: куча и typedef-реестр. */
-    CHeap       heap;
-    CTypedef   *typedefs;
-    size_t      typedef_count;
-    size_t      typedef_cap;
+    CHeap        heap;
+    CTypedef    *typedefs;
+    size_t       typedef_count;
+    size_t       typedef_cap;
+    /* Экземпляры спрайтов. insts[0..inst_count) — живые (спрайты и клоны),
+       свободные структуры клонов лежат в пуле free_pool и переиспользуются
+       без malloc/free-черняхи. */
+    SpriteInst **insts;
+    size_t       inst_count, inst_cap;
+    SpriteInst **free_pool;
+    size_t       free_count, free_cap;
+    size_t       clone_count;   /* живых клонов сейчас */
 };
 
 static void push_frame(Fiber *f, CatBrick **bs, size_t n, int loop, long left, CatFormula *cond) {
@@ -388,9 +423,9 @@ static void push_frame(Fiber *f, CatBrick **bs, size_t n, int loop, long left, C
     f->frames[f->frame_count++] = fr;
 }
 
-static void spawn(CatEngine *e, CatSprite *sp, CatScript *sc) {
+static void spawn(CatEngine *e, SpriteInst *inst, CatScript *sc) {
     Fiber *f = (Fiber *)cat_calloc(1, sizeof(Fiber));
-    f->sprite = sp;
+    f->inst = inst;
     f->script = sc;
     push_frame(f, sc->bricks, sc->brick_count, 0, 0, NULL);
     if (e->fiber_count == e->fiber_cap) {
@@ -400,12 +435,73 @@ static void spawn(CatEngine *e, CatSprite *sp, CatScript *sc) {
     e->fibers[e->fiber_count++] = f;
 }
 
+/* Регистрация экземпляра в массиве живых. */
+static void inst_register(CatEngine *e, SpriteInst *inst) {
+    if (e->inst_count == e->inst_cap) {
+        e->inst_cap = e->inst_cap ? e->inst_cap * 2 : 16;
+        e->insts = (SpriteInst **)cat_realloc(e->insts, sizeof(SpriteInst *) * e->inst_cap);
+    }
+    e->insts[e->inst_count++] = inst;
+}
+
+/* Корневой экземпляр спрайта-прототипа (создаётся один раз, не удаляется). */
+static SpriteInst *inst_root(CatEngine *e, CatSprite *proto) {
+    SpriteInst *inst = (SpriteInst *)cat_calloc(1, sizeof(SpriteInst));
+    inst->proto = proto;
+    inst->x = proto->x; inst->y = proto->y;
+    inst->direction = proto->direction; inst->size = proto->size;
+    inst->transparency = proto->transparency; inst->brightness = proto->brightness;
+    inst->visible = proto->visible;
+    inst->is_clone = false;
+    inst_register(e, inst);
+    return inst;
+}
+
+/*
+ * Создать клон: копируется только поза (несколько double), скрипты
+ * «когда я начинаю как клон» запускаются сразу. Ограничено NC_MAX_CLONES;
+ * при исчерпании клон тихо не создаётся — проект не раздувается и не лагает.
+ */
+static SpriteInst *inst_clone(CatEngine *e, SpriteInst *src) {
+    if (e->clone_count >= NC_MAX_CLONES) return NULL;
+    SpriteInst *c;
+    if (e->free_count) {                    /* пул: без malloc */
+        c = e->free_pool[--e->free_count];
+    } else {
+        c = (SpriteInst *)cat_calloc(1, sizeof(SpriteInst));
+    }
+    c->proto = src->proto;
+    inst_copy_pose(c, src);
+    c->is_clone = true;
+    c->dead = false;
+    e->clone_count++;
+    inst_register(e, c);
+    for (size_t k = 0; k < src->proto->script_count; ++k) {
+        CatScript *scr = src->proto->scripts[k];
+        if (scr->head && scr->head->kind == CB_WHEN_CLONED)
+            spawn(e, c, scr);
+    }
+    return c;
+}
+
+/* Отправить структуру клона обратно в пул (память не трогаем). */
+static void inst_recycle(CatEngine *e, SpriteInst *c) {
+    if (e->free_count == e->free_cap) {
+        e->free_cap = e->free_cap ? e->free_cap * 2 : 16;
+        e->free_pool = (SpriteInst **)cat_realloc(e->free_pool, sizeof(SpriteInst *) * e->free_cap);
+    }
+    e->free_pool[e->free_count++] = c;
+}
+
 CatEngine *cat_engine_new(CatProject *project) {
     CatEngine *e = (CatEngine *)cat_calloc(1, sizeof(CatEngine));
     e->project = project;
     c_heap_init(&e->heap);
     return e;
 }
+
+size_t cat_engine_instance_count(const CatEngine *e) { return e ? e->inst_count : 0; }
+size_t cat_engine_clone_count(const CatEngine *e)    { return e ? e->clone_count : 0; }
 
 /* Разрешение имени типа по цепочке typedef'ов. */
 static const char *c_resolve_type(CatEngine *e, const char *type) {
@@ -454,6 +550,10 @@ void cat_engine_free(CatEngine *e) {
     if (!e) return;
     for (size_t i = 0; i < e->fiber_count; ++i) fiber_free(e->fibers[i]);
     cat_free(e->fibers);
+    for (size_t i = 0; i < e->inst_count; ++i) cat_free(e->insts[i]);
+    cat_free(e->insts);
+    for (size_t i = 0; i < e->free_count; ++i) cat_free(e->free_pool[i]);
+    cat_free(e->free_pool);
     c_heap_clear(&e->heap);
     c_typedefs_clear(e->typedefs, e->typedef_count);
     cat_free(e);
@@ -464,10 +564,15 @@ void cat_engine_start(CatEngine *e) {
         CatScene *sc = e->project->scenes[si];
         for (size_t spi = 0; spi < sc->sprite_count; ++spi) {
             CatSprite *sp = sc->sprites[spi];
+            /* Экземпляр корня создаём один раз — broadcast и клоны им пользуются. */
+            SpriteInst *root = NULL;
+            for (size_t i = 0; i < e->inst_count; ++i)
+                if (e->insts[i]->proto == sp && !e->insts[i]->is_clone) { root = e->insts[i]; break; }
+            if (!root) root = inst_root(e, sp);
             for (size_t k = 0; k < sp->script_count; ++k) {
                 CatScript *scr = sp->scripts[k];
                 if (scr->head && scr->head->kind == CB_WHEN_STARTED)
-                    spawn(e, sp, scr);
+                    spawn(e, root, scr);
             }
         }
     }
@@ -475,16 +580,28 @@ void cat_engine_start(CatEngine *e) {
 
 void cat_engine_broadcast(CatEngine *e, const char *msg) {
     if (!msg) return;
+    /* Получают ВСЕ живые экземпляры: и прототипы, и клоны
+       (у клона те же скрипты — проход по insts без лишней работы). Корням,
+       для которых cat_engine_start ещё не вызывался, создаём экземпляр. */
     for (size_t si = 0; si < e->project->scene_count; ++si) {
         CatScene *sc = e->project->scenes[si];
         for (size_t spi = 0; spi < sc->sprite_count; ++spi) {
             CatSprite *sp = sc->sprites[spi];
-            for (size_t k = 0; k < sp->script_count; ++k) {
-                CatScript *scr = sp->scripts[k];
-                if (scr->head && scr->head->kind == CB_WHEN_BROADCAST &&
-                    scr->head->arg0 && strcmp(scr->head->arg0, msg) == 0) {
-                    spawn(e, sp, scr);
-                }
+            SpriteInst *root = NULL;
+            for (size_t i = 0; i < e->inst_count; ++i)
+                if (e->insts[i]->proto == sp && !e->insts[i]->is_clone) { root = e->insts[i]; break; }
+            if (!root) root = inst_root(e, sp);
+        }
+    }
+    for (size_t i = 0; i < e->inst_count; ++i) {
+        SpriteInst *inst = e->insts[i];
+        if (inst->dead) continue;
+        CatSprite *sp = inst->proto;
+        for (size_t k = 0; k < sp->script_count; ++k) {
+            CatScript *scr = sp->scripts[k];
+            if (scr->head && scr->head->kind == CB_WHEN_BROADCAST &&
+                scr->head->arg0 && strcmp(scr->head->arg0, msg) == 0) {
+                spawn(e, inst, scr);
             }
         }
     }
@@ -498,10 +615,10 @@ void cat_engine_broadcast(CatEngine *e, const char *msg) {
     }
 }
 
-static CatValue slot_or(CatEngine *e, CatSprite *sp, CatBrick *b, const char *name, double def) {
+static CatValue slot_or(CatEngine *e, SpriteInst *inst, CatBrick *b, const char *name, double def) {
     CatFormula *f = cat_brick_slot(b, name);
     if (!f) return cat_value_number(def);
-    return eval_formula_internal(e, sp, f);
+    return eval_formula_internal(e, inst, f);
 }
 
 /* --- Слоты C-блоков ---
@@ -533,22 +650,22 @@ static CatFormula *c_slot(CatBrick *b, const char *const *names, size_t n) {
 }
 
 /* Вычислить слот C-блока как число. */
-static double c_slot_num(CatEngine *e, CatSprite *sp, CatBrick *b,
+static double c_slot_num(CatEngine *e, SpriteInst *inst, CatBrick *b,
                          const char *const *names, size_t n, double def) {
     CatFormula *f = c_slot(b, names, n);
     if (!f) return def;
-    CatValue v = eval_formula_internal(e, sp, f);
+    CatValue v = eval_formula_internal(e, inst, f);
     double d = cat_value_to_number(&v);
     cat_value_free(&v);
     return d;
 }
 
 /* Вычислить слот C-блока как строку (тип, имя typedef'а). */
-static char *c_slot_str(CatEngine *e, CatSprite *sp, CatBrick *b,
+static char *c_slot_str(CatEngine *e, SpriteInst *inst, CatBrick *b,
                         const char *const *names, size_t n) {
     CatFormula *f = c_slot(b, names, n);
     if (!f) return NULL;
-    CatValue v = eval_formula_internal(e, sp, f);
+    CatValue v = eval_formula_internal(e, inst, f);
     char *s = cat_value_to_cstring(&v);
     cat_value_free(&v);
     return s;
@@ -558,10 +675,11 @@ static char *c_slot_str(CatEngine *e, CatSprite *sp, CatBrick *b,
 /* Выполняет один брикк из текущего кадра. Возвращает: 0 продолжить,
    1 приостановить (yield). */
 static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
-    CatSprite *sp = fi->sprite;
+    SpriteInst *inst = fi->inst;
+    CatSprite *sp = inst ? inst->proto : NULL; /* общие данные: имя, переменные, списки */
     switch (b->kind) {
     case CB_WAIT: {
-        CatValue v = slot_or(e, sp, b, "seconds", 0);
+        CatValue v = slot_or(e, inst, b, "seconds", 0);
         fi->sleep_left = cat_value_to_number(&v);
         cat_value_free(&v);
         return 1;
@@ -587,7 +705,7 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         return 0;
     }
     case CB_REPEAT: {
-        CatValue v = slot_or(e, sp, b, "times", 0);
+        CatValue v = slot_or(e, inst, b, "times", 0);
         long n = (long)cat_value_to_number(&v); cat_value_free(&v);
         if (n <= 0) return 0;
         push_frame(fi, b->children, b->child_count, 2, n, NULL);
@@ -600,7 +718,7 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     }
     case CB_IF_BEGIN:
     case CB_IF_THEN_BEGIN: {
-        CatValue v = slot_or(e, sp, b, "condition", 0);
+        CatValue v = slot_or(e, inst, b, "condition", 0);
         bool t = cat_value_to_bool(&v); cat_value_free(&v);
         if (t)
             push_frame(fi, b->children, b->child_count, 0, 0, NULL);
@@ -609,13 +727,13 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         return 0;
     }
     case CB_SET_VARIABLE: {
-        CatValue v = slot_or(e, sp, b, "value", 0);
+        CatValue v = slot_or(e, inst, b, "value", 0);
         cat_sprite_set_var(sp, b->arg0 ? b->arg0 : "", v);
         return 0;
     }
     case CB_CHANGE_VARIABLE: {
         CatValue cur = cat_sprite_get_var(sp, b->arg0 ? b->arg0 : "");
-        CatValue by  = slot_or(e, sp, b, "value", 0);
+        CatValue by  = slot_or(e, inst, b, "value", 0);
         CatValue nv = cat_value_number(cat_value_to_number(&cur) + cat_value_to_number(&by));
         cat_value_free(&cur); cat_value_free(&by);
         cat_sprite_set_var(sp, b->arg0 ? b->arg0 : "", nv);
@@ -625,7 +743,7 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         CatList *l = cat_sprite_get_list(sp, b->arg0 ? b->arg0 : "");
         if (l->count == l->cap) { l->cap = l->cap ? l->cap*2 : 4;
             l->items = (CatValue*)cat_realloc(l->items, sizeof(CatValue)*l->cap); }
-        l->items[l->count++] = slot_or(e, sp, b, "value", 0);
+        l->items[l->count++] = slot_or(e, inst, b, "value", 0);
         return 0;
     }
     case CB_CLEAR_LIST: {
@@ -635,31 +753,31 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         return 0;
     }
     case CB_PLACE_AT: {
-        CatValue x = slot_or(e, sp, b, "x", 0), y = slot_or(e, sp, b, "y", 0);
-        sp->x = cat_value_to_number(&x); sp->y = cat_value_to_number(&y);
+        CatValue x = slot_or(e, inst, b, "x", 0), y = slot_or(e, inst, b, "y", 0);
+        inst->x = cat_value_to_number(&x); inst->y = cat_value_to_number(&y);
         cat_value_free(&x); cat_value_free(&y);
         return 0;
     }
-    case CB_SET_X: { CatValue v=slot_or(e,sp,b,"x",0); sp->x=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_SET_Y: { CatValue v=slot_or(e,sp,b,"y",0); sp->y=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_CHANGE_X: { CatValue v=slot_or(e,sp,b,"x",0); sp->x+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_CHANGE_Y: { CatValue v=slot_or(e,sp,b,"y",0); sp->y+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_SET_X: { CatValue v=slot_or(e,inst,b,"x",0); inst->x=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_SET_Y: { CatValue v=slot_or(e,inst,b,"y",0); inst->y=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_CHANGE_X: { CatValue v=slot_or(e,inst,b,"x",0); inst->x+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_CHANGE_Y: { CatValue v=slot_or(e,inst,b,"y",0); inst->y+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
     case CB_MOVE_STEPS: {
-        CatValue v=slot_or(e,sp,b,"steps",0);
+        CatValue v=slot_or(e,inst,b,"steps",0);
         double s=cat_value_to_number(&v); cat_value_free(&v);
-        double rad = (90.0 - sp->direction) * M_PI/180.0;
-        sp->x += s*cos(rad); sp->y += s*sin(rad);
+        double rad = (90.0 - inst->direction) * M_PI/180.0;
+        inst->x += s*cos(rad); inst->y += s*sin(rad);
         return 0;
     }
-    case CB_TURN_LEFT: { CatValue v=slot_or(e,sp,b,"degrees",0); sp->direction-=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_TURN_RIGHT:{ CatValue v=slot_or(e,sp,b,"degrees",0); sp->direction+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_POINT_IN_DIRECTION:{ CatValue v=slot_or(e,sp,b,"degrees",90); sp->direction=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_SHOW: sp->visible = true; return 0;
-    case CB_HIDE: sp->visible = false; return 0;
-    case CB_SET_SIZE_TO: { CatValue v=slot_or(e,sp,b,"size",100); sp->size=cat_value_to_number(&v); cat_value_free(&v); return 0; }
-    case CB_CHANGE_SIZE_BY:{ CatValue v=slot_or(e,sp,b,"size",0); sp->size+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_TURN_LEFT: { CatValue v=slot_or(e,inst,b,"degrees",0); inst->direction-=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_TURN_RIGHT:{ CatValue v=slot_or(e,inst,b,"degrees",0); inst->direction+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_POINT_IN_DIRECTION:{ CatValue v=slot_or(e,inst,b,"degrees",90); inst->direction=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_SHOW: inst->visible = true; return 0;
+    case CB_HIDE: inst->visible = false; return 0;
+    case CB_SET_SIZE_TO: { CatValue v=slot_or(e,inst,b,"size",100); inst->size=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_CHANGE_SIZE_BY:{ CatValue v=slot_or(e,inst,b,"size",0); inst->size+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
     case CB_SAY: case CB_THINK: {
-        CatValue v=slot_or(e,sp,b,"text",0);
+        CatValue v=slot_or(e,inst,b,"text",0);
         char *s=cat_value_to_cstring(&v);
         printf("[%s %s]: %s\n", sp->name, b->kind==CB_SAY?"says":"thinks", s);
         cat_free(s); cat_value_free(&v); return 0;
@@ -669,7 +787,7 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_STOP_ALL_SOUNDS:
         printf("[stop all sounds]\n"); return 0;
     case CB_PRINT: {
-        CatValue v=slot_or(e,sp,b,"value",0);
+        CatValue v=slot_or(e,inst,b,"value",0);
         char *s=cat_value_to_cstring(&v);
         puts(s);
         cat_free(s); cat_value_free(&v); return 0;
@@ -682,7 +800,7 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     /* ---------- Низкоуровневые C-блоки ---------- */
     case CB_MALLOC: {
         static const char *sz[] = { "csize", "size" };
-        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        size_t n = (size_t)c_slot_num(e, inst, b, sz, 2, 0);
         double addr = c_heap_alloc(&e->heap, n, false);
         if (b->arg0) cat_sprite_set_var(sp, b->arg0, cat_value_number(addr));
         return 0;
@@ -690,8 +808,8 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_CALLOC: {
         static const char *cnt[] = { "ccount", "count" };
         static const char *sz[]  = { "csize", "size" };
-        size_t c = (size_t)c_slot_num(e, sp, b, cnt, 2, 0);
-        size_t s = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        size_t c = (size_t)c_slot_num(e, inst, b, cnt, 2, 0);
+        size_t s = (size_t)c_slot_num(e, inst, b, sz, 2, 0);
         double addr = (c != 0 && s != 0 && c <= C_HEAP_MAX_BYTES && s <= C_HEAP_MAX_BYTES)
                           ? c_heap_alloc(&e->heap, c * s, true) : 0;
         if (b->arg0) cat_sprite_set_var(sp, b->arg0, cat_value_number(addr));
@@ -700,8 +818,8 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_REALLOC: {
         static const char *ptr[] = { "cpointer", "pointer" };
         static const char *sz[]  = { "csize", "size" };
-        double old = c_slot_num(e, sp, b, ptr, 2, 0);
-        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        double old = c_slot_num(e, inst, b, ptr, 2, 0);
+        size_t n = (size_t)c_slot_num(e, inst, b, sz, 2, 0);
         double addr = 0;
         if (n > 0) {
             CAlloc *a = c_heap_find(&e->heap, old);
@@ -720,7 +838,7 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     }
     case CB_FREE: {
         static const char *ptr[] = { "cpointer", "pointer" };
-        double addr = c_slot_num(e, sp, b, ptr, 2, 0);
+        double addr = c_slot_num(e, inst, b, ptr, 2, 0);
         c_heap_free(&e->heap, addr);
         return 0;
     }
@@ -728,9 +846,9 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         static const char *dst[] = { "cdestination", "destination", "dest" };
         static const char *src[] = { "csource", "source", "src" };
         static const char *sz[]  = { "csize", "size" };
-        double d = c_slot_num(e, sp, b, dst, 3, 0);
-        double s = c_slot_num(e, sp, b, src, 3, 0);
-        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        double d = c_slot_num(e, inst, b, dst, 3, 0);
+        double s = c_slot_num(e, inst, b, src, 3, 0);
+        size_t n = (size_t)c_slot_num(e, inst, b, sz, 2, 0);
         CAlloc *da = c_heap_find(&e->heap, d);
         CAlloc *sa = c_heap_find(&e->heap, s);
         if (!da || !sa || n == 0) return 0;
@@ -744,9 +862,9 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         static const char *ptr[] = { "cpointer", "pointer" };
         static const char *val[] = { "cvalue", "value" };
         static const char *sz[]  = { "csize", "size" };
-        double p = c_slot_num(e, sp, b, ptr, 2, 0);
-        int v = (int)c_slot_num(e, sp, b, val, 2, 0);
-        size_t n = (size_t)c_slot_num(e, sp, b, sz, 2, 0);
+        double p = c_slot_num(e, inst, b, ptr, 2, 0);
+        int v = (int)c_slot_num(e, inst, b, val, 2, 0);
+        size_t n = (size_t)c_slot_num(e, inst, b, sz, 2, 0);
         CAlloc *a = c_heap_find(&e->heap, p);
         if (!a || n == 0) return 0;
         size_t off = (size_t)(p - a->addr);
@@ -757,8 +875,8 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_TYPEDEF: {
         static const char *nm[] = { "cname", "name" };
         static const char *bs[] = { "cbasetype", "basetype", "base" };
-        char *alias = c_slot_str(e, sp, b, nm, 2);
-        char *base = c_slot_str(e, sp, b, bs, 3);
+        char *alias = c_slot_str(e, inst, b, nm, 2);
+        char *base = c_slot_str(e, inst, b, bs, 3);
         if (!alias && b->arg0) alias = cat_strdup(b->arg0);
         if (!base && b->arg1) base = cat_strdup(b->arg1);
         if (alias && base) c_typedef_add(e, alias, base);
@@ -770,10 +888,10 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         static const char *val[] = { "cvalue", "value" };
         static const char *ty[]  = { "ctype", "type" };
         CatFormula *vf = c_slot(b, val, 2);
-        char *type = c_slot_str(e, sp, b, ty, 2);
+        char *type = c_slot_str(e, inst, b, ty, 2);
         if (!type && b->arg1) type = cat_strdup(b->arg1);
         if (!type) type = cat_strdup("double");
-        CatValue in = vf ? eval_formula_internal(e, sp, vf) : cat_value_number(0);
+        CatValue in = vf ? eval_formula_internal(e, inst, vf) : cat_value_number(0);
         CatValue out = c_cast_value(c_resolve_type(e, type), &in);
         cat_value_free(&in);
         cat_free(type);
@@ -786,16 +904,16 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         static const char *off[] = { "coffset", "offset" };
         static const char *val[] = { "cvalue", "value" };
         static const char *ty[]  = { "ctype", "type" };
-        double p = c_slot_num(e, sp, b, ptr, 2, 0) + c_slot_num(e, sp, b, off, 2, 0);
+        double p = c_slot_num(e, inst, b, ptr, 2, 0) + c_slot_num(e, inst, b, off, 2, 0);
         CatFormula *vf = c_slot(b, val, 2);
-        char *type = c_slot_str(e, sp, b, ty, 2);
+        char *type = c_slot_str(e, inst, b, ty, 2);
         if (!type) type = cat_strdup("double");
         CAlloc *a = c_heap_find(&e->heap, p);
         if (a) {
             size_t n = c_type_size(c_resolve_type(e, type));
             size_t offaddr = (size_t)(p - a->addr);
             if (offaddr + n > a->size) n = a->size - offaddr;
-            CatValue v = vf ? eval_formula_internal(e, sp, vf) : cat_value_number(0);
+            CatValue v = vf ? eval_formula_internal(e, inst, vf) : cat_value_number(0);
             if (n > 0) c_encode(a->data + offaddr, n, c_resolve_type(e, type), &v);
             cat_value_free(&v);
         }
@@ -806,8 +924,8 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         static const char *ptr[] = { "cpointer", "pointer" };
         static const char *off[] = { "coffset", "offset" };
         static const char *ty[]  = { "ctype", "type" };
-        double p = c_slot_num(e, sp, b, ptr, 2, 0) + c_slot_num(e, sp, b, off, 2, 0);
-        char *type = c_slot_str(e, sp, b, ty, 2);
+        double p = c_slot_num(e, inst, b, ptr, 2, 0) + c_slot_num(e, inst, b, off, 2, 0);
+        char *type = c_slot_str(e, inst, b, ty, 2);
         if (!type) type = cat_strdup("double");
         const char *resolved = c_resolve_type(e, type);
         CAlloc *a = c_heap_find(&e->heap, p);
@@ -840,15 +958,20 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
             fi->frame_count--;
         }
         return 0;
-    /* Клоны и выполнение произвольного кода: в интерпретаторе (fallback)
-       безопасные заглушки. CB_C_CODE/CB_JAVA_CODE требуют компиляции
-       (см. cat_compiler.c), CB_CLONE не моделируется в статике. */
+    /* Выполнение произвольного кода требует компиляции (см. cat_compiler.c):
+       в интерпретаторе (fallback) это безопасные заглушки. */
     case CB_C_CODE:
     case CB_JAVA_CODE:
-    case CB_CLONE:
-    case CB_WHEN_CLONED:
         return 0;
+    /* Клоны: zero-copy — копируется только поза экземпляра (O(1)),
+       скрипты/переменные общие. Скрипты WhenCloned клона стартуют сразу. */
+    case CB_CLONE:
+        inst_clone(e, inst);
+        return 0;
+    case CB_WHEN_CLONED:
+        return 0; /* в потоке не встречается: живёт только головой скрипта */
     case CB_DELETE_THIS_CLONE:
+        if (inst->is_clone) inst->dead = true; /* соберётся на компакции тика */
         fi->done = true;
         return 1;
     default: return 0;
@@ -885,7 +1008,7 @@ bool cat_engine_tick(CatEngine *e, double dt) {
                     fi->frame_count--; continue;
                 }
                 if (fr->loop_kind == 3) {
-                    CatValue v = fr->cond ? eval_formula_internal(e, fi->sprite, fr->cond) : cat_value_bool(true);
+                    CatValue v = fr->cond ? eval_formula_internal(e, fi->inst, fr->cond) : cat_value_bool(true);
                     bool done = cat_value_to_bool(&v); cat_value_free(&v);
                     if (done) { fi->frame_count--; continue; }
                     fr->ip = 0; continue;
@@ -899,13 +1022,27 @@ bool cat_engine_tick(CatEngine *e, double dt) {
         }
         if (!fi->done) any_alive = true;
     }
-    /* Компакция мёртвых. */
+    /* Компакция мёртвых фиберов (включая фиберы удалённых клонов). */
     size_t w = 0;
     for (size_t i = 0; i < e->fiber_count; ++i) {
-        if (e->fibers[i]->done) fiber_free(e->fibers[i]);
-        else e->fibers[w++] = e->fibers[i];
+        Fiber *f = e->fibers[i];
+        if (f->done || f->inst->dead) fiber_free(f);
+        else e->fibers[w++] = f;
     }
     e->fiber_count = w;
+    /* Компакция удалённых клонов: структуры — в пул, а не в free,
+       поэтому массовое «создать/удалить клона» не гуляет по куче. */
+    w = 0;
+    for (size_t i = 0; i < e->inst_count; ++i) {
+        SpriteInst *inst = e->insts[i];
+        if (inst->is_clone && inst->dead) {
+            inst_recycle(e, inst);
+            e->clone_count--;
+        } else {
+            e->insts[w++] = inst;
+        }
+    }
+    e->inst_count = w;
     return any_alive && e->fiber_count > 0;
 }
 
@@ -917,18 +1054,19 @@ void cat_engine_run(CatEngine *e, double dt, int max_ticks) {
 
 /* ---------- eval ---------- */
 
-static CatValue eval_formula_internal(CatEngine *e, CatSprite *sp, const CatFormula *f) {
+static CatValue eval_formula_internal(CatEngine *e, SpriteInst *inst, const CatFormula *f) {
     if (!f) return cat_value_number(0);
+    CatSprite *proto = inst ? inst->proto : NULL;
     switch (f->kind) {
     case CF_NUMBER: case CF_STRING: case CF_BOOL: return cat_value_copy(&f->literal);
     case CF_VARIABLE: {
         char *n = cat_value_to_cstring(&f->literal);
-        CatValue v = cat_sprite_get_var(sp, n);
+        CatValue v = proto ? cat_sprite_get_var(proto, n) : cat_value_number(0);
         cat_free(n); return v;
     }
     case CF_LIST: {
         char *n = cat_value_to_cstring(&f->literal);
-        CatList *l = sp ? cat_sprite_get_list(sp, n) : NULL;
+        CatList *l = proto ? cat_sprite_get_list(proto, n) : NULL;
         cat_free(n);
         if (!l || l->count == 0) return cat_value_string("");
         /* Возвращаем последний элемент как заглушку. */
@@ -936,24 +1074,32 @@ static CatValue eval_formula_internal(CatEngine *e, CatSprite *sp, const CatForm
     }
     case CF_SENSOR: {
         char *n = cat_value_to_cstring(&f->literal);
-        CatValue v = eval_sensor(sp, n);
+        CatValue v = eval_sensor(inst, n);
         cat_free(n); return v;
     }
     case CF_UNARY_OP: {
-        CatValue a = eval_formula_internal(e, sp, f->argc?f->args[0]:NULL);
+        CatValue a = eval_formula_internal(e, inst, f->argc?f->args[0]:NULL);
         return eval_unary(f->op ? f->op : "", a);
     }
     case CF_BINARY_OP: {
-        CatValue a = eval_formula_internal(e, sp, f->argc>0?f->args[0]:NULL);
-        CatValue b = eval_formula_internal(e, sp, f->argc>1?f->args[1]:NULL);
+        CatValue a = eval_formula_internal(e, inst, f->argc>0?f->args[0]:NULL);
+        CatValue b = eval_formula_internal(e, inst, f->argc>1?f->args[1]:NULL);
         return eval_binop(f->op ? f->op : "+", a, b);
     }
     case CF_FUNCTION:
-        return eval_function(e, sp, f->op ? f->op : "", f->args, f->argc);
+        return eval_function(e, inst, f->op ? f->op : "", f->args, f->argc);
     }
     return cat_value_number(0);
 }
 
+/* Обёртка для вызова вне скрипта (тесты): собираем временную позу спрайта. */
 CatValue cat_eval_formula(CatEngine *e, CatSprite *sp, const CatFormula *f) {
-    return eval_formula_internal(e, sp, f);
+    if (!sp) return eval_formula_internal(e, NULL, f);
+    SpriteInst tmp = {0};
+    tmp.proto = sp;
+    tmp.x = sp->x; tmp.y = sp->y;
+    tmp.direction = sp->direction; tmp.size = sp->size;
+    tmp.transparency = sp->transparency; tmp.brightness = sp->brightness;
+    tmp.visible = sp->visible;
+    return eval_formula_internal(e, &tmp, f);
 }
