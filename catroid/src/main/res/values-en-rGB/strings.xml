@@ -1096,9 +1096,6 @@
     <string formatted="false" name="brick_replace_item_in_userlist_replace_in_list">Replace item in list</string>
     <string formatted="false" name="brick_replace_item_in_userlist_item_at_index">at position</string>
     <string formatted="false" name="brick_replace_item_in_userlist_with_value">with</string>
-    <string formatted="false" name="brick_web_request">Send web request to</string>
-    <string formatted="false" name="brick_web_request_default_value">https://catrob.at/joke</string>
-    <string formatted="false" name="brick_web_request_result">and store answer in</string>
     <string formatted="false" name="web_request_warning_title">Allow web access?</string>
     <string formatted="false" name="web_request_warning_message">Be very careful before allowing access, since the
         link may expose your personal information, such as your precise geographical location or any text
@@ -1114,11 +1111,6 @@
         later, you can remove the entry from the list of trusted domains in
         the settings of this app.
     </string>
-    <string formatted="false" name="brick_look_request">Get image from</string>
-    <string formatted="false" name="brick_look_request_result">and use as current look</string>
-    <string formatted="false" name="brick_background_request_result">and use as current background</string>
-    <string formatted="false" name="look_request_http_error_message">"Get image from %1$s returned HTTP error %2$s"</string>
-    <string formatted="false" name="look_request_type_error_message">"Get image from %1$s could not retrieve a recognized image format"</string>
     <string formatted="false" name="brick_store_csv_into_userlist_store">Store column</string>
     <string formatted="false" name="brick_store_csv_into_userlist_of">of the</string>
     <string formatted="false" name="brick_store_csv_into_userlist_csv">comma-separated values</string>

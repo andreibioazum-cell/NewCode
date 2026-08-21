@@ -1250,6 +1250,25 @@
     <string formatted="false" name="brick_c_type_default">double</string>
     <string formatted="false" name="brick_c_typedef_name_default">my_int</string>
     <string formatted="false" name="brick_c_base_type_default">int</string>
+    <string formatted="false" name="brick_c_set">set</string>
+    <string formatted="false" name="brick_c_store_in">and store in</string>
+    <string formatted="false" name="brick_c_ternary_then">then</string>
+    <string formatted="false" name="brick_c_ternary_else">else</string>
+    <string formatted="false" name="brick_c_increment">Increment</string>
+    <string formatted="false" name="brick_c_decrement">Decrement</string>
+    <string formatted="false" name="brick_c_sizeof">Size of type</string>
+    <string formatted="false" name="brick_c_struct">Struct</string>
+    <string formatted="false" name="brick_c_with_fields">with fields</string>
+    <string formatted="false" name="brick_c_enum">Enum</string>
+    <string formatted="false" name="brick_c_with_values">with values</string>
+    <string formatted="false" name="brick_c_assert">Assert</string>
+    <string formatted="false" name="brick_c_goto">Goto</string>
+    <string formatted="false" name="brick_c_label">Label</string>
+    <string formatted="false" name="brick_c_while">While</string>
+    <string formatted="false" name="brick_c_do_while">Do while</string>
+    <string formatted="false" name="brick_c_switch">Switch</string>
+    <string formatted="false" name="brick_c_case">Case</string>
+    <string formatted="false" name="brick_c_label_default">start</string>
     <string formatted="false" name="brick_execute_c_code">Execute C code</string>
     <string formatted="false" name="brick_execute_java_code">Execute Java code</string>
     <string formatted="false" name="brick_code_label">code</string>
@@ -1265,9 +1284,6 @@
     <string formatted="false" name="brick_replace_item_in_userlist_item_at_index">at position</string>
     <string formatted="false" name="brick_replace_item_in_userlist_with_value">with</string>
 
-    <string formatted="false" name="brick_web_request">Send web request to</string>
-    <string formatted="false" name="brick_web_request_default_value">https://catrob.at/joke</string>
-    <string formatted="false" name="brick_web_request_result">and store answer in</string>
     <string formatted="false" name="web_request_warning_title">Allow web access?</string>
     <string formatted="false" name="web_request_warning_message">Be very careful before allowing access, since the
         link may expose your personal information, such as your precise geographical location or any text
@@ -1283,11 +1299,6 @@
         later, you can remove the entry from the list of trusted domains in
         the settings of this app.
     </string>
-    <string formatted="false" name="brick_look_request">Get image from</string>
-    <string formatted="false" name="brick_look_request_result">and use as current look</string>
-    <string formatted="false" name="brick_background_request_result">and use as current background</string>
-    <string formatted="false" name="look_request_http_error_message">"Get image from %1$s returned HTTP error %2$s"</string>
-    <string formatted="false" name="look_request_type_error_message">"Get image from %1$s could not retrieve a recognized image format"</string>
 
     <string formatted="false" name="brick_store_csv_into_userlist_store">Store column</string>
     <string formatted="false" name="brick_store_csv_into_userlist_of">of the</string>

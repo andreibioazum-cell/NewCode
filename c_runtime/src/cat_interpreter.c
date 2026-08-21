@@ -78,6 +78,11 @@ static CatValue eval_binop(const char *op, CatValue a, CatValue b) {
         else if (strcmp(op, "/") == 0 || ieq(op, "DIVIDE")) z = y == 0 ? 0 : x / y;
         else if (strcmp(op, "%") == 0 || ieq(op, "MOD") || ieq(op, "MODULO")) z = y == 0 ? 0 : fmod(x, y);
         else if (strcmp(op, "^") == 0 || ieq(op, "POW")) z = pow(x, y);
+        else if (strcmp(op, "&") == 0 || ieq(op, "BIT_AND")) z = (double)((long long)x & (long long)y);
+        else if (strcmp(op, "|") == 0 || ieq(op, "BIT_OR")) z = (double)((long long)x | (long long)y);
+        else if (strcmp(op, "^") == 0 || ieq(op, "BIT_XOR")) z = (double)((long long)x ^ (long long)y);
+        else if (strcmp(op, "<<") == 0 || ieq(op, "SHIFT_LEFT")) z = (double)((long long)x << ((int)y & 63));
+        else if (strcmp(op, ">>") == 0 || ieq(op, "SHIFT_RIGHT")) z = (double)((long long)x >> ((int)y & 63));
         else if (strcmp(op, "<") == 0 || ieq(op, "SMALLER_THAN")) { r = cat_value_bool(x < y); goto done; }
         else if (strcmp(op, ">") == 0 || ieq(op, "GREATER_THAN")) { r = cat_value_bool(x > y); goto done; }
         else if (strcmp(op, "<=") == 0 || ieq(op, "SMALLER_OR_EQUAL")) { r = cat_value_bool(x <= y); goto done; }
@@ -93,6 +98,7 @@ static CatValue eval_unary(const char *op, CatValue a) {
     CatValue r;
     if (ieq(op, "NOT") || ieq(op, "LOGICAL_NOT")) r = cat_value_bool(!cat_value_to_bool(&a));
     else if (strcmp(op, "-") == 0 || ieq(op, "MINUS")) r = cat_value_number(-cat_value_to_number(&a));
+    else if (strcmp(op, "~") == 0 || ieq(op, "BIT_NOT")) r = cat_value_number((double)(~(long long)cat_value_to_number(&a)));
     else r = cat_value_copy(&a);
     cat_value_free(&a);
     return r;
@@ -737,6 +743,13 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
         CatValue nv = cat_value_number(cat_value_to_number(&cur) + cat_value_to_number(&by));
         cat_value_free(&cur); cat_value_free(&by);
         cat_sprite_set_var(sp, b->arg0 ? b->arg0 : "", nv);
+        return 0;
+    }
+    case CB_INC: case CB_DEC: {
+        CatValue cur = cat_sprite_get_var(sp, b->arg0 ? b->arg0 : "");
+        double d = cat_value_to_number(&cur) + (b->kind == CB_INC ? 1.0 : -1.0);
+        cat_value_free(&cur);
+        cat_sprite_set_var(sp, b->arg0 ? b->arg0 : "", cat_value_number(d));
         return 0;
     }
     case CB_ADD_TO_LIST: {

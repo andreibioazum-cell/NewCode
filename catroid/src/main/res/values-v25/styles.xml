@@ -104,6 +104,9 @@
     </style>
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/toolbar_icons</item>
+        <!-- Явный фон тулбара: заголовок «Проекты» не должен терять тёмную
+             подложку ни при каких состояниях темы. -->
+        <item name="background">@color/toolbar_background</item>
     </style>
 
     <!-- ActionMode -->

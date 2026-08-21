@@ -76,9 +76,6 @@ import java.util.Objects
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-private const val WEB_REQUEST_BRICK = "WebRequestBrick"
-private const val BACKGROUND_REQUEST_BRICK = "BackgroundRequestBrick"
-private const val LOOK_REQUEST_BRICK = "LookRequestBrick"
 private const val OPEN_URL_BRICK = "OpenUrlBrick"
 private const val WIKI_URL =
     "<a href='https://catrob.at/webbricks'>" + "https://catrob.at/webbricks</a>"
@@ -299,8 +296,7 @@ open class ProjectUploadActivity : BaseActivity(),
 
         xml.findAnyOf(
             listOf(
-                WEB_REQUEST_BRICK, BACKGROUND_REQUEST_BRICK,
-                LOOK_REQUEST_BRICK, OPEN_URL_BRICK
+                OPEN_URL_BRICK
             )
         )?.let {
             checkApiPattern()

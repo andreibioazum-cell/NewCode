@@ -80,7 +80,6 @@ import org.catrobat.catroid.content.actions.GoToTouchPositionAction;
 import org.catrobat.catroid.content.actions.HideTextAction;
 import org.catrobat.catroid.content.actions.IfLogicAction;
 import org.catrobat.catroid.content.actions.InsertItemIntoUserListAction;
-import org.catrobat.catroid.content.actions.LookRequestAction;
 import org.catrobat.catroid.content.actions.MoveNStepsAction;
 import org.catrobat.catroid.content.actions.OpenUrlAction;
 import org.catrobat.catroid.content.actions.PaintNewLookAction;
@@ -113,6 +112,19 @@ import org.catrobat.catroid.content.actions.SaveLaserAction;
 import org.catrobat.catroid.content.actions.SavePlotAction;
 import org.catrobat.catroid.content.actions.SceneStartAction;
 import org.catrobat.catroid.content.actions.FreeMemoryAction;
+import org.catrobat.catroid.content.actions.TernaryAction;
+import org.catrobat.catroid.content.actions.IncrementAction;
+import org.catrobat.catroid.content.actions.DecrementAction;
+import org.catrobat.catroid.content.actions.SizeofAction;
+import org.catrobat.catroid.content.actions.StructAction;
+import org.catrobat.catroid.content.actions.EnumAction;
+import org.catrobat.catroid.content.actions.AssertAction;
+import org.catrobat.catroid.content.actions.GotoAction;
+import org.catrobat.catroid.content.actions.LabelAction;
+import org.catrobat.catroid.content.actions.CaseAction;
+import org.catrobat.catroid.content.actions.SwitchAction;
+import org.catrobat.catroid.content.actions.WhileAction;
+import org.catrobat.catroid.content.actions.DoWhileAction;
 import org.catrobat.catroid.content.actions.SceneTransitionAction;
 import org.catrobat.catroid.content.actions.ScriptSequenceAction;
 import org.catrobat.catroid.content.actions.SetBrightnessAction;
@@ -169,7 +181,6 @@ import org.catrobat.catroid.content.actions.WaitForBubbleBrickAction;
 import org.catrobat.catroid.content.actions.WaitForSoundAction;
 import org.catrobat.catroid.content.actions.WaitTillIdleAction;
 import org.catrobat.catroid.content.actions.WaitUntilAction;
-import org.catrobat.catroid.content.actions.WebRequestAction;
 import org.catrobat.catroid.content.actions.WriteUserDataOnDeviceAction;
 import org.catrobat.catroid.content.actions.WriteVariableToFileAction;
 import org.catrobat.catroid.content.actions.conditional.GlideToAction;
@@ -1332,6 +1343,105 @@ public class ActionFactory extends Actions {
 		return action;
 	}
 
+	public Action createTernaryAction(Sprite sprite, SequenceAction sequence, Formula condition,
+			Formula ifTrue, Formula ifFalse, UserVariable userVariable) {
+		TernaryAction action = Actions.action(TernaryAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCondition(condition);
+		action.setIfTrue(ifTrue);
+		action.setIfFalse(ifFalse);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createIncrementAction(Sprite sprite, SequenceAction sequence, UserVariable userVariable) {
+		IncrementAction action = Actions.action(IncrementAction.class);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createDecrementAction(Sprite sprite, SequenceAction sequence, UserVariable userVariable) {
+		DecrementAction action = Actions.action(DecrementAction.class);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createSizeofAction(Sprite sprite, SequenceAction sequence, Formula type,
+			UserVariable userVariable) {
+		SizeofAction action = Actions.action(SizeofAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setType(type);
+		action.setUserVariable(userVariable);
+		return action;
+	}
+
+	public Action createStructAction(Sprite sprite, SequenceAction sequence, Formula name, Formula fields) {
+		StructAction action = Actions.action(StructAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setName(name);
+		action.setFields(fields);
+		return action;
+	}
+
+	public Action createEnumAction(Sprite sprite, SequenceAction sequence, Formula name, Formula enumerators) {
+		EnumAction action = Actions.action(EnumAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCMemory(cMemoryOf(scope.getProject()));
+		action.setName(name);
+		action.setEnumerators(enumerators);
+		return action;
+	}
+
+	public Action createAssertAction(Sprite sprite, SequenceAction sequence, Formula condition) {
+		AssertAction action = Actions.action(AssertAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCondition(condition);
+		return action;
+	}
+
+	public Action createGotoAction(Sprite sprite, SequenceAction sequence, Formula label) {
+		return Actions.action(GotoAction.class);
+	}
+
+	public Action createLabelAction(Sprite sprite, SequenceAction sequence, Formula label) {
+		return Actions.action(LabelAction.class);
+	}
+
+	public Action createCaseAction(Sprite sprite, SequenceAction sequence, Formula value) {
+		return Actions.action(CaseAction.class);
+	}
+
+	public Action createSwitchAction(Sprite sprite, SequenceAction sequence, Formula value, Action switchSequence) {
+		SwitchAction action = Actions.action(SwitchAction.class);
+		action.setAction(switchSequence);
+		return action;
+	}
+
+	public Action createWhileAction(Sprite sprite, SequenceAction sequence, Formula condition, Action loopSequence) {
+		WhileAction action = Actions.action(WhileAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCondition(condition);
+		action.setAction(loopSequence);
+		return action;
+	}
+
+	public Action createDoWhileAction(Sprite sprite, SequenceAction sequence, Formula condition, Action loopSequence) {
+		DoWhileAction action = Actions.action(DoWhileAction.class);
+		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
+		action.setScope(scope);
+		action.setCondition(condition);
+		action.setAction(loopSequence);
+		return action;
+	}
+
 	public Action createStopScriptAction(int spinnerSelection, Script currentScript, Sprite sprite) {
 		switch (spinnerSelection) {
 			case BrickValues.STOP_THIS_SCRIPT:
@@ -1517,25 +1627,6 @@ public class ActionFactory extends Actions {
 		ReadListFromDeviceAction action = Actions.action(ReadListFromDeviceAction.class);
 		action.setUserList(userList);
 
-		return action;
-	}
-
-	public Action createWebRequestAction(Sprite sprite, SequenceAction sequence, Formula variableFormula,
-			UserVariable userVariable) {
-		WebRequestAction action = action(WebRequestAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setFormula(variableFormula);
-		action.setUserVariable(userVariable);
-		return action;
-	}
-
-	public Action createLookRequestAction(Sprite sprite, SequenceAction sequence,
-			Formula variableFormula) {
-		LookRequestAction action = action(LookRequestAction.class);
-		Scope scope = new Scope(ProjectManager.getInstance().getCurrentProject(), sprite, sequence);
-		action.setScope(scope);
-		action.setFormula(variableFormula);
 		return action;
 	}
 

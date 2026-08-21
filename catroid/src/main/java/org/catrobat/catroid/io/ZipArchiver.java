@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -40,7 +41,11 @@ import java.util.zip.ZipOutputStream;
 public class ZipArchiver {
 
 	private static final String DIRECTORY_LEVEL_UP = "../";
-	private static final int COMPRESSION_LEVEL = 0;
+	/* Ультра-сжатие: раньше проекты сохранялись БЕЗ сжатия (level 0), и
+	 * .catrobat-файлы раздувались (code.xml — очень повторяющийся XML).
+	 * BEST_COMPRESSION максимально ужимает архив, оставаясь обычным ZIP,
+	 * который читается и самим приложением, и оригинальным Catroid. */
+	private static final int COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
 
 	public void zip(File archive, File[] files) throws IOException {
 		archive.createNewFile();
@@ -48,6 +53,7 @@ public class ZipArchiver {
 		ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream);
 		try {
 			zipOutputStream.setLevel(COMPRESSION_LEVEL);
+			zipOutputStream.setMethod(ZipOutputStream.DEFLATED);
 			writeZipEntriesToStream(zipOutputStream, Arrays.asList(files), "");
 		} finally {
 			zipOutputStream.close();
