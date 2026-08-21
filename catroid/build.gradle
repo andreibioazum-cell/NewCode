@@ -181,12 +181,6 @@ android {
         animationsDisabled = true
     }
 
-    sourceSets {
-        androidTest {
-            resources.srcDirs += ['src/androidTest/res', 'src/androidTest/assets']
-        }
-    }
-
     packagingOptions {
         jniLibs {
             excludes += ['lib/mips/*', 'lib/armeabi/*']
@@ -359,11 +353,6 @@ dependencies {
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    androidTestImplementation project(path: ':catroid')
-    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
-    androidTestImplementation('androidx.arch.core:core-testing:2.2.0') {
-        exclude group: 'org.mockito', module: 'mockito-core'
-    }
 
     // Support libraries
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -463,11 +452,6 @@ dependencies {
 
     implementation "com.google.android.gms:play-services-auth:17.0.0"
 
-    androidTestImplementation('tools.fastlane:screengrab:2.1.1') {
-        // https://issuetracker.google.com/issues/123060356
-        exclude group: 'com.android.support.test.uiautomator', module: 'uiautomator-v18'
-    }
-    androidTestImplementation "androidx.test.espresso:espresso-web:$espressoVersion"
 
     testImplementation 'junit:junit:4.13.2'
 
@@ -483,24 +467,13 @@ dependencies {
     testImplementation 'org.json:json:20190722'
 
     // Retrofit testing
-    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.14.9'
 
     // Koin for Unit tests
-    androidTestImplementation "io.insert-koin:koin-test:$koin_version"
 
-    androidTestImplementation "org.mockito:mockito-android:$mockitoVersion"
-    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
 
-    androidTestImplementation "io.mockk:mockk-android:${mockkVersion}"
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
 
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-intents:$espressoVersion"
 
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
 }
 

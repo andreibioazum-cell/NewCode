@@ -108,6 +108,7 @@ static int map_brick(const char *type) {
         {"JavaCodeBrick", CB_JAVA_CODE},
         /* Клоны спрайтов. */
         {"WhenClonedBrick", CB_WHEN_CLONED},
+        {"WhenClonedScript", CB_WHEN_CLONED},
         {"CloneBrick", CB_CLONE},
         {"DeleteThisCloneBrick", CB_DELETE_THIS_CLONE},
     };

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Клоны спрайтов: Clone / WhenCloned / DeleteThisClone.
+     Клон делит со спрайтом скрипты и переменные (zero-copy),
+     копируется только поза. Работает и в компиляторе, и в интерпретаторе. -->
+<program>
+  <header><programName>Clones</programName></header>
+  <scenes>
+    <scene>
+      <name>Scene</name>
+      <objectList>
+        <object>
+          <name>Spawner</name>
+          <scriptList>
+            <script type="StartScript">
+              <brickList>
+                <brick type="SetVariableBrick"><userVariable>i</userVariable>
+                  <formulaList>
+                    <formula category="value"><type>NUMBER</type><value>0</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="PlaceAtBrick">
+                  <formulaList>
+                    <formula category="x"><type>NUMBER</type><value>10</value></formula>
+                    <formula category="y"><type>NUMBER</type><value>20</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="RepeatBrick">
+                  <formulaList>
+                    <formula category="times"><type>NUMBER</type><value>3</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="CloneBrick"/>
+                <brick type="LoopEndBrick"/>
+                <brick type="WaitBrick">
+                  <formulaList>
+                    <formula category="seconds"><type>NUMBER</type><value>0.1</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>STRING</type><value>spawner done</value></formula>
+                  </formulaList>
+                </brick>
+              </brickList>
+            </script>
+            <script type="WhenClonedScript">
+              <brickList>
+                <brick type="ChangeVariableBrick"><userVariable>i</userVariable>
+                  <formulaList>
+                    <formula category="value"><type>NUMBER</type><value>1</value></formula>
+                  </formulaList>
+                </brick>
+                <brick type="PrintBrick">
+                  <formulaList>
+                    <formula category="value"><type>FUNCTION</type><value>JOIN</value>
+                      <leftChild><type>STRING</type><value>clone alive, i=</value></leftChild>
+                      <rightChild><type>USER_VARIABLE</type><value>i</value></rightChild>
+                    </formula>
+                  </formulaList>
+                </brick>
+                <brick type="DeleteThisCloneBrick"/>
+              </brickList>
+            </script>
+          </scriptList>
+        </object>
+      </objectList>
+    </scene>
+  </scenes>
+</program>

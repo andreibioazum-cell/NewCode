@@ -69,7 +69,7 @@ code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_pro
 | Формулы        | +, −, ×, ÷, %, ^, сравнения, AND/OR/NOT, sin/cos/tan/sqrt/abs/round/floor/ceil/ln/log/exp/min/max/random/length/join/letter, USER_VARIABLE, USER_LIST, SENSOR |
 | C-блоки        | Malloc, Calloc, Realloc, Free, Memcpy, Memset, Typedef, Cast, PointerSet, PointerGet — настоящие операции с памятью |
 | Код (inline)   | ExecuteCCode (сырой C встраивается в вывод и исполняется нативно), ExecuteJavaCode (хранит исходник Java; исполняется скриптовым движком в Android-интерпретаторе) |
-| Клоны          | Clone, DeleteThisClone, WhenCloned — распознаются при загрузке; в статической C-компиляции Clone — no-op, DeleteThisClone → return |
+| Клоны          | Clone, DeleteThisClone, WhenCloned — настоящие zero-copy клоны (см. ниже) |
 | Отладка/CLI    | PrintBrick (наше расширение — печатает значение в stdout)             |
 
 **Расширения** (Lego NXT/EV3, Raspberry Pi, Arduino, Phiro, Parrot Drone,
@@ -95,6 +95,25 @@ JumpingSumo, NFC, Chromecast, Embroidery/Stitch, Gamepad) не
   честная небрежность C (например, запись по нулевому указателю
   завершит программу), поэтому экспериментируйте аккуратно.
 
+### Клоны спрайтов
+
+Модель «zero-copy» в обоих режимах: **скрипты, переменные и списки —
+общие** с прототипом, отдельной является только сценическая поза
+(x, y, курс, размер, прозрачность, яркость, видимость).
+
+* **Интерпретатор** (`interp`): клон/прототип — это легкий `SpriteInst`.
+  Создание клона копирует ~7 `double` (O(1), ноль strdup); удалённые
+  клоны возвращаются в пул структур и переиспользуются — churn
+  «создать/удалить» не гуляет по malloc/free. Потолок `NC_MAX_CLONES`
+  (1024) защищает от лавины клонов: сверх лимита клон тихо не
+  создаётся, проект не лагает. `Broadcast` получают и клоны.
+* **Компилятор** (`run`/`build`): для спрайта со скриптами WhenCloned
+  генерируется `clone_fire_<i>()`: фиксированный пул поз
+  `NC_CLONE_CAP` (по умолчанию 16, переопределяется `-DNC_CLONE_CAP=`)
+  + побитовая копия структуры позы. Клон синхронно выполняет скрипты
+  WhenCloned и освобождает слот пула (статический рантайм
+  последовательный). Пул заполнен => новый клон пропускается.
+
 ## Устройство
 
 ```
@@ -112,10 +131,12 @@ src/
 tests/
   test_all.c        — юнит-тесты загрузчика/формул/интерпретатора
   test_c_blocks.c   — C-блоки в режиме интерпретатора
+  test_clones.c     — zero-copy клоны интерпретатора (поза, пул, лимит)
   test_compiler.c   — сквозные тесты: XML -> C -> cc -> машинный код -> вывод
 examples/
   hello.xml         — циклы, формулы, broadcast
   c_memory.xml      — C-блоки: указатели, memcpy/realloc, break/return
+  clones.xml        — клоны: Clone/WhenCloned/DeleteThisClone
 ```
 
 ## Отличие от интерпретатора
