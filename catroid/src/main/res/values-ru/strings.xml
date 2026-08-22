@@ -366,6 +366,27 @@
     <string formatted="false" name="sort_projects">Сортировать</string>
     <string formatted="false" name="unsort_projects">Не сортировать</string>
     <string formatted="false" name="import_from_project">Выбрать проект для импорта</string>
+    <!-- AI Assistant -->
+    <string formatted="false" name="open_ai_assistant">Открыть ИИ помощника</string>
+    <string formatted="false" name="ai_assistant_title">ИИ помощник</string>
+    <string formatted="false" name="ai_chat_hint">Введите сообщение…</string>
+    <string formatted="false" name="ai_send">Отправить</string>
+    <string formatted="false" name="clear_chat">Очистить чат</string>
+    <string formatted="false" name="ai_thinking">Думает…</string>
+    <string formatted="false" name="ai_error">Ошибка: %1$s</string>
+    <string formatted="false" name="ai_error_generic">Что-то пошло не так. Проверьте подключение к интернету.</string>
+    <string formatted="false" name="ai_no_project">Сначала откройте проект — тогда я смогу его редактировать.</string>
+    <string formatted="false" name="ai_rounds_exhausted">Я не успел закончить. Спросите ещё раз.</string>
+    <string formatted="false" name="ai_changes_saved">✅ Изменения применены и сохранены (%1$d действий). Вернитесь в проект, чтобы увидеть результат.</string>
+    <string formatted="false" name="ai_project_state">=== ТЕКУЩЕЕ СОСТОЯНИЕ ПРОЕКТА ===</string>
+    <string formatted="false" name="ai_brick_catalog_header">=== ВСЕ ДОСТУПНЫЕ БЛОКИ ПРИЛОЖЕНИЯ (имена классов для add_any_brick) ===</string>
+    <!-- 3D shape bricks -->
+    <string formatted="false" name="brick_create_cube">Создать куб</string>
+    <string formatted="false" name="brick_create_sphere">Создать сферу</string>
+    <string formatted="false" name="brick_create_pyramid">Создать пирамиду</string>
+    <string formatted="false" name="brick_create_cylinder">Создать цилиндр</string>
+    <string formatted="false" name="ai_welcome">Привет! Я ИИ-помощник NewCode. Я умею создавать и редактировать твой проект: добавлять спрайты, менять фон, вставлять звуки, скрипты и блоки — включая переменные, списки и редкие блоки. Просто скажи, какую игру или анимацию ты хочешь!</string>
+    <string formatted="false" name="ai_system_prompt">Ты — встроенный ИИ-помощник приложения NewCode — визуального конструктора проектов для Android на основе Catrobat/Pocket Code. Ты можешь НАПРЯМУЮ редактировать проект пользователя с помощью инструментов (function calling): создавать и переименовывать спрайты, добавлять цветные образы, менять фон, копировать звуки между спрайтами, добавлять скрипты (start, tapped, receive, background_changes), добавлять блоки, создавать переменные и списки и задавать их значения. Для обычных блоков используй add_brick (move_n_steps, turn_left/right, go_to_xy, go_to_sprite, point_in_direction, glide_to, say, say_for, think, show, hide, set_look, set_size_to, change_size_by, play_sound, set_volume_to, wait, broadcast, broadcast_wait, forever с вложенными блоками через add_brick_to_loop). Для ЛЮБОГО другого блока — включая переменные (SetVariableBrick, ChangeVariableBrick, ShowTextBrick), списки, физику, клоны, озвучку, перо, C-блоки и редкие блоки — используй add_any_brick с точным именем класса brick_class из каталога ниже, параметры передавай в params. Для создания переменной используй add_variable, для установки значения — set_variable_value, для создания списка — add_list. 3D-фигуры: чтобы создать объёмный объект (куб, сферу, пирамиду, цилиндр) и сразу показать его у спрайта, используй create_3d_object (shape: cube/sphere/pyramid/cylinder, size — размер в пикселях, color — цвет #RRGGBB). 3D-блоки в скриптах — CreateCubeBrick, CreateSphereBrick, CreatePyramidBrick, CreateCylinderBrick через add_any_brick. Перед каждым шагом к этому промпту прикладывается текущее состояние проекта (JSON) — всегда проверяй его и используй существующие спрайты, образы, звуки, переменные и списки. После нескольких инструментов (или если не уверен, что изменилось) вызови get_project_state, чтобы перечитать актуальное состояние проекта. Спланируй запрос пользователя, затем вызывай инструменты по одному. Проявляй инициативу: если пользователь просит «игру», «анимацию» или «3D», предложи готовый сценарий — спрайты, скрипты, переменные для счёта, 3D-фигуры. После выполнения инструментов ответь пользователю кратко на его языке и объясни, что сделано и как продолжить. Если инструмент вернул ошибку — исправь параметры и попробуй снова.</string>
     <!-- New Dialog Titles -->
     <string formatted="false" name="new_scene_dialog">Новая сцена</string>
     <!-- Delete Dialog Titles -->

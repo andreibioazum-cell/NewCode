@@ -145,6 +145,7 @@ class ProjectActivity : BaseCastActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_project_activity, menu)
+        menuInflater.inflate(R.menu.menu_project_ai_assistant, menu)
         menu.findItem(R.id.from_local).isVisible = false
         menu.findItem(R.id.edit).isVisible = false
         return super.onCreateOptionsMenu(menu)
@@ -156,6 +157,8 @@ class ProjectActivity : BaseCastActivity() {
             R.id.project_options -> supportFragmentManager.beginTransaction().replace(
                 R.id.fragment_container, ProjectOptionsFragment(), ProjectOptionsFragment.TAG
             ).addToBackStack(ProjectOptionsFragment.TAG).commit()
+
+            R.id.open_ai_assistant -> startActivity(Intent(this, AiAssistantActivity::class.java))
 
             else -> return super.onOptionsItemSelected(item)
         }

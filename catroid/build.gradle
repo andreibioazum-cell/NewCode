@@ -104,6 +104,59 @@ ext.copyGoogleServicesFile = { flavorName, flavorId ->
 def defaultVersionCode = 102
 def defaultVersionName = "1.4.1"
 
+
+// ---------------------------------------------------------------------------
+// Generates a JSON catalog of ALL bricks in the repository into assets,
+// so the AI assistant can "see" every brick (including rare ones).
+// ---------------------------------------------------------------------------
+def generateBrickCatalogTask = tasks.register('generateBrickCatalog') {
+    def srcDir = file('src/main/java/org/catrobat/catroid/content/bricks')
+    def outDir = file('src/main/assets')
+    def outFile = file('src/main/assets/brick_catalog.json')
+    inputs.dir(srcDir)
+    outputs.file(outFile)
+    doLast {
+        outDir.mkdirs()
+        def bricks = []
+        srcDir.listFiles().findAll { f -> f.isFile() && (f.name.endsWith('.java') || f.name.endsWith('.kt')) }.each { f ->
+            def name = f.name - (f.name.endsWith('.kt') ? '.kt' : '.java')
+            if (!name.endsWith('Brick')) return
+            def text = f.text
+            def ctors = []
+            def m = text =~ /(?:public\s+)?(?:$name)\s*\(([^)]*)\)/
+            while (m.find()) {
+                def p = m.group(1).trim()
+                if (p != '()' && p.length() > 0) {
+                    ctors.add(p.replaceAll(/@\w+/, '').replaceAll(/\s+/, ' ').trim())
+                }
+            }
+            if (f.name.endsWith('.kt')) {
+                def m2 = text =~ /constructor\s*\(([^)]*)\)/
+                while (m2.find()) {
+                    def p = m2.group(1).trim()
+                    if (p != '()' && p.length() > 0) {
+                        ctors.add(p.replaceAll(/@\w+/, '').replaceAll(/\s+/, ' ').trim())
+                    }
+                }
+            }
+            def setters = []
+            def s = text =~ /public\s+void\s+set(\w+)\s*\(([^)]*)\)/
+            while (s.find()) {
+                def p = s.group(2).trim()
+                if (p.length() > 0) {
+                    setters.add(s.group(1) + ': ' + p.replaceAll(/\s+/, ' ').trim())
+                }
+            }
+            def entry = [name: name, constructors: ctors, setters: setters]
+            bricks.add(entry)
+        }
+        def json = new groovy.json.JsonBuilder([bricks: bricks]).toPrettyString()
+        outFile.text = json
+        println "Brick catalog generated: ${bricks.size()} bricks -> ${outFile}"
+    }
+}
+tasks.named('preBuild').configure { dependsOn generateBrickCatalogTask }
+
 android {
     compileSdk = 35
 

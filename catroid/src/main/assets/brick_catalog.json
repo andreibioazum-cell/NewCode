@@ -1,0 +1,1446 @@
+{
+  "bricks": [
+    {
+      "name": "AddItemToUserListBrick",
+      "constructors": [
+        "double value",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ArcBrick",
+      "constructors": [
+        "directionEnum: Directions, radius: Float, degrees: Float",
+        "directionEnum: Directions, formula1: Formula?, formula2: Formula?"
+      ],
+      "setters": []
+    },
+    {
+      "name": "AskBrick",
+      "constructors": [
+        "String questionText",
+        "Formula questionFormula, UserVariable answerVariable",
+        "Formula questionFormula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "AskSpeechBrick",
+      "constructors": [
+        "String questionText",
+        "Formula questionFormula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "AssertBrick",
+      "constructors": [
+        "double condition"
+      ],
+      "setters": []
+    },
+    {
+      "name": "AssertEqualsBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "AssertUserListsBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "BreakBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "Brick",
+      "constructors": [
+        "UUID parentBrickId, int subStackIndex, List<Brick> bricksToAdd"
+      ],
+      "setters": []
+    },
+    {
+      "name": "BroadcastBrick",
+      "constructors": [
+        "String broadcastMessage"
+      ],
+      "setters": [
+        "BroadcastMessage: String broadcastMessage"
+      ]
+    },
+    {
+      "name": "BroadcastMessageBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "BroadcastReceiverBrick",
+      "constructors": [
+        "BroadcastScript broadcastScript"
+      ],
+      "setters": [
+        "BroadcastMessage: String broadcastMessage",
+        "CommentedOut: boolean commentedOut"
+      ]
+    },
+    {
+      "name": "BroadcastWaitBrick",
+      "constructors": [
+        "String broadcastMessage"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CallocBrick",
+      "constructors": [
+        "double count, double size, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CameraBrick",
+      "constructors": [
+        "private var spinnerSelectionON: Boolean = true"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CaseBrick",
+      "constructors": [
+        "double value"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CastBrick",
+      "constructors": [
+        "double value, String type, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeBrightnessByNBrick",
+      "constructors": [
+        "double changeBrightnessValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeColorByNBrick",
+      "constructors": [
+        "double changeColorValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeSizeByNBrick",
+      "constructors": [
+        "double sizeValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeTempoByNBrick",
+      "constructors": [
+        "int changeTempoValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeTransparencyByNBrick",
+      "constructors": [
+        "double changeTransparencyValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeVariableBrick",
+      "constructors": [
+        "double value",
+        "Formula formula, UserVariable userVariable",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeVolumeByNBrick",
+      "constructors": [
+        "double changeVolumeValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeXByNBrick",
+      "constructors": [
+        "int xMovementValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChangeYByNBrick",
+      "constructors": [
+        "int yMovementValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ChooseCameraBrick",
+      "constructors": [
+        "private var spinnerSelectionFRONT: Boolean = true"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ClearBackgroundBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ClearGraphicEffectBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ClearUserListBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "CloneBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ComeToFrontBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "CompositeBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ContinueBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "CopyLookBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CreateCubeBrick",
+      "constructors": [
+        "size: Double, color: String"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CreateCylinderBrick",
+      "constructors": [
+        "size: Double, color: String"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CreatePyramidBrick",
+      "constructors": [
+        "size: Double, color: String"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CreateShapeBrick",
+      "constructors": [
+        "size: Double, color: String"
+      ],
+      "setters": []
+    },
+    {
+      "name": "CreateSphereBrick",
+      "constructors": [
+        "size: Double, color: String"
+      ],
+      "setters": []
+    },
+    {
+      "name": "DecrementBrick",
+      "constructors": [
+        "UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "DeleteItemOfUserListBrick",
+      "constructors": [
+        "Integer item",
+        "Formula formula, UserList userList",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "DeleteLookBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "DeleteThisCloneBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "DoWhileBrick",
+      "constructors": [
+        "double condition"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "EditLookBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "EmptyEventBrick",
+      "constructors": [
+        "EmptyScript script"
+      ],
+      "setters": []
+    },
+    {
+      "name": "EndBrick",
+      "constructors": [
+        "endBrickParent: BrickBaseType, private val viewResource: Int = R.layout.brick_loop_end"
+      ],
+      "setters": []
+    },
+    {
+      "name": "EnumBrick",
+      "constructors": [
+        "String name, String enumerators"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ExitStageBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "FadeParticleEffectBrick",
+      "constructors": [
+        "fadeType: Int = FADE_IN"
+      ],
+      "setters": []
+    },
+    {
+      "name": "FinishStageBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "FlashBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ForItemInUserListBrick",
+      "constructors": [],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "ForVariableFromToBrick",
+      "constructors": [
+        "int from, int to",
+        "Formula from, Formula to"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "ForeverBrick",
+      "constructors": [],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "FormulaBrick",
+      "constructors": [],
+      "setters": [
+        "FormulaWithBrickField: FormulaField formulaField, Formula formula"
+      ]
+    },
+    {
+      "name": "FreeBrick",
+      "constructors": [
+        "double pointer"
+      ],
+      "setters": []
+    },
+    {
+      "name": "GlideToBrick",
+      "constructors": [
+        "int xDestinationValue, int yDestinationValue, int durationInMilliSecondsValue",
+        "Formula xDestination, Formula yDestination, Formula durationInSeconds"
+      ],
+      "setters": []
+    },
+    {
+      "name": "GoNStepsBackBrick",
+      "constructors": [
+        "int steps",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "GoThroughBrick",
+      "constructors": [
+        "x1: Int, y1: Int, x2: Int, y2: Int",
+        "formula1: Formula, formula2: Formula, formula3: Formula, formula4: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "GoToBrick",
+      "constructors": [
+        "Sprite destinationSprite"
+      ],
+      "setters": []
+    },
+    {
+      "name": "GotoBrick",
+      "constructors": [
+        "String label"
+      ],
+      "setters": []
+    },
+    {
+      "name": "HideBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "HideTextBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "IfLogicBeginBrick",
+      "constructors": [
+        "Formula formula"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "IfLogicElseBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "IfLogicEndBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "IfOnEdgeBounceBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "IfThenLogicBeginBrick",
+      "constructors": [
+        "Formula formula"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "IfThenLogicEndBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "IncrementBrick",
+      "constructors": [
+        "UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "InsertItemIntoUserListBrick",
+      "constructors": [
+        "Formula userListFormulaValueToInsert, Formula userListFormulaIndexToInsert, UserList userList",
+        "double value, Integer indexToInsert",
+        "Formula userListFormulaValueToInsert, Formula userListFormulaIndexToInsert"
+      ],
+      "setters": []
+    },
+    {
+      "name": "LabelBrick",
+      "constructors": [
+        "String label"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ListSelectorBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "LoopEndBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "LoopEndlessBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "MallocBrick",
+      "constructors": [
+        "double size, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "MemcpyBrick",
+      "constructors": [
+        "double destination, double source, double size"
+      ],
+      "setters": []
+    },
+    {
+      "name": "MemsetBrick",
+      "constructors": [
+        "double pointer, double value, double size"
+      ],
+      "setters": []
+    },
+    {
+      "name": "MoveNStepsBrick",
+      "constructors": [
+        "double steps",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "NextLookBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "NoteBrick",
+      "constructors": [
+        "String note",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "OpenUrlBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PaintNewLookBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ParameterizedBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ParameterizedEndBrick",
+      "constructors": [
+        "parent: ParameterizedBrick"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ParticleEffectAdditivityBrick",
+      "constructors": [
+        "fadeType: Int = ON"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PauseForBeatsBrick",
+      "constructors": [
+        "float pausedBeats",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PenDownBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "PenUpBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "PlaceAtBrick",
+      "constructors": [
+        "int xPositionValue, int yPositionValue",
+        "Formula xPosition, Formula yPosition"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PlayDrumForBeatsBrick",
+      "constructors": [
+        "int value",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PlayNoteForBeatsBrick",
+      "constructors": [
+        "int note, int pausedBeats",
+        "Formula note, Formula beats"
+      ],
+      "setters": [
+        "Value: int value"
+      ]
+    },
+    {
+      "name": "PlaySoundAndWaitBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "PlaySoundAtBrick",
+      "constructors": [
+        "double value",
+        "Formula formula"
+      ],
+      "setters": [
+        "Sound: SoundInfo sound"
+      ]
+    },
+    {
+      "name": "PlaySoundBrick",
+      "constructors": [],
+      "setters": [
+        "Sound: SoundInfo sound"
+      ]
+    },
+    {
+      "name": "PointInDirectionBrick",
+      "constructors": [
+        "double direction",
+        "Formula direction"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PointToBrick",
+      "constructors": [
+        "Sprite pointedSprite"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PointerGetBrick",
+      "constructors": [
+        "double pointer, double offset, String type, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PointerSetBrick",
+      "constructors": [
+        "double pointer, double offset, double value, String type"
+      ],
+      "setters": []
+    },
+    {
+      "name": "PreviousLookBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ReadListFromDeviceBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ReadVariableFromDeviceBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ReadVariableFromFileBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ReallocBrick",
+      "constructors": [
+        "double pointer, double size, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "RepeatBrick",
+      "constructors": [
+        "Formula condition"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "RepeatUntilBrick",
+      "constructors": [
+        "Formula condition"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "ReplaceItemInUserListBrick",
+      "constructors": [
+        "double value, Integer indexToReplace",
+        "Formula valueFormula, Formula indexFormula, UserList userList",
+        "Formula valueFormula, Formula indexFormula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ReportBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ResetTimerBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ReturnBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "SaveLaserBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SavePlotBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SayBubbleBrick",
+      "constructors": [
+        "String text"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SayForBubbleBrick",
+      "constructors": [
+        "String text, float duration"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SceneStartBrick",
+      "constructors": [
+        "String sceneToStart"
+      ],
+      "setters": [
+        "SceneToStart: String sceneToStart"
+      ]
+    },
+    {
+      "name": "SceneTransitionBrick",
+      "constructors": [
+        "String scene"
+      ],
+      "setters": [
+        "SceneForTransition: String sceneForTransition"
+      ]
+    },
+    {
+      "name": "ScriptBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "SetBackgroundAndWaitBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "SetBackgroundBrick",
+      "constructors": [],
+      "setters": [
+        "Look: LookData look"
+      ]
+    },
+    {
+      "name": "SetBackgroundByIndexAndWaitBrick",
+      "constructors": [
+        "index: Int",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetBackgroundByIndexBrick",
+      "constructors": [
+        "index: Int",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetBounceBrick",
+      "constructors": [
+        "double bounceFactor",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetBrightnessBrick",
+      "constructors": [
+        "double brightness",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetCameraFocusPointBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "SetColorBrick",
+      "constructors": [
+        "double color",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetFrictionBrick",
+      "constructors": [
+        "double friction",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetGravityBrick",
+      "constructors": [
+        "Vector2 gravity",
+        "Formula gravityX, Formula gravityY"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetInstrumentBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "SetListeningLanguageBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "SetLookBrick",
+      "constructors": [],
+      "setters": [
+        "Look: LookData look"
+      ]
+    },
+    {
+      "name": "SetLookByIndexBrick",
+      "constructors": [
+        "int index",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetMassBrick",
+      "constructors": [
+        "double mass",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetParticleColorBrick",
+      "constructors": [
+        "color: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetPenColorBrick",
+      "constructors": [
+        "int red, int green, int blue",
+        "Formula red, Formula green, Formula blue"
+      ],
+      "setters": [
+        "Value: int value"
+      ]
+    },
+    {
+      "name": "SetPenSizeBrick",
+      "constructors": [
+        "double penSize",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetPhysicsObjectTypeBrick",
+      "constructors": [
+        "PhysicsObject.Type type"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetRotationStyleBrick",
+      "constructors": [],
+      "setters": [
+        "Name: String name"
+      ]
+    },
+    {
+      "name": "SetSizeToBrick",
+      "constructors": [
+        "double size",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetTempoBrick",
+      "constructors": [
+        "int tempo",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetTextBrick",
+      "constructors": [
+        "int xDestinationValue, int yDestinationValue, String text",
+        "Formula xDestination, Formula yDestination, Formula text"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetTransparencyBrick",
+      "constructors": [
+        "double transparency",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetVariableBrick",
+      "constructors": [
+        "double value",
+        "Formula variableFormula, UserVariable userVariable",
+        "Sensors defaultValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetVelocityBrick",
+      "constructors": [
+        "Vector2 velocity",
+        "Formula velocityX, Formula velocityY"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetVolumeToBrick",
+      "constructors": [
+        "double volume",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetXBrick",
+      "constructors": [
+        "int xPositionValue",
+        "Formula xPosition"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SetYBrick",
+      "constructors": [
+        "int yPositionValue",
+        "Formula yPosition"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ShareLaserBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SharePlotBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ShowBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "ShowTextBrick",
+      "constructors": [
+        "int xPosition, int yPosition",
+        "Formula xPosition, Formula yPosition"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ShowTextColorSizeAlignmentBrick",
+      "constructors": [
+        "int xPosition, int yPosition, double size, String color",
+        "Formula xPosition, Formula yPosition, Formula size, Formula color"
+      ],
+      "setters": [
+        "Name: String name",
+        "Value: int value"
+      ]
+    },
+    {
+      "name": "SizeofBrick",
+      "constructors": [
+        "String type, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SpeakAndWaitBrick",
+      "constructors": [
+        "String text",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SpeakBrick",
+      "constructors": [
+        "String text",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "StampBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StartCutBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StartEngraveBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StartListeningBrick",
+      "constructors": [
+        "userVariable: UserVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "StartPlotBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StopAllSoundsBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StopCutBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StopEngraveBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StopPlotBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StopScriptBrick",
+      "constructors": [
+        "int spinnerSelection"
+      ],
+      "setters": []
+    },
+    {
+      "name": "StopSoundBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "StoreCSVIntoUserListBrick",
+      "constructors": [
+        "Formula userListFormulaColumnToInsert, Formula userListFormulaCSVToInsert, UserList userList",
+        "Integer column, String csv",
+        "Formula userListFormulaColumnToInsert, Formula userListFormulaCSVToInsert"
+      ],
+      "setters": []
+    },
+    {
+      "name": "StructBrick",
+      "constructors": [
+        "String name, String fields"
+      ],
+      "setters": []
+    },
+    {
+      "name": "SwitchBrick",
+      "constructors": [
+        "double value"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "SwitchEndBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "TapAtBrick",
+      "constructors": [
+        "int xPositionValue, int yPositionValue",
+        "Formula xPosition, Formula yPosition"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TapForBrick",
+      "constructors": [
+        "xPositionValue: Int, yPositionValue: Int, durationInSecondsValue: Double",
+        "xPosition: Formula?, yPosition: Formula?, durationInSeconds: Formula?"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TernaryBrick",
+      "constructors": [
+        "double condition, double ifTrue, double ifFalse, UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ThinkBubbleBrick",
+      "constructors": [
+        "String text",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "ThinkForBubbleBrick",
+      "constructors": [
+        "String text, float durationInSecondsValue",
+        "Formula text, Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TouchAndSlideBrick",
+      "constructors": [
+        "xPositionValue: Int, yPositionValue: Int, xChangeValue: Int, yChangeValue: Int, durationInSecondsValue: Double",
+        "xPosition: Formula?, yPosition: Formula?, xChange: Formula?, yChange: Formula?, durationInSeconds: Formula?"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TurnLeftBrick",
+      "constructors": [
+        "double degreesValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TurnLeftSpeedBrick",
+      "constructors": [
+        "double degreesPerSecond",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TurnRightBrick",
+      "constructors": [
+        "double degreesValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TurnRightSpeedBrick",
+      "constructors": [
+        "double degreesPerSecond",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "TypedefBrick",
+      "constructors": [
+        "String name, String baseType"
+      ],
+      "setters": []
+    },
+    {
+      "name": "UserDataBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "UserDefinedBrick",
+      "constructors": [
+        "UserDefinedBrick userDefinedBrick",
+        "List<UserDefinedBrickData> userBrickDataList"
+      ],
+      "setters": [
+        "CallingBrick: boolean callingBrick"
+      ]
+    },
+    {
+      "name": "UserDefinedReceiverBrick",
+      "constructors": [
+        "UserDefinedScript userDefinedScript",
+        "UserDefinedBrick userDefinedBrick"
+      ],
+      "setters": []
+    },
+    {
+      "name": "UserListBrick",
+      "constructors": [],
+      "setters": [
+        "UserList: UserList userList"
+      ]
+    },
+    {
+      "name": "UserVariableBrick",
+      "constructors": [],
+      "setters": [
+        "UserVariable: UserVariable userVariable"
+      ]
+    },
+    {
+      "name": "VibrationBrick",
+      "constructors": [
+        "double vibrateDurationInSeconds",
+        "Formula vibrateDurationInSecondsFormula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "VisualPlacementBrick",
+      "constructors": [],
+      "setters": [
+        "Coordinates: int x, int y"
+      ]
+    },
+    {
+      "name": "WaitBrick",
+      "constructors": [
+        "int timeToWaitInMillisecondsValue",
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WaitTillIdleBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "WaitUntilBrick",
+      "constructors": [
+        "Formula formula"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WhenBackgroundChangesBrick",
+      "constructors": [
+        "WhenBackgroundChangesScript script"
+      ],
+      "setters": [
+        "Look: LookData look",
+        "CommentedOut: boolean commentedOut"
+      ]
+    },
+    {
+      "name": "WhenBounceOffBrick",
+      "constructors": [
+        "WhenBounceOffScript script"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WhenBrick",
+      "constructors": [
+        "WhenScript script"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WhenClonedBrick",
+      "constructors": [
+        "WhenClonedScript script"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WhenConditionBrick",
+      "constructors": [
+        "WhenConditionScript script"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut"
+      ]
+    },
+    {
+      "name": "WhenStartedBrick",
+      "constructors": [
+        "StartScript script"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WhenTouchDownBrick",
+      "constructors": [
+        "WhenTouchDownScript script"
+      ],
+      "setters": []
+    },
+    {
+      "name": "WhileBrick",
+      "constructors": [
+        "double condition"
+      ],
+      "setters": [
+        "CommentedOut: boolean commentedOut",
+        "Parent: Brick parent"
+      ]
+    },
+    {
+      "name": "WriteListOnDeviceBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "WriteVariableOnDeviceBrick",
+      "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "WriteVariableToFileBrick",
+      "constructors": [
+        "value: String",
+        "formula: Formula"
+      ],
+      "setters": []
+    }
+  ]
+}

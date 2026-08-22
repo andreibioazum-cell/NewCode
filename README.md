@@ -31,6 +31,22 @@ C-блоки (теперь включая почти весь базовый C: 
 (`Deflater.BEST_COMPRESSION` — раньше архив записывался вообще без сжатия),
 при этом остаются обычным ZIP, совместимым с оригинальным Catroid.
 
+В приложение встроен **ИИ-помощник** на базе [OpenRouter](https://openrouter.ai)
+(`AiAssistantActivity`): откройте проект → меню «⋮» → **«Открыть ИИ помощника»**.
+Помощник умеет не только отвечать на вопросы, но и **напрямую редактировать
+открытый проект** (function calling): создавать/переименовывать/удалять
+спрайты, добавлять цветные образы и менять фон, копировать звуки между
+спрайтами, добавлять скрипты (`start`, `tapped`, `receive`,
+`background_changes`) и блоки (`move_n_steps`, `turn_left/right`, `go_to_xy`,
+`go_to_sprite`, `glide_to`, `say/say_for/think`, `show/hide`, `set_look`,
+`set_size_to`, `change_size_by`, `play_sound`, `set_volume_to`, `wait`,
+`broadcast`, `forever` с вложенными блоками). Все изменения сохраняются в
+проект автоматически. Модель и ключ API задаются в
+[`OpenRouterClient.kt`](catroid/src/main/java/org/catrobat/catroid/ai/OpenRouterClient.kt)
+(по умолчанию `openrouter/auto` — автоматический выбор модели, нужна
+поддержка function calling). Набор действий — в
+[`AiProjectActions.kt`](catroid/src/main/java/org/catrobat/catroid/ai/AiProjectActions.kt).
+
 Дополнительно вычищено для лёгкости сборки: локали сокращены до
 **английской и русской** (~12 МБ переводов 70+ языков удалены),
 instrumented-тесты UI с их `.catrobat`-проектами (~29 МБ) и

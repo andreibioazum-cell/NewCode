@@ -50,6 +50,13 @@
     <color name="separator">#51656C</color>
     <color name="action_button">#ffab08</color>
 
+    <!-- AI Assistant Colors -->
+    <color name="chat_bubble_user">#1B6B84</color>
+    <color name="chat_bubble_assistant">#0E3B4C</color>
+    <color name="chat_bubble_action">#3A2E4D</color>
+    <color name="chat_input_background">#0B3A49</color>
+    <color name="chat_hint">#8FB3C0</color>
+
     <!-- Formula Editor Colors -->
     <color name="formula_editor_icon">#FFF</color>
     <color name="formula_editor_text">#FFF</color>
