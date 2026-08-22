@@ -20,21 +20,40 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.catrobat.catroid.content.bricks
+package org.catrobat.catroid.content.actions
 
-import org.catrobat.catroid.R
-import org.catrobat.catroid.common.ThreeDShape
+import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
+import org.catrobat.catroid.content.Sprite
 
 /**
- * Блок «Создать цилиндр»: генерирует спрайту 3D-образ цилиндра.
+ * Помещает спрайт (3D-объект) в заданные координаты сцены.
  */
-class CreateCylinderBrick : CreateShapeBrick {
+class Place3DObjectAction : TemporalAction() {
 
-    constructor() : super()
+    private var sprite: Sprite? = null
+    private var x: Double = 0.0
+    private var y: Double = 0.0
+    private var executed = false
 
-    constructor(name: String, size: Double, color: String) : super(name, size, color)
+    fun setSprite(sprite: Sprite?) {
+        this.sprite = sprite
+    }
 
-    override fun shape(): ThreeDShape = ThreeDShape.CYLINDER
+    fun setX(x: Double) {
+        this.x = x
+    }
 
-    override fun nameStringRes(): Int = R.string.brick_create_cylinder
+    fun setY(y: Double) {
+        this.y = y
+    }
+
+    override fun update(percent: Float) {
+        if (executed) {
+            return
+        }
+        executed = true
+        val sp = sprite ?: return
+        sp.look.setXInUserInterfaceDimensionUnit(x.toFloat())
+        sp.look.setYInUserInterfaceDimensionUnit(y.toFloat())
+    }
 }

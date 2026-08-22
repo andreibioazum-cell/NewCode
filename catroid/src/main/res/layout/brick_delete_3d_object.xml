@@ -36,15 +36,15 @@
         android:visibility="gone" />
 
     <org.catrobat.catroid.ui.BrickLayout
-        android:id="@+id/brick_create_3d_layout"
+        android:id="@+id/brick_delete_3d_layout"
         style="@style/BrickContainer.Look.Small">
 
         <include layout="@layout/icon_brick_category_3d" />
 
         <TextView
-            android:id="@+id/brick_create_3d_text_view"
+            android:id="@+id/brick_3d_text_view"
             style="@style/BrickText.SingleLine"
-            android:text="@string/brick_create_cube" />
+            android:text="@string/brick_delete_3d_object" />
     </org.catrobat.catroid.ui.BrickLayout>
 
 </LinearLayout>

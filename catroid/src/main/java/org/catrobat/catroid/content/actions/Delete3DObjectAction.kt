@@ -23,42 +23,23 @@
 package org.catrobat.catroid.content.actions
 
 import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction
-import org.catrobat.catroid.ProjectManager
-import org.catrobat.catroid.common.ThreeDLookGenerator
-import org.catrobat.catroid.common.ThreeDShape
 import org.catrobat.catroid.content.Sprite
 
 /**
- * Генерирует 3D-образ (куб, сфера, пирамида, цилиндр) для спрайта
- * при исполнении проекта. Размер и цвет задаются параметрами блока.
+ * Удаляет 3D-образ (фигуру) с заданным именем у спрайта.
  */
-class Create3DLookAction : TemporalAction() {
+class Delete3DObjectAction : TemporalAction() {
 
     private var sprite: Sprite? = null
-    private var shape: ThreeDShape = ThreeDShape.CUBE
-    private var name: String = ""
-    private var size: Double = 100.0
-    private var colorHex: String = "#4CAF50"
+    private var objectName: String = ""
     private var executed = false
 
     fun setSprite(sprite: Sprite?) {
         this.sprite = sprite
     }
 
-    fun setShape(shape: ThreeDShape) {
-        this.shape = shape
-    }
-
-    fun setName(name: String) {
-        this.name = name
-    }
-
-    fun setSize(size: Double) {
-        this.size = size
-    }
-
-    fun setColorHex(colorHex: String) {
-        this.colorHex = colorHex
+    fun setObjectName(objectName: String) {
+        this.objectName = objectName
     }
 
     override fun update(percent: Float) {
@@ -67,17 +48,19 @@ class Create3DLookAction : TemporalAction() {
         }
         executed = true
         val sp = sprite ?: return
-        val project = ProjectManager.getInstance().currentProject ?: return
-        val scene = project.sceneList.firstOrNull { it.spriteList.contains(sp) } ?: return
-        runCatching {
-            ThreeDLookGenerator.createLook(
-                scene,
-                sp,
-                shape,
-                name,
-                size.toInt().coerceAtLeast(32),
-                colorHex
-            )
+        val lookData = sp.lookList.firstOrNull { it.name == objectName } ?: return
+        val index = sp.lookList.indexOf(lookData)
+        if (sp.look.lookData === lookData) {
+            val nextIndex = if (sp.lookList.size > 1) {
+                (index + 1).coerceAtMost(sp.lookList.size - 1)
+            } else {
+                -1
+            }
+            if (nextIndex in sp.lookList.indices && sp.lookList[nextIndex] !== lookData) {
+                sp.look.setLookData(sp.lookList[nextIndex])
+            }
         }
+        sp.lookList.removeAt(index)
+        runCatching { lookData.invalidate() }
     }
 }

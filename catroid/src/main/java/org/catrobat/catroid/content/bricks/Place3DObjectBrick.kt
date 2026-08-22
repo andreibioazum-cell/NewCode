@@ -26,62 +26,40 @@ import android.content.Context
 import android.view.View
 import android.widget.TextView
 import org.catrobat.catroid.R
-import org.catrobat.catroid.common.ThreeDShape
 import org.catrobat.catroid.content.Sprite
-import org.catrobat.catroid.content.actions.Create3DLookAction
+import org.catrobat.catroid.content.actions.Place3DObjectAction
 import org.catrobat.catroid.content.actions.ScriptSequenceAction
 
 /**
- * Базовый блок «3D-фигура»: при исполнении проекта генерирует спрайту
- * объёмный образ (куб/сфера/пирамида/цилиндр) с заданным именем,
- * размером и цветом.
+ * Блок «Поместить 3D-объект в x, y»: перемещает спрайт с 3D-фигурой
+ * в заданные координаты сцены.
  */
-abstract class CreateShapeBrick : BrickBaseType {
+class Place3DObjectBrick : BrickBaseType {
 
-    var name: String = ""
-    var size: Double = 100.0
-    var color: String = "#4CAF50"
+    var x: Double = 0.0
+    var y: Double = 0.0
 
     constructor() : super()
 
-    constructor(name: String, size: Double, color: String) : super() {
-        this.name = name
-        this.size = size
-        this.color = color
+    constructor(x: Double, y: Double) : super() {
+        this.x = x
+        this.y = y
     }
 
-    abstract fun shape(): ThreeDShape
-
-    protected abstract fun nameStringRes(): Int
-
-    override fun getViewResource(): Int = R.layout.brick_create_3d_shape
+    override fun getViewResource(): Int = R.layout.brick_place_3d_object
 
     override fun getView(context: Context): View {
         super.getView(context)
-        view.findViewById<TextView>(R.id.brick_create_3d_text_view).text =
-            context.getString(nameStringRes()) + " (" + paramsSummary() + ")"
+        view.findViewById<TextView>(R.id.brick_3d_text_view).text =
+            context.getString(R.string.brick_place_3d_object) + " (${x.toInt()} · ${y.toInt()})"
         return view
     }
 
-    private fun paramsSummary(): String {
-        val shapeName = name.trim().ifEmpty { defaultShapeName() }
-        return "$shapeName · ${size.toInt()} · $color"
-    }
-
-    private fun defaultShapeName(): String = when (shape()) {
-        ThreeDShape.CUBE -> "cube"
-        ThreeDShape.SPHERE -> "sphere"
-        ThreeDShape.PYRAMID -> "pyramid"
-        ThreeDShape.CYLINDER -> "cylinder"
-    }
-
     override fun addActionToSequence(sprite: Sprite, sequence: ScriptSequenceAction) {
-        val action = Create3DLookAction()
+        val action = Place3DObjectAction()
         action.setSprite(sprite)
-        action.setShape(shape())
-        action.setName(name)
-        action.setSize(size)
-        action.setColorHex(color)
+        action.setX(x)
+        action.setY(y)
         sequence.addAction(action)
     }
 }

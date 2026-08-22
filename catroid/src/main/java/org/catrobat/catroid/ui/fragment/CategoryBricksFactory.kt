@@ -60,6 +60,13 @@ import org.catrobat.catroid.content.bricks.BroadcastWaitBrick
 import org.catrobat.catroid.content.bricks.CallocBrick
 import org.catrobat.catroid.content.bricks.CameraBrick
 import org.catrobat.catroid.content.bricks.CastBrick
+import org.catrobat.catroid.content.bricks.Change3DObjectColorBrick
+import org.catrobat.catroid.content.bricks.CreateCubeBrick
+import org.catrobat.catroid.content.bricks.CreateCylinderBrick
+import org.catrobat.catroid.content.bricks.CreatePyramidBrick
+import org.catrobat.catroid.content.bricks.CreateSphereBrick
+import org.catrobat.catroid.content.bricks.Delete3DObjectBrick
+import org.catrobat.catroid.content.bricks.Place3DObjectBrick
 import org.catrobat.catroid.content.bricks.ChangeBrightnessByNBrick
 import org.catrobat.catroid.content.bricks.ChangeColorByNBrick
 import org.catrobat.catroid.content.bricks.ChangeSizeByNBrick
@@ -244,6 +251,8 @@ open class CategoryBricksFactory {
                 context,
                 isBackgroundSprite
             )
+
+            context.getString(R.string.category_3d) -> return setup3dCategoryList(context)
 
             context.getString(R.string.category_pen) -> return setupPenCategoryList(
                 isBackgroundSprite
@@ -540,6 +549,20 @@ open class CategoryBricksFactory {
         return looksBrickList
     }
 
+    private fun setup3dCategoryList(context: Context): List<Brick> {
+        val threeDBrickList: MutableList<Brick> = ArrayList()
+        threeDBrickList.add(CreateCubeBrick("cube1", 100.0, "#4CAF50"))
+        threeDBrickList.add(CreateSphereBrick("sphere1", 100.0, "#2196F3"))
+        threeDBrickList.add(CreatePyramidBrick("pyramid1", 100.0, "#FF9800"))
+        threeDBrickList.add(CreateCylinderBrick("cylinder1", 100.0, "#9C27B0"))
+        threeDBrickList.add(
+            Place3DObjectBrick(BrickValues.X_POSITION.toDouble(), BrickValues.Y_POSITION.toDouble())
+        )
+        threeDBrickList.add(Change3DObjectColorBrick("cube1", "#FF5722"))
+        threeDBrickList.add(Delete3DObjectBrick("cube1"))
+        return threeDBrickList
+    }
+
     private fun setupPenCategoryList(isBackgroundSprite: Boolean): List<Brick> {
         val penBrickList: MutableList<Brick> = ArrayList()
         if (!isBackgroundSprite) {
@@ -804,6 +827,10 @@ open class CategoryBricksFactory {
 
             searchList(brick, setupLooksCategoryList(context, isBackgroundSprite)) -> res.getString(
                 R.string.category_looks
+            )
+
+            searchList(brick, setup3dCategoryList(context)) -> res.getString(
+                R.string.category_3d
             )
 
             searchList(

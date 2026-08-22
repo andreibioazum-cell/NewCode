@@ -32,7 +32,7 @@ class CreateSphereBrick : CreateShapeBrick {
 
     constructor() : super()
 
-    constructor(size: Double, color: String) : super(size, color)
+    constructor(name: String, size: Double, color: String) : super(name, size, color)
 
     override fun shape(): ThreeDShape = ThreeDShape.SPHERE
 

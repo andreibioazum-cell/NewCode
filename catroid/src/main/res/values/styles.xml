@@ -87,6 +87,7 @@
         <item name="icon_userbrick">@drawable/ic_your_brick_pos</item>
         <item name="icon_device">@drawable/ic_device_pos</item>
         <item name="icon_recently_used">@drawable/ic_recently_used_pos</item>
+        <item name="icon_3d">@drawable/ic_3d_pos</item>
     </style>
 
     <!-- Launch-тема для лаунчера (ProjectListActivity).
@@ -706,6 +707,10 @@
 
     <style name="BrickCategory.C">
         <item name="android:background">@drawable/brick_categories_cyan</item>
+    </style>
+
+    <style name="BrickCategory.3D">
+        <item name="android:background">@drawable/brick_categories_3d</item>
     </style>
 
      <style name="WebViewLoadingCircle" parent="android:Theme.Holo.Dialog">

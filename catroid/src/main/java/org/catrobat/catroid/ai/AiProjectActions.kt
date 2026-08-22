@@ -214,9 +214,10 @@ object AiProjectActions {
             "cylinder", "цилиндр" -> ThreeDShape.CYLINDER
             else -> return errorResult("Неизвестная фигура «$shapeName». Доступны: cube, sphere, pyramid, cylinder")
         }
+        val name = str(args, "name", "")
         val size = dbl(args, "size", 100.0)
         val color = str(args, "color", "#4CAF50")
-        val lookName = ThreeDLookGenerator.createLook(scene, sprite, shape, size.toInt(), color)
+        val lookName = ThreeDLookGenerator.createLook(scene, sprite, shape, name, size.toInt(), color)
             ?: return errorResult("Не удалось создать 3D-фигуру (ошибка записи образа)")
         return okResult("Создан 3D-образ «$lookName» (${shapeName}) для спрайта «$spriteName»")
     }
@@ -980,7 +981,7 @@ object AiProjectActions {
         ))
         tools.add(tool(
             "add_any_brick",
-            "УНИВЕРСАЛЬНЫЙ инструмент: ставит ЛЮБОЙ блок NewCode по имени класса, даже редкий. brick_class — точное имя класса блока, например SetVariableBrick, ChangeVariableBrick, ShowTextBrick, SetXBrick, WhenStartedBrick, RepeatBrick, IfThenLogicBeginBrick, NextLookBrick, StopAllSoundsBrick, SetPenSizeBrick, GoNStepsBackBrick, SpeakBrick, VibrationBrick, SetGravityBrick, CloneBrick и т.д. (полный список — через search_bricks). 3D-блоки: CreateCubeBrick, CreateSphereBrick, CreatePyramidBrick, CreateCylinderBrick (параметры size — размер, color — цвет #RRGGBB). Параметры передаются в params: список из {name, value} — они заполняют конструктор или сеттеры блока; value может быть числом, строкой, true/false или именем объекта (спрайт, образ, звук, переменная, список). Для блоков с формулой (SetVariableBrick и др.) передайте param name=value со строковым выражением, например «1» или «10». position — индекс вставки.",
+            "УНИВЕРСАЛЬНЫЙ инструмент: ставит ЛЮБОЙ блок NewCode по имени класса, даже редкий. brick_class — точное имя класса блока, например SetVariableBrick, ChangeVariableBrick, ShowTextBrick, SetXBrick, WhenStartedBrick, RepeatBrick, IfThenLogicBeginBrick, NextLookBrick, StopAllSoundsBrick, SetPenSizeBrick, GoNStepsBackBrick, SpeakBrick, VibrationBrick, SetGravityBrick, CloneBrick и т.д. (полный список — через search_bricks). 3D-блоки (категория 3D): CreateCubeBrick, CreateSphereBrick, CreatePyramidBrick, CreateCylinderBrick (параметры name — имя фигуры, например cube1; size — размер; color — цвет #RRGGBB), Place3DObjectBrick (x, y — поместить в координаты), Change3DObjectColorBrick (name, color — перекрасить фигуру), Delete3DObjectBrick (name — удалить фигуру). Параметры передаются в params: список из {name, value} — они заполняют конструктор или сеттеры блока; value может быть числом, строкой, true/false или именем объекта (спрайт, образ, звук, переменная, список). Для блоков с формулой (SetVariableBrick и др.) передайте param name=value со строковым выражением, например «1» или «10». position — индекс вставки.",
             "sprite_name" to param("string", "Имя спрайта", true),
             "script_index" to param("integer", "Индекс скрипта", true),
             "brick_class" to param("string", "Точное имя класса блока, например SetVariableBrick", true),
@@ -989,9 +990,10 @@ object AiProjectActions {
         ))
         tools.add(tool(
             "create_3d_object",
-            "Создаёт 3D-фигуру: генерирует объёмный образ (куб, сфера, пирамида или цилиндр) и сразу делает его активным у указанного спрайта. shape: cube | sphere | pyramid | cylinder. size — размер в пикселях (по умолчанию 100). color — цвет #RRGGBB (по умолчанию зелёный #4CAF50). 3D-фигура — это готовый образ спрайта: его можно двигать, вращать и менять размер обычными блоками.",
+            "Создаёт 3D-фигуру: генерирует объёмный образ (куб, сфера, пирамида или цилиндр) и сразу делает его активным у указанного спрайта. shape: cube | sphere | pyramid | cylinder. name — имя фигуры (имя образа), например cube1 (по умолчанию Cube/Sphere/...). size — размер в пикселях (по умолчанию 100). color — цвет #RRGGBB (по умолчанию зелёный #4CAF50). 3D-фигура — это готовый образ спрайта: его можно двигать (Place3DObjectBrick), вращать и менять размер обычными блоками, перекрашивать (Change3DObjectColorBrick) и удалять (Delete3DObjectBrick).",
             "sprite_name" to param("string", "Имя спрайта, которому назначить фигуру", true),
             "shape" to param("string", "cube | sphere | pyramid | cylinder", true),
+            "name" to param("string", "Имя фигуры, например cube1 (необязательно)", false),
             "size" to param("number", "Размер в пикселях (по умолчанию 100)", false),
             "color" to param("string", "Цвет #RRGGBB, например #FF5722 (по умолчанию #4CAF50)", false)
         ))

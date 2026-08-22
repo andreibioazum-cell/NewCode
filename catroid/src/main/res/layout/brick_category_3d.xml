@@ -23,28 +23,13 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    style="@style/BrickCategory.3D">
 
-    <CheckBox
-        android:id="@+id/brick_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:visibility="gone" />
+    <include layout="@layout/icon_brick_category_3d" />
 
-    <org.catrobat.catroid.ui.BrickLayout
-        android:id="@+id/brick_create_3d_layout"
-        style="@style/BrickContainer.Look.Small">
-
-        <include layout="@layout/icon_brick_category_3d" />
-
-        <TextView
-            android:id="@+id/brick_create_3d_text_view"
-            style="@style/BrickText.SingleLine"
-            android:text="@string/brick_create_cube" />
-    </org.catrobat.catroid.ui.BrickLayout>
+    <TextView
+        style="@style/BrickCategoryText"
+        android:text="@string/category_3d">
+    </TextView>
 
 </LinearLayout>

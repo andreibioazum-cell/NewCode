@@ -22,29 +22,29 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="348dp"
+    android:height="90dp"
+    android:viewportWidth="348"
+    android:viewportHeight="71.941"
+    tools:ignore="VectorRaster">
 
-    <CheckBox
-        android:id="@+id/brick_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:visibility="gone" />
-
-    <org.catrobat.catroid.ui.BrickLayout
-        android:id="@+id/brick_create_3d_layout"
-        style="@style/BrickContainer.Look.Small">
-
-        <include layout="@layout/icon_brick_category_3d" />
-
-        <TextView
-            android:id="@+id/brick_create_3d_text_view"
-            style="@style/BrickText.SingleLine"
-            android:text="@string/brick_create_cube" />
-    </org.catrobat.catroid.ui.BrickLayout>
-
-</LinearLayout>
+<path
+    android:pathData="M0,2h348v87h-348z"
+    android:fillColor="@color/brick_color_3d"/>
+<path
+    android:pathData="M0,2h348v1h-348z"
+    android:strokeAlpha="0.4"
+    android:fillColor="#fff"
+    android:fillAlpha="0.4"/>
+<path
+    android:pathData="M0,1h348v1h-348z"
+    android:strokeAlpha="0.75"
+    android:fillColor="#383838"
+    android:fillAlpha="0.75"/>
+<path
+    android:pathData="M0,87h348v1h-348z"
+    android:fillColor="#222222"/>
+</vector>

@@ -122,6 +122,13 @@
       "setters": []
     },
     {
+      "name": "Change3DObjectColorBrick",
+      "constructors": [
+        "name: String, color: String"
+      ],
+      "setters": []
+    },
+    {
       "name": "ChangeBrightnessByNBrick",
       "constructors": [
         "double changeBrightnessValue",
@@ -247,35 +254,35 @@
     {
       "name": "CreateCubeBrick",
       "constructors": [
-        "size: Double, color: String"
+        "name: String, size: Double, color: String"
       ],
       "setters": []
     },
     {
       "name": "CreateCylinderBrick",
       "constructors": [
-        "size: Double, color: String"
+        "name: String, size: Double, color: String"
       ],
       "setters": []
     },
     {
       "name": "CreatePyramidBrick",
       "constructors": [
-        "size: Double, color: String"
+        "name: String, size: Double, color: String"
       ],
       "setters": []
     },
     {
       "name": "CreateShapeBrick",
       "constructors": [
-        "size: Double, color: String"
+        "name: String, size: Double, color: String"
       ],
       "setters": []
     },
     {
       "name": "CreateSphereBrick",
       "constructors": [
-        "size: Double, color: String"
+        "name: String, size: Double, color: String"
       ],
       "setters": []
     },
@@ -283,6 +290,13 @@
       "name": "DecrementBrick",
       "constructors": [
         "UserVariable userVariable"
+      ],
+      "setters": []
+    },
+    {
+      "name": "Delete3DObjectBrick",
+      "constructors": [
+        "name: String"
       ],
       "setters": []
     },
@@ -623,6 +637,13 @@
     {
       "name": "PenUpBrick",
       "constructors": [],
+      "setters": []
+    },
+    {
+      "name": "Place3DObjectBrick",
+      "constructors": [
+        "x: Double, y: Double"
+      ],
       "setters": []
     },
     {

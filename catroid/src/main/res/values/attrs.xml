@@ -59,6 +59,7 @@
         <attr name="icon_device" format="reference"/>
         <attr name="icon_userbrick" format="reference" />
         <attr name="icon_recently_used" format="reference" />
+        <attr name="icon_3d" format="reference" />
     </declare-styleable>
 
     <!-- Category icons visibility -->

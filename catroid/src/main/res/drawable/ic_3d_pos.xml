@@ -22,29 +22,22 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
-    <CheckBox
-        android:id="@+id/brick_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:visibility="gone" />
-
-    <org.catrobat.catroid.ui.BrickLayout
-        android:id="@+id/brick_create_3d_layout"
-        style="@style/BrickContainer.Look.Small">
-
-        <include layout="@layout/icon_brick_category_3d" />
-
-        <TextView
-            android:id="@+id/brick_create_3d_text_view"
-            style="@style/BrickText.SingleLine"
-            android:text="@string/brick_create_cube" />
-    </org.catrobat.catroid.ui.BrickLayout>
-
-</LinearLayout>
+    <!-- Isometric cube: top face -->
+    <path
+        android:pathData="M12,2.5 L19.5,6.7 L12,10.9 L4.5,6.7 Z"
+        android:fillColor="#FFFFFF" />
+    <!-- left face -->
+    <path
+        android:pathData="M4.5,6.7 L12,10.9 L12,19.3 L4.5,15.1 Z"
+        android:fillColor="#C9C9C9" />
+    <!-- right face -->
+    <path
+        android:pathData="M12,10.9 L19.5,6.7 L19.5,15.1 L12,19.3 Z"
+        android:fillColor="#9E9E9E" />
+</vector>
