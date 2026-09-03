@@ -64,9 +64,12 @@ import org.catrobat.catroid.content.bricks.WaitBrick;
 import org.catrobat.catroid.content.bricks.WhileBrick;
 import org.catrobat.catroid.formulaeditor.Formula;
 import org.catrobat.catroid.formulaeditor.FormulaElement;
+import org.catrobat.catroid.formulaeditor.InternToken;
+import org.catrobat.catroid.formulaeditor.InternTokenType;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -392,6 +395,11 @@ public final class CodeGenerator {
 	// Formula -> expression string
 	// ----------------------------------------------------------------------
 
+	/**
+	 * FormulaElement's children are private in this fork, so the tree is read
+	 * through its flat in-order intern token list and re-parsed into a small
+	 * node structure that this class renders with the language's precedence.
+	 */
 	static String formulaToString(Formula formula) {
 		if (formula == null) {
 			return "?";
@@ -400,69 +408,231 @@ public final class CodeGenerator {
 		if (tree == null) {
 			return "?";
 		}
-		return elementToString(tree, null, false);
-	}
-
-	private static String elementToString(FormulaElement element, String parentOp, boolean isRightChild) {
-		if (element == null) {
+		FNode node = parseOrExpr(new TokenCursor(tree.getInternTokenList()));
+		if (node == null) {
 			return "?";
 		}
-		switch (element.getElementType()) {
+		return renderNode(node, null, false);
+	}
+
+	private static final class FNode {
+		final String kind; // literal, string, variable, unary, binary, call
+		final String value; // literal text, name, operator or function name
+		final FNode left;
+		final FNode right;
+
+		FNode(String kind, String value, FNode left, FNode right) {
+			this.kind = kind;
+			this.value = value;
+			this.left = left;
+			this.right = right;
+		}
+	}
+
+	private static final class TokenCursor {
+		private final List<InternToken> tokens;
+		private int position = 0;
+
+		TokenCursor(List<InternToken> tokens) {
+			this.tokens = tokens;
+		}
+
+		InternToken peek() {
+			return position < tokens.size() ? tokens.get(position) : null;
+		}
+
+		InternToken advance() {
+			return tokens.get(position++);
+		}
+
+		boolean peekOperator(String name) {
+			InternToken token = peek();
+			return token != null && token.getInternTokenType() == InternTokenType.OPERATOR
+					&& name.equals(token.getTokenStringValue());
+		}
+	}
+
+	private static FNode parseOrExpr(TokenCursor cursor) {
+		FNode left = parseAndExpr(cursor);
+		while (cursor.peekOperator("LOGICAL_OR")) {
+			cursor.advance();
+			left = new FNode("binary", "LOGICAL_OR", left, parseAndExpr(cursor));
+		}
+		return left;
+	}
+
+	private static FNode parseAndExpr(TokenCursor cursor) {
+		FNode left = parseNotExpr(cursor);
+		while (cursor.peekOperator("LOGICAL_AND")) {
+			cursor.advance();
+			left = new FNode("binary", "LOGICAL_AND", left, parseNotExpr(cursor));
+		}
+		return left;
+	}
+
+	private static FNode parseNotExpr(TokenCursor cursor) {
+		if (cursor.peekOperator("LOGICAL_NOT")) {
+			cursor.advance();
+			return new FNode("unary", "LOGICAL_NOT", null, parseNotExpr(cursor));
+		}
+		return parseComparisonExpr(cursor);
+	}
+
+	private static FNode parseComparisonExpr(TokenCursor cursor) {
+		FNode left = parseAdditiveExpr(cursor);
+		String op = comparisonOperator(cursor);
+		if (op != null) {
+			cursor.advance();
+			return new FNode("binary", op, left, parseAdditiveExpr(cursor));
+		}
+		return left;
+	}
+
+	private static String comparisonOperator(TokenCursor cursor) {
+		InternToken token = cursor.peek();
+		if (token == null || token.getInternTokenType() != InternTokenType.OPERATOR) {
+			return null;
+		}
+		String name = token.getTokenStringValue();
+		if ("EQUAL".equals(name) || "NOT_EQUAL".equals(name) || "SMALLER_THAN".equals(name)
+				|| "GREATER_THAN".equals(name) || "SMALLER_OR_EQUAL".equals(name)
+				|| "GREATER_OR_EQUAL".equals(name)) {
+			return name;
+		}
+		return null;
+	}
+
+	private static FNode parseAdditiveExpr(TokenCursor cursor) {
+		FNode left = parseMultiplicativeExpr(cursor);
+		while (cursor.peekOperator("PLUS") || cursor.peekOperator("MINUS")) {
+			String op = cursor.peekOperator("PLUS") ? "PLUS" : "MINUS";
+			cursor.advance();
+			left = new FNode("binary", op, left, parseMultiplicativeExpr(cursor));
+		}
+		return left;
+	}
+
+	private static FNode parseMultiplicativeExpr(TokenCursor cursor) {
+		FNode left = parseUnaryExpr(cursor);
+		while (true) {
+			String op = null;
+			for (String candidate : new String[] {"MULT", "DIVIDE", "MOD", "POW"}) {
+				if (cursor.peekOperator(candidate)) {
+					op = candidate;
+					break;
+				}
+			}
+			if (op == null) {
+				return left;
+			}
+			cursor.advance();
+			left = new FNode("binary", op, left, parseUnaryExpr(cursor));
+		}
+	}
+
+	private static FNode parseUnaryExpr(TokenCursor cursor) {
+		if (cursor.peekOperator("MINUS")) {
+			cursor.advance();
+			return new FNode("unary", "MINUS", null, parseUnaryExpr(cursor));
+		}
+		return parsePrimaryExpr(cursor);
+	}
+
+	private static FNode parsePrimaryExpr(TokenCursor cursor) {
+		InternToken token = cursor.peek();
+		if (token == null) {
+			return new FNode("literal", "0", null, null);
+		}
+		switch (token.getInternTokenType()) {
 			case NUMBER:
-				return element.getValue() == null ? "0" : element.getValue();
+				cursor.advance();
+				return new FNode("literal", token.getTokenStringValue(), null, null);
 			case STRING:
-				return quoted(element.getValue());
+				cursor.advance();
+				return new FNode("string", token.getTokenStringValue(), null, null);
 			case USER_VARIABLE:
 			case USER_LIST:
 			case SENSOR:
 			case USER_DEFINED_BRICK_INPUT:
 			case COLLISION_FORMULA:
-				return element.getValue() == null ? "?" : element.getValue();
-			case BRACKET: {
-				FormulaElement inner = element.getLeftChild() != null
-						? element.getLeftChild() : element.getRightChild();
-				return "(" + elementToString(inner, null, false) + ")";
-			}
-			case FUNCTION: {
-				String name = FUNCTION_NAMES.get(element.getValue());
-				if (name == null) {
-					name = element.getValue() == null ? "?" : element.getValue().toLowerCase();
+				cursor.advance();
+				return new FNode("variable", token.getTokenStringValue(), null, null);
+			case BRACKET_OPEN:
+				cursor.advance();
+				FNode inner = parseOrExpr(cursor);
+				if (cursor.peek() != null
+						&& cursor.peek().getInternTokenType() == InternTokenType.BRACKET_CLOSE) {
+					cursor.advance();
 				}
-				FormulaElement left = element.getLeftChild();
-				FormulaElement right = element.getRightChild();
-				if (left == null && right == null) {
+				return inner;
+			case FUNCTION_NAME: {
+				cursor.advance();
+				String name = token.getTokenStringValue();
+				if (cursor.peek() != null
+						&& cursor.peek().getInternTokenType() == InternTokenType.FUNCTION_PARAMETERS_BRACKET_OPEN) {
+					cursor.advance();
+					FNode first = parseOrExpr(cursor);
+					FNode second = null;
+					while (cursor.peek() != null
+							&& cursor.peek().getInternTokenType() == InternTokenType.FUNCTION_PARAMETER_DELIMITER) {
+						cursor.advance();
+						second = parseOrExpr(cursor);
+					}
+					if (cursor.peek() != null
+							&& cursor.peek().getInternTokenType() == InternTokenType.FUNCTION_PARAMETERS_BRACKET_CLOSE) {
+						cursor.advance();
+					}
+					return new FNode("call", name, first, second);
+				}
+				return new FNode("call", name, null, null);
+			}
+			default:
+				cursor.advance();
+				return new FNode("literal", "?", null, null);
+		}
+	}
+
+	private static String renderNode(FNode node, String parentOp, boolean isRightChild) {
+		if (node == null) {
+			return "?";
+		}
+		switch (node.kind) {
+			case "literal":
+				return node.value == null || node.value.isEmpty() ? "0" : node.value;
+			case "string":
+				return quoted(node.value);
+			case "variable":
+				return node.value == null ? "?" : node.value;
+			case "unary":
+				if ("MINUS".equals(node.value)) {
+					return "-" + renderNode(node.right, "MINUS", true);
+				}
+				if ("LOGICAL_NOT".equals(node.value)) {
+					return "not " + renderNode(node.right, "NOT_PRECEDENT", true);
+				}
+				return "?";
+			case "call": {
+				String name = FUNCTION_NAMES.get(node.value);
+				if (name == null) {
+					name = node.value == null ? "?" : node.value.toLowerCase(Locale.US);
+				}
+				if (node.left == null) {
 					return name;
 				}
-				if (left != null && right == null) {
-					return name + "(" + elementToString(left, null, false) + ")";
+				if (node.right == null) {
+					return name + "(" + renderNode(node.left, null, false) + ")";
 				}
-				if (left != null && right != null) {
-					return name + "(" + elementToString(left, null, false) + ", "
-							+ elementToString(right, null, false) + ")";
-				}
-				return name + "(" + elementToString(right, null, false) + ")";
+				return name + "(" + renderNode(node.left, null, false) + ", "
+						+ renderNode(node.right, null, false) + ")";
 			}
-			case OPERATOR: {
-				String op = element.getValue();
-				if (op == null) {
-					return "?";
-				}
-				FormulaElement left = element.getLeftChild();
-				FormulaElement right = element.getRightChild();
-				if ("MINUS".equals(op) && left == null) {
-					return "-" + elementToString(right, "MINUS", true);
-				}
-				if ("LOGICAL_NOT".equals(op) && left == null) {
-					return "not " + elementToString(right, "NOT_PRECEDENT", true);
-				}
-				if (left == null || right == null) {
-					return "?";
+			case "binary": {
+				String op = node.value;
+				if ("POW".equals(op)) {
+					return "pow(" + renderNode(node.left, null, false) + ", "
+							+ renderNode(node.right, null, false) + ")";
 				}
 				String symbol;
-				if ("POWER".equals(op)) {
-					return "pow(" + elementToString(left, null, false) + ", "
-							+ elementToString(right, null, false) + ")";
-				} else if ("PLUS".equals(op)) {
+				if ("PLUS".equals(op)) {
 					symbol = "+";
 				} else if ("MINUS".equals(op)) {
 					symbol = "-";
@@ -489,11 +659,10 @@ public final class CodeGenerator {
 				} else if ("LOGICAL_OR".equals(op)) {
 					symbol = "or";
 				} else {
-					symbol = op.toLowerCase();
+					symbol = op.toLowerCase(Locale.US);
 				}
-				String leftStr = elementToString(left, op, false);
-				String rightStr = elementToString(right, op, true);
-				String result = leftStr + " " + symbol + " " + rightStr;
+				String result = renderNode(node.left, op, false) + " " + symbol + " "
+						+ renderNode(node.right, op, true);
 				if (needsParens(op, parentOp, isRightChild)) {
 					return "(" + result + ")";
 				}

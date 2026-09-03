@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -78,6 +79,16 @@ public class CodeScriptListFragment extends ListFragment {
 		adapter = new CodeAdapter();
 		setListAdapter(adapter);
 		refresh();
+		// ListFragment (unlike ListActivity) has no overridable long-click
+		// callback, so the long press is wired up on the ListView itself.
+		getListView().setOnItemLongClickListener(
+				new AdapterView.OnItemLongClickListener() {
+					@Override
+					public boolean onItemLongClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						return onScriptLongClick(position);
+					}
+				});
 	}
 
 	@Override
@@ -121,8 +132,7 @@ public class CodeScriptListFragment extends ListFragment {
 		startActivity(intent);
 	}
 
-	@Override
-	public boolean onListItemLongClick(android.widget.ListView l, View view, int position, long id) {
+	private boolean onScriptLongClick(int position) {
 		List<Script> scripts = currentScripts();
 		if (position < 0 || position >= scripts.size()) {
 			return false;
