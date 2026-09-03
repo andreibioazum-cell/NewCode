@@ -61,6 +61,8 @@ typedef enum {
 
     /* Движение */
     CB_PLACE_AT, CB_SET_X, CB_SET_Y, CB_CHANGE_X, CB_CHANGE_Y,
+    /* Нативные 3D-блоки: глубина и углы Эйлера. */
+    CB_SET_Z, CB_CHANGE_Z, CB_SET_ROTATION_X, CB_SET_ROTATION_Y, CB_MOVE_FORWARD_3D,
     CB_MOVE_STEPS, CB_TURN_LEFT, CB_TURN_RIGHT, CB_POINT_IN_DIRECTION,
     CB_GLIDE_TO,
 
@@ -209,7 +211,9 @@ struct CatSprite {
     CatSound   *sounds;
     size_t      sound_count;
     /* Состояние сцены/движка. */
-    double  x, y, direction, size, transparency, brightness;
+    double  x, y, z;
+    double  rotation_x, rotation_y, direction; /* direction = rotation вокруг Z */
+    double  size, transparency, brightness;
     bool    visible;
     int     current_look; /* -1 если нет */
 };

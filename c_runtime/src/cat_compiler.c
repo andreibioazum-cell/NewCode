@@ -481,6 +481,9 @@ static void gen_formula(NcGen *g, CatFormula *f) {
         const char *field = NULL;
         if (strcasecmp(n, "OBJECT_X") == 0 || strcasecmp(n, "X_POSITION") == 0) field = "x";
         else if (strcasecmp(n, "OBJECT_Y") == 0 || strcasecmp(n, "Y_POSITION") == 0) field = "y";
+        else if (strcasecmp(n, "OBJECT_Z") == 0 || strcasecmp(n, "Z_POSITION") == 0) field = "z";
+        else if (strcasecmp(n, "OBJECT_ROTATION_X") == 0) field = "rotation_x";
+        else if (strcasecmp(n, "OBJECT_ROTATION_Y") == 0) field = "rotation_y";
         else if (strcasecmp(n, "OBJECT_ROTATION") == 0 || strcasecmp(n, "DIRECTION") == 0) field = "direction";
         else if (strcasecmp(n, "OBJECT_SIZE") == 0 || strcasecmp(n, "SIZE") == 0) field = "size";
         else if (strcasecmp(n, "OBJECT_TRANSPARENCY") == 0) field = "transparency";
@@ -734,6 +737,30 @@ static void gen_bricks(NcGen *g, CatBrick **bricks, size_t n) {
             gen_double_expr(g, fml(b, "y", "Y_POSITION_CHANGE", NULL), "nc_num(0)");
             sb_puts(o, ";\n");
             break;
+        case CB_SET_Z:
+            sb_indent(o); sb_puts(o, "SP->z = "); gen_double_expr(g, fml(b, "z", "Z_POSITION", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_CHANGE_Z:
+            sb_indent(o); sb_puts(o, "SP->z += "); gen_double_expr(g, fml(b, "z", "Z_POSITION_CHANGE", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_SET_ROTATION_X:
+            sb_indent(o); sb_puts(o, "SP->rotation_x = "); gen_double_expr(g, fml(b, "degrees", "DEGREES", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_SET_ROTATION_Y:
+            sb_indent(o); sb_puts(o, "SP->rotation_y = "); gen_double_expr(g, fml(b, "degrees", "DEGREES", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            break;
+        case CB_MOVE_FORWARD_3D: {
+            int t = ++g->out.counter;
+            sb_line(o, "{"); g->out.indent++;
+            sb_indent(o); sb_printf(o, "double d_%d = ", t); gen_double_expr(g, fml(b, "steps", "STEPS", NULL), "nc_num(0)"); sb_puts(o, ";\n");
+            sb_line(o, "double pitch_%d = SP->rotation_x * 3.14159265358979323846 / 180.0;", t);
+            sb_line(o, "double yaw_%d = SP->rotation_y * 3.14159265358979323846 / 180.0;", t);
+            sb_line(o, "SP->x += d_%d * sin(yaw_%d) * cos(pitch_%d);", t, t, t);
+            sb_line(o, "SP->y -= d_%d * sin(pitch_%d);", t, t);
+            sb_line(o, "SP->z += d_%d * cos(yaw_%d) * cos(pitch_%d);", t, t, t);
+            g->out.indent--; sb_line(o, "}");
+            break;
+        }
         case CB_MOVE_STEPS: {
             int t = ++g->out.counter;
             sb_line(o, "{");
@@ -1325,7 +1352,7 @@ char *cat_compile_to_c(CatProject *p) {
 
     /* 2. Состояние спрайтов. */
     sb_line(o, "typedef struct {");
-    sb_line(o, "    double x, y, direction, size, transparency, brightness;");
+    sb_line(o, "    double x, y, z, rotation_x, rotation_y, direction, size, transparency, brightness;");
     sb_line(o, "    int visible;");
     sb_line(o, "} Spr;");
     for (size_t si = 0, idx = 0; si < p->scene_count; ++si) {

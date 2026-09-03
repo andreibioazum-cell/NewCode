@@ -60,6 +60,23 @@ code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_pro
 * `src/nc_rt_data.h` — встроенная копия `nc_rt.h` (компилятор записывает
   её рядом со сгенерированным кодом). Регенерируется из
   `include/nc_rt.h`, не редактируется вручную.
+* `include/nc_3d.h` + `src/nc_3d.c` — независимое от платформы 3D-ядро на
+  ISO C11: векторы, transform (position/rotation/scale), камера, перспектива
+  и проекция в горизонтальный viewport 1280×720. Java/Kotlin и GC не нужны.
+
+## Горизонтальный 3D-режим
+
+Android-редактор и сцена зафиксированы в landscape. Визуальный формат
+остаётся прежним (`code.xml` и цепочки блоков), но поза спрайта теперь имеет
+`x/y/z` и углы `rotation_x/rotation_y/direction` (Z). Новые XML-блоки:
+
+* `SetZBrick`, `ChangeZByNBrick`;
+* `SetRotationXBrick`, `SetRotationYBrick`;
+* `MoveForward3DBrick` — движение по pitch/yaw.
+
+Датчики формул: `OBJECT_Z`, `OBJECT_ROTATION_X`, `OBJECT_ROTATION_Y`.
+Одинаковая семантика реализована в отладочном интерпретаторе и в нативной
+компиляции. Пример: `./newcode run examples/landscape_3d.xml`.
 
 ## Поддерживаемые блоки
 
@@ -67,7 +84,7 @@ code.xml ──cat_loader──► CatProject ──cat_compiler──► nc_pro
 |----------------|------------------------------------------------------------------------|
 | События        | When started, When tapped, When broadcast, Broadcast, Broadcast&Wait  |
 | Управление     | Wait, Forever, Repeat, Repeat Until, If/Else, If Then, Stop, Note, Return, Break, Continue, While, DoWhile, For (from..to..step), Switch/Case, Goto/Label |
-| Движение       | PlaceAt, SetX/Y, ChangeX/Y, Move N steps, Turn left/right, Point in dir, Glide |
+| Движение       | PlaceAt, SetX/Y, ChangeX/Y, Move N steps, Turn left/right, Point in dir, Glide; **3D:** SetZ, ChangeZ, SetRotationX/Y, MoveForward3D |
 | Внешний вид    | Show, Hide, SetSize, ChangeSize, Say, Think, Set/Next/Previous look   |
 | Звук           | PlaySound, StopAllSounds, SetVolume, ChangeVolume                     |
 | Данные         | SetVariable, ChangeVariable, AddToList, DeleteFromList, ClearList, InsertIntoList, ReplaceInList |
