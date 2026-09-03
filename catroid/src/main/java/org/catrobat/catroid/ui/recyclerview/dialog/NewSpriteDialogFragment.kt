@@ -54,6 +54,7 @@ import org.catrobat.catroid.ui.SpriteActivity.EXTRA_Y_TRANSFORM
 import org.catrobat.catroid.ui.SpriteActivity.REQUEST_CODE_VISUAL_PLACEMENT
 import org.catrobat.catroid.ui.recyclerview.dialog.textwatcher.DuplicateInputTextWatcher
 import org.catrobat.catroid.ui.recyclerview.fragment.SpriteListFragment
+import org.catrobat.catroid.ui.scene.SceneFragment
 import org.catrobat.catroid.utils.Utils
 import org.catrobat.catroid.visualplacement.VisualPlacementActivity
 import java.io.File
@@ -131,6 +132,9 @@ class NewSpriteDialogFragment(
 
         if (currentFragment is SpriteListFragment) {
             currentFragment.notifyDataSetChanged()
+        }
+        if (currentFragment is SceneFragment) {
+            (currentFragment as SceneFragment).refresh()
         }
 
         if (isPlaceVisually) {

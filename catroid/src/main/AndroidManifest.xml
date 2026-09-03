@@ -156,6 +156,11 @@
             android:windowSoftInputMode="adjustNothing" />
 
         <activity
+            android:name=".ui.code.CodeEditorActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:exported="true"
             android:name=".ui.SpriteActivity"
             android:screenOrientation="landscape"

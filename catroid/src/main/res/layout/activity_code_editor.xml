@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Catroid: An on-device visual programming system for Android devices
+  ~ Copyright (C) 2010-2026 The Catrobat Team
+  ~ (<http://developer.catrobat.org/credits>)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 3 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <EditText
+        android:id="@+id/code_editor"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/code_editor_background"
+        android:gravity="top|start"
+        android:hint="@string/code_editor_hint"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:lineSpacingExtra="2dp"
+        android:padding="12dp"
+        android:scrollbars="vertical"
+        android:textColor="@color/code_editor_text"
+        android:textColorHint="#4B5568"
+        android:textSize="14sp"
+        android:typeface="monospace" />
+
+    <TextView
+        android:id="@+id/code_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/code_status_background"
+        android:padding="6dp"
+        android:text="@string/code_saved"
+        android:textColor="@color/code_status_text"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</LinearLayout>

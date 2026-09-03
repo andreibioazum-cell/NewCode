@@ -53,10 +53,14 @@ import org.catrobat.catroid.formulaeditor.UserList;
 import org.catrobat.catroid.formulaeditor.UserVariable;
 import org.catrobat.catroid.io.StorageOperations;
 import org.catrobat.catroid.io.asynctask.ProjectSaver;
+import org.catrobat.catroid.content.bricks.MoveNStepsBrick;
 import org.catrobat.catroid.pocketmusic.PocketMusicActivity;
 import org.catrobat.catroid.soundrecorder.SoundRecorderActivity;
 import org.catrobat.catroid.stage.StageActivity;
 import org.catrobat.catroid.stage.TestResult;
+import org.catrobat.catroid.ui.code.CodeEditorActivity;
+import org.catrobat.catroid.ui.code.CodeEvents;
+import org.catrobat.catroid.ui.code.CodeScriptListFragment;
 import org.catrobat.catroid.ui.controller.RecentBrickListManager;
 import org.catrobat.catroid.ui.fragment.AddBrickFragment;
 import org.catrobat.catroid.ui.fragment.BrickCategoryFragment;
@@ -248,10 +252,86 @@ public class SpriteActivity extends BaseActivity {
 		if (getCurrentFragment() instanceof ScriptFragment) {
 			menu.findItem(R.id.comment_in_out).setVisible(true);
 			showUndo(isUndoMenuItemVisible);
-		} else if (getCurrentFragment() instanceof LookListFragment) {
+		} else if (getCurrentFragment() instanceof CodeScriptListFragment
+				|| getCurrentFragment() instanceof LookListFragment) {
 			showUndo(isUndoMenuItemVisible);
 		}
 		return super.onPrepareOptionsMenu(menu);
+	}
+
+	/**
+	 * Engine-style "new script": the user picks the event, then writes plain code.
+	 */
+	public void showNewScriptDialog() {
+		CharSequence[] types = new CharSequence[] {
+				getString(R.string.new_script_type_started),
+				getString(R.string.new_script_type_touched),
+				getString(R.string.new_script_type_broadcast),
+				getString(R.string.new_script_type_cloned)
+		};
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.new_script_dialog_title)
+				.setItems(types, (dialog, which) -> {
+					switch (which) {
+						case 0:
+							createScriptAndOpenEditor(CodeEvents.TYPE_STARTED, null);
+							break;
+						case 1:
+							createScriptAndOpenEditor(CodeEvents.TYPE_TOUCHED, null);
+							break;
+						case 2:
+							showBroadcastNameDialog();
+							break;
+						case 3:
+							createScriptAndOpenEditor(CodeEvents.TYPE_CLONED, null);
+							break;
+						default:
+					}
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
+	}
+
+	private void showBroadcastNameDialog() {
+		TextInputDialog.Builder builder = new TextInputDialog.Builder(this);
+		builder.setHint(getString(R.string.broadcast_name_label)).setText("start");
+		builder.setTitle(R.string.new_script_type_broadcast);
+		builder.setPositiveButton(getString(R.string.ok), new TextInputDialog.OnClickListener() {
+			@Override
+			public void onPositiveButtonClick(DialogInterface dialog, String textInput) {
+				createScriptAndOpenEditor(CodeEvents.TYPE_BROADCAST, textInput);
+			}
+		});
+		builder.setNegativeButton(R.string.cancel, null);
+		builder.show();
+	}
+
+	private void createScriptAndOpenEditor(String type, String broadcastName) {
+		Sprite sprite = ProjectManager.getInstance().getCurrentSprite();
+		Project project = ProjectManager.getInstance().getCurrentProject();
+		Scene scene = ProjectManager.getInstance().getCurrentlyEditedScene();
+		if (sprite == null || project == null || scene == null) {
+			return;
+		}
+		Script script = CodeEvents.createNewScript(type, broadcastName);
+		sprite.addScript(script);
+		if (CodeEvents.TYPE_BROADCAST.equals(type) && broadcastName != null && !broadcastName.isEmpty()) {
+			project.getBroadcastMessageContainer().addBroadcastMessage(broadcastName);
+		}
+		if (CodeEvents.TYPE_STARTED.equals(type) && script.getBrickList().isEmpty()) {
+			// starter line so the game does something on the very first run
+			script.addBrick(new MoveNStepsBrick(10));
+		}
+		saveProject();
+		openCodeEditor(scene, sprite, script);
+	}
+
+	private void openCodeEditor(Scene scene, Sprite sprite, Script script) {
+		Intent intent = new Intent(this, CodeEditorActivity.class);
+		intent.putExtra(CodeEditorActivity.EXTRA_SCENE_NAME, scene.getName());
+		intent.putExtra(CodeEditorActivity.EXTRA_SPRITE_NAME, sprite.getName());
+		intent.putExtra(CodeEditorActivity.EXTRA_SCRIPT_ID, script.getScriptId().toString());
+		startActivity(intent);
 	}
 
 	@Override
@@ -636,6 +716,10 @@ public class SpriteActivity extends BaseActivity {
 	}
 
 	public void handleAddButton(View view) {
+		if (getCurrentFragment() instanceof CodeScriptListFragment) {
+			showNewScriptDialog();
+			return;
+		}
 		if (getCurrentFragment() instanceof ScriptFragment) {
 			((ScriptFragment) getCurrentFragment()).handleAddButton();
 			return;
