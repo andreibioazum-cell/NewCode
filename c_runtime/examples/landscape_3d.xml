@@ -1,0 +1,18 @@
+<program>
+  <header><programName>Landscape 3D</programName></header>
+  <objectList>
+    <object>
+      <name>Cube</name>
+      <scriptList>
+        <script type="StartScript">
+          <brickList>
+            <brick type="SetZBrick"><formulaList><formula category="z"><type>NUMBER</type><value>10</value></formula></formulaList></brick>
+            <brick type="SetRotationYBrick"><formulaList><formula category="degrees"><type>NUMBER</type><value>45</value></formula></formulaList></brick>
+            <brick type="MoveForward3DBrick"><formulaList><formula category="steps"><type>NUMBER</type><value>5</value></formula></formulaList></brick>
+            <brick type="PrintBrick"><formulaList><formula category="value"><type>SENSOR</type><value>OBJECT_Z</value></formula></formulaList></brick>
+          </brickList>
+        </script>
+      </scriptList>
+    </object>
+  </objectList>
+</program>

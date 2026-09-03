@@ -265,6 +265,11 @@ const char *cat_brick_kind_name(CatBrickKind k) {
     case CB_SET_Y: return "SetY";
     case CB_CHANGE_X: return "ChangeX";
     case CB_CHANGE_Y: return "ChangeY";
+    case CB_SET_Z: return "SetZ";
+    case CB_CHANGE_Z: return "ChangeZ";
+    case CB_SET_ROTATION_X: return "SetRotationX";
+    case CB_SET_ROTATION_Y: return "SetRotationY";
+    case CB_MOVE_FORWARD_3D: return "MoveForward3D";
     case CB_MOVE_STEPS: return "MoveSteps";
     case CB_TURN_LEFT: return "TurnLeft";
     case CB_TURN_RIGHT: return "TurnRight";

@@ -97,38 +97,38 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
 -->
 
 
        <!-- <activity
             android:name=".ui.MarketingActivity"
-            android:screenOrientation="portrait" />-->
+            android:screenOrientation="landscape" />-->
 
 <!--        <activity
             android:name=".ui.NfcTagsActivity"
-            android:screenOrientation="portrait" />-->
+            android:screenOrientation="landscape" />-->
 
 <!--        <activity
             android:name=".ui.WebViewActivity"
-            android:screenOrientation="portrait" />-->
+            android:screenOrientation="landscape" />-->
 
 <!--        <activity
             android:name=".ui.ProjectUploadActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing"/>-->
 
 <!--        <activity
             android:name=".stage.StageActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/stage"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />-->
 
 <!--        <activity
             android:exported="true"
             android:name=".ui.ProjectListActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing" >
             <intent-filter
                 android:icon="${appIcon}"
@@ -154,13 +154,13 @@
 
 <!--        <activity
             android:name=".ui.ProjectActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing" />-->
 
 <!--        <activity
             android:exported="true"
             android:name=".ui.SpriteActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -171,30 +171,30 @@
 
 <!--        <activity
             android:name=".ui.SignInActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing" />-->
 
 <!--        <activity
             android:name=".ui.recyclerview.backpack.BackpackActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing" />-->
 
 <!--        <activity
             android:name=".ui.ScratchConverterActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
         </activity>-->
 
 <!--        <activity
             android:name=".ui.ScratchProgramDetailsActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing" />-->
 
 <!--        <activity
             android:name=".soundrecorder.SoundRecorderActivity"
             android:exported="true"
             android:label="@string/soundrecorder_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -209,7 +209,7 @@
 <!--        <activity
             android:name=".pocketmusic.PocketMusicActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:label="@string/add_sound_music"
             android:icon="@drawable/ic_pocketmusic"/>-->
 

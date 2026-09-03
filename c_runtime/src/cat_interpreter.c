@@ -26,14 +26,15 @@ static int ieq(const char *a, const char *b) { return a && b && strcasecmp(a, b)
  */
 typedef struct SpriteInst {
     CatSprite *proto;    /* общие данные: имя, скрипты, переменные, списки */
-    double  x, y, direction, size, transparency, brightness;
+    double  x, y, z, rotation_x, rotation_y, direction, size, transparency, brightness;
     bool    visible;
     bool    is_clone;
     bool    dead;        /* «delete this clone» пометил экземпляр */
 } SpriteInst;
 
 static void inst_copy_pose(SpriteInst *dst, const SpriteInst *src) {
-    dst->x = src->x; dst->y = src->y;
+    dst->x = src->x; dst->y = src->y; dst->z = src->z;
+    dst->rotation_x = src->rotation_x; dst->rotation_y = src->rotation_y;
     dst->direction = src->direction; dst->size = src->size;
     dst->transparency = src->transparency; dst->brightness = src->brightness;
     dst->visible = src->visible;
@@ -43,6 +44,9 @@ static CatValue eval_sensor(SpriteInst *inst, const char *name) {
     if (!name) return cat_value_number(0);
     if (ieq(name, "OBJECT_X") || ieq(name, "X_POSITION")) return cat_value_number(inst ? inst->x : 0);
     if (ieq(name, "OBJECT_Y") || ieq(name, "Y_POSITION")) return cat_value_number(inst ? inst->y : 0);
+    if (ieq(name, "OBJECT_Z") || ieq(name, "Z_POSITION")) return cat_value_number(inst ? inst->z : 0);
+    if (ieq(name, "OBJECT_ROTATION_X")) return cat_value_number(inst ? inst->rotation_x : 0);
+    if (ieq(name, "OBJECT_ROTATION_Y")) return cat_value_number(inst ? inst->rotation_y : 0);
     if (ieq(name, "OBJECT_ROTATION") || ieq(name, "DIRECTION")) return cat_value_number(inst ? inst->direction : 90);
     if (ieq(name, "OBJECT_SIZE") || ieq(name, "SIZE")) return cat_value_number(inst ? inst->size : 100);
     if (ieq(name, "OBJECT_TRANSPARENCY")) return cat_value_number(inst ? inst->transparency : 0);
@@ -454,7 +458,8 @@ static void inst_register(CatEngine *e, SpriteInst *inst) {
 static SpriteInst *inst_root(CatEngine *e, CatSprite *proto) {
     SpriteInst *inst = (SpriteInst *)cat_calloc(1, sizeof(SpriteInst));
     inst->proto = proto;
-    inst->x = proto->x; inst->y = proto->y;
+    inst->x = proto->x; inst->y = proto->y; inst->z = proto->z;
+    inst->rotation_x = proto->rotation_x; inst->rotation_y = proto->rotation_y;
     inst->direction = proto->direction; inst->size = proto->size;
     inst->transparency = proto->transparency; inst->brightness = proto->brightness;
     inst->visible = proto->visible;
@@ -775,6 +780,16 @@ static int exec_brick(CatEngine *e, Fiber *fi, CatBrick *b) {
     case CB_SET_Y: { CatValue v=slot_or(e,inst,b,"y",0); inst->y=cat_value_to_number(&v); cat_value_free(&v); return 0; }
     case CB_CHANGE_X: { CatValue v=slot_or(e,inst,b,"x",0); inst->x+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
     case CB_CHANGE_Y: { CatValue v=slot_or(e,inst,b,"y",0); inst->y+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_SET_Z: { CatValue v=slot_or(e,inst,b,"z",0); inst->z=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_CHANGE_Z: { CatValue v=slot_or(e,inst,b,"z",0); inst->z+=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_SET_ROTATION_X: { CatValue v=slot_or(e,inst,b,"degrees",0); inst->rotation_x=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_SET_ROTATION_Y: { CatValue v=slot_or(e,inst,b,"degrees",0); inst->rotation_y=cat_value_to_number(&v); cat_value_free(&v); return 0; }
+    case CB_MOVE_FORWARD_3D: {
+        CatValue v=slot_or(e,inst,b,"steps",0); double d=cat_value_to_number(&v); cat_value_free(&v);
+        double pitch=inst->rotation_x*M_PI/180.0, yaw=inst->rotation_y*M_PI/180.0;
+        inst->x += d*sin(yaw)*cos(pitch); inst->y -= d*sin(pitch); inst->z += d*cos(yaw)*cos(pitch);
+        return 0;
+    }
     case CB_MOVE_STEPS: {
         CatValue v=slot_or(e,inst,b,"steps",0);
         double s=cat_value_to_number(&v); cat_value_free(&v);
@@ -1110,7 +1125,8 @@ CatValue cat_eval_formula(CatEngine *e, CatSprite *sp, const CatFormula *f) {
     if (!sp) return eval_formula_internal(e, NULL, f);
     SpriteInst tmp = {0};
     tmp.proto = sp;
-    tmp.x = sp->x; tmp.y = sp->y;
+    tmp.x = sp->x; tmp.y = sp->y; tmp.z = sp->z;
+    tmp.rotation_x = sp->rotation_x; tmp.rotation_y = sp->rotation_y;
     tmp.direction = sp->direction; tmp.size = sp->size;
     tmp.transparency = sp->transparency; tmp.brightness = sp->brightness;
     tmp.visible = sp->visible;
