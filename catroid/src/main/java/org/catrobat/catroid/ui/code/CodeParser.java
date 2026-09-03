@@ -333,7 +333,7 @@ public final class CodeParser {
 		private final Sprite sprite;
 		private int index = 0;
 
-		Parser(String code, Project project, Sprite sprite) {
+		Parser(String code, Project project, Sprite sprite) throws ParseException {
 			List<Token> lexed;
 			try {
 				lexed = new Lexer(code).tokenize();
