@@ -2325,4 +2325,38 @@ needs read and write access to it. You can always change permissions through you
     <string formatted="false" name="undo_sort">Undo sort</string>
     <string formatted="false" name="sort">Sort</string>
     <string formatted="false" name="checkbox">checkbox</string>
+
+    <!-- Engine: scene view -->
+    <string formatted="false" name="scene_hint">Tap + to add sprites, then tap a sprite to open its code</string>
+    <string formatted="false" name="scene_view">Scene view</string>
+    <string formatted="false" name="list_view">Sprite list</string>
+    <string formatted="false" name="switch_scene">Switch scene</string>
+
+    <!-- Engine: code scripts -->
+    <string formatted="false" name="code_event_started">when started</string>
+    <string formatted="false" name="code_event_touched">when touched</string>
+    <string formatted="false" name="code_event_cloned">when cloned</string>
+    <string formatted="false" name="code_event_background_touched">when background touched</string>
+    <string formatted="false" name="code_event_background_changed">when background changes</string>
+    <string formatted="false" name="code_event_bounce_off">when bounces off</string>
+    <string formatted="false" name="code_event_condition">when condition</string>
+    <string formatted="false" name="code_event_broadcast">when %1$s received</string>
+    <string formatted="false" name="code_event_empty">empty event</string>
+    <string formatted="false" name="code_event_user_script">when %1$s called</string>
+    <string formatted="false" name="code_scripts_empty">No scripts yet. Press + to add one.</string>
+    <string formatted="false" name="code_script_empty">(empty)</string>
+    <string formatted="false" name="code_editor_hint">// write your code here</string>
+    <string formatted="false" name="code_saved">Code saved</string>
+    <string formatted="false" name="code_errors_title">Code errors</string>
+    <string formatted="false" name="code_help_title">Commands</string>
+
+    <!-- Engine: new script dialog -->
+    <string formatted="false" name="new_script_dialog_title">New script</string>
+    <string formatted="false" name="new_script_type_started">when started</string>
+    <string formatted="false" name="new_script_type_touched">when touched</string>
+    <string formatted="false" name="new_script_type_broadcast">when message received</string>
+    <string formatted="false" name="new_script_type_cloned">when cloned</string>
+    <string formatted="false" name="broadcast_name_label">Message name</string>
+
+    <string formatted="false" name="code_help_reference">Commands:\n\nmove(10) — move 10 steps forward\nturn(90) / turn_left(90) — rotate\npoint(0) — point in direction (0 = up)\nchange_x(10) / change_y(10) — shift position\nset_x(0) / set_y(0) — jump to position\nplace(100, 50) — go to x/y\nglide(100, 50, 1) — glide to x/y over 1 second\nset_size(50) / change_size(10) — resize\nsay(\"hello\") / say(\"hi\", 2) — speech bubble\nthink(\"hmm\") — thought bubble\nhide() / show() / hide_text()\nnext_look() — next look\nclone() / delete() — clone / delete clone\ncome_to_front() / bounce_on_edge()\nwait(1) — wait 1 second\nstop() — stop this script\nexit_stage() — stop the game\n\nrepeat (3) { … }\nwhile (x &lt; 10) { … }\ndo { … } while (x &lt; 10)\nforever { … }\nif (x &gt; 5) { … } else { … }\n\nbroadcast(\"start\") / wait_broadcast(\"start\")\nplay_sound(\"boom\") / stop_all_sounds()\nplay_note(440)\n\nset_variable(score, 0)\nchange_variable(score, 1)\nread(answer, \"Your name?\")\n\nExpressions: numbers, \"strings\", variables\n  + - * / % ** ( ) == != &lt; &gt; &lt;= &gt;=\n  and, or, not, true, false\n  abs(2) sqrt(9) round(1.5) floor(1.5) ceil(1.5)\n  min(2, 3) max(2, 3) pow(2, 3) atan2(1, 1)\n  random(0, 10) sin(1) cos(1) tan(1)</string>
 </resources>

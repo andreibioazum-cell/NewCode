@@ -57,6 +57,14 @@
         android:title="@string/new_scene"
         app:showAsAction="never" />
     <item
+        android:id="@+id/switch_scene"
+        android:title="@string/switch_scene"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/list_view"
+        android:title="@string/list_view"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/show_details"
         android:title="@string/show_details"
         app:showAsAction="never" />

@@ -65,6 +65,7 @@ import org.catrobat.catroid.ui.recyclerview.fragment.RecyclerViewFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.SceneListFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.SpriteListFragment
 import org.catrobat.catroid.ui.recyclerview.util.UniqueNameProvider
+import org.catrobat.catroid.ui.scene.SceneFragment
 import org.catrobat.catroid.utils.ToastUtil
 import org.catrobat.catroid.utils.Utils
 import org.catrobat.catroid.utils.setVisibleOrGone
@@ -123,7 +124,7 @@ class ProjectActivity : BaseCastActivity() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         when (fragmentPosition) {
             FRAGMENT_SCENES -> fragmentTransaction.replace(
-                R.id.fragment_container, SceneListFragment(), SceneListFragment.TAG
+                R.id.fragment_container, SceneFragment(), SceneFragment.TAG
             )
 
             FRAGMENT_SPRITES -> fragmentTransaction.replace(
@@ -133,6 +134,13 @@ class ProjectActivity : BaseCastActivity() {
             else -> throw IllegalArgumentException("Invalid fragmentPosition in Activity.")
         }
         fragmentTransaction.commit()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (currentFragment is SceneFragment) {
+            (currentFragment as SceneFragment).refresh()
+        }
     }
 
     private val currentFragment: Fragment?
@@ -153,6 +161,11 @@ class ProjectActivity : BaseCastActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.new_scene -> handleAddSceneButton()
+            R.id.list_view -> supportFragmentManager.beginTransaction().replace(
+                R.id.fragment_container, SpriteListFragment(), SpriteListFragment.TAG
+            ).commit()
+
+            R.id.switch_scene -> showScenePicker()
             R.id.project_options -> supportFragmentManager.beginTransaction().replace(
                 R.id.fragment_container, ProjectOptionsFragment(), ProjectOptionsFragment.TAG
             ).addToBackStack(ProjectOptionsFragment.TAG).commit()
@@ -160,6 +173,28 @@ class ProjectActivity : BaseCastActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    private fun showScenePicker() {
+        val currentProject = projectManager.currentProject ?: return
+        if (currentProject.sceneList.size <= 1) {
+            return
+        }
+        val names = currentProject.sceneList.map { it.name }.toTypedArray()
+        val currentIndex = currentProject.sceneList.indexOfFirst {
+            it.name == projectManager.currentlyEditedScene?.name
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.switch_scene)
+            .setSingleChoiceItems(names, currentIndex) { dialog, which ->
+                projectManager.currentlyEditedScene = currentProject.sceneList[which]
+                if (currentFragment is SceneFragment) {
+                    (currentFragment as SceneFragment).refresh()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     override fun onPause() {
@@ -330,12 +365,10 @@ class ProjectActivity : BaseCastActivity() {
     }
 
     private fun handleAddButton() {
-        if (currentFragment is SceneListFragment) {
-            handleAddSceneButton()
-            return
-        }
-        if (currentFragment is SpriteListFragment) {
-            handleAddSpriteButton()
+        when (currentFragment) {
+            is SceneListFragment -> handleAddSceneButton()
+            is SceneFragment -> handleAddSpriteButton()
+            is SpriteListFragment -> handleAddSpriteButton()
         }
     }
 
@@ -355,6 +388,9 @@ class ProjectActivity : BaseCastActivity() {
                 currentProject.addScene(scene)
                 if (currentFragment is SceneListFragment) {
                     (currentFragment as RecyclerViewFragment<*>).notifyDataSetChanged()
+                } else if (currentFragment is SceneFragment) {
+                    projectManager.currentlyEditedScene = scene
+                    (currentFragment as SceneFragment).refresh()
                 } else {
                     val intent = Intent(this, ProjectActivity::class.java)
                     intent.putExtra(EXTRA_FRAGMENT_POSITION, FRAGMENT_SCENES)

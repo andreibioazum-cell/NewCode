@@ -36,6 +36,7 @@ import org.catrobat.catroid.R
 import org.catrobat.catroid.ui.SpriteActivity.FRAGMENT_LOOKS
 import org.catrobat.catroid.ui.SpriteActivity.FRAGMENT_SCRIPTS
 import org.catrobat.catroid.ui.SpriteActivity.FRAGMENT_SOUNDS
+import org.catrobat.catroid.ui.code.CodeScriptListFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.LookListFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.ScriptFragment
 import org.catrobat.catroid.ui.recyclerview.fragment.SoundListFragment
@@ -99,16 +100,20 @@ fun SpriteActivity.loadFragment(fragmentPosition: Int) {
 }
 
 private fun showScripts(fragmentTransaction: FragmentTransaction) {
+    // The block palette is replaced by the engine-style code editor:
+    // scripts are now plain code, not drag & drop blocks.
     fragmentTransaction.replace(
-        R.id.fragment_container, ScriptFragment(),
-        ScriptFragment.TAG
+        R.id.fragment_container, CodeScriptListFragment(),
+        CodeScriptListFragment.TAG
     )
 }
 
 fun Fragment?.isFragmentWithTablayout() =
-    this is ScriptFragment || this is LookListFragment || this is SoundListFragment
+    this is CodeScriptListFragment || this is ScriptFragment ||
+        this is LookListFragment || this is SoundListFragment
 
 fun Fragment?.getTabPositionInSpriteActivity(): Int = when (this) {
+    is CodeScriptListFragment -> FRAGMENT_SCRIPTS
     is ScriptFragment -> FRAGMENT_SCRIPTS
     is LookListFragment -> FRAGMENT_LOOKS
     is SoundListFragment -> FRAGMENT_SOUNDS

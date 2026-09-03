@@ -2170,4 +2170,38 @@
     <string formatted="false" name="undo_sort">Не сортировать</string>
     <string formatted="false" name="sort">Сортировать</string>
     <string formatted="false" name="checkbox">флажок</string>
+
+    <!-- Engine: scene view -->
+    <string formatted="false" name="scene_hint">Нажмите +, чтобы добавить спрайт, затем коснитесь спрайта, чтобы открыть его код</string>
+    <string formatted="false" name="scene_view">Вид сцены</string>
+    <string formatted="false" name="list_view">Список спрайтов</string>
+    <string formatted="false" name="switch_scene">Сменить сцену</string>
+
+    <!-- Engine: code scripts -->
+    <string formatted="false" name="code_event_started">при старте</string>
+    <string formatted="false" name="code_event_touched">при касании</string>
+    <string formatted="false" name="code_event_cloned">при клонировании</string>
+    <string formatted="false" name="code_event_background_touched">при касании фона</string>
+    <string formatted="false" name="code_event_background_changed">при смене фона</string>
+    <string formatted="false" name="code_event_bounce_off">при отскоке</string>
+    <string formatted="false" name="code_event_condition">при условии</string>
+    <string formatted="false" name="code_event_broadcast">при получении %1$s</string>
+    <string formatted="false" name="code_event_empty">пустое событие</string>
+    <string formatted="false" name="code_event_user_script">при вызове %1$s</string>
+    <string formatted="false" name="code_scripts_empty">Скриптов пока нет. Нажмите +, чтобы добавить.</string>
+    <string formatted="false" name="code_script_empty">(пусто)</string>
+    <string formatted="false" name="code_editor_hint">// напишите код здесь</string>
+    <string formatted="false" name="code_saved">Код сохранён</string>
+    <string formatted="false" name="code_errors_title">Ошибки кода</string>
+    <string formatted="false" name="code_help_title">Команды</string>
+
+    <!-- Engine: new script dialog -->
+    <string formatted="false" name="new_script_dialog_title">Новый скрипт</string>
+    <string formatted="false" name="new_script_type_started">при старте</string>
+    <string formatted="false" name="new_script_type_touched">при касании</string>
+    <string formatted="false" name="new_script_type_broadcast">при получении сообщения</string>
+    <string formatted="false" name="new_script_type_cloned">при клонировании</string>
+    <string formatted="false" name="broadcast_name_label">Имя сообщения</string>
+
+    <string formatted="false" name="code_help_reference">Команды:\n\nmove(10) — идти на 10 шагов\nturn(90) / turn_left(90) — повернуть\npoint(0) — повернуться на угол (0 = вверх)\nchange_x(10) / change_y(10) — сдвинуть позицию\nset_x(0) / set_y(0) — перейти в точку\nplace(100, 50) — перейти в x/y\nglide(100, 50, 1) — плавно идти в x/y за 1 секунду\nset_size(50) / change_size(10) — размер\nsay(\"привет\") / say(\"привет\", 2) — пузырь с речью\nthink(\"хм\") — пузырь с мыслью\nhide() / show() / hide_text()\nnext_look() — следующий вид\nclone() / delete() — клонировать / удалить клон\ncome_to_front() / bounce_on_edge()\nwait(1) — ждать 1 секунду\nstop() — остановить этот скрипт\nexit_stage() — остановить игру\n\nrepeat (3) { … }\nwhile (x &lt; 10) { … }\ndo { … } while (x &lt; 10)\nforever { … }\nif (x &gt; 5) { … } else { … }\n\nbroadcast(\"start\") / wait_broadcast(\"start\")\nplay_sound(\"boom\") / stop_all_sounds()\nplay_note(440)\n\nset_variable(score, 0)\nchange_variable(score, 1)\nread(answer, \"Как вас зовут?\")\n\nВыражения: числа, \"строки\", переменные\n  + - * / % ** ( ) == != &lt; &gt; &lt;= &gt;=\n  and, or, not, true, false\n  abs(2) sqrt(9) round(1.5) floor(1.5) ceil(1.5)\n  min(2, 3) max(2, 3) pow(2, 3) atan2(1, 1)\n  random(0, 10) sin(1) cos(1) tan(1)</string>
 </resources>
